@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom'
 import CollectionPage from './pages/CollectionPage'
 import RecipeDetailPage from './pages/RecipeDetailPage'
 import AddRecipePage from './pages/AddRecipePage'
+import AboutPage from './pages/AboutPage'
 
 export default function App() {
   return (
@@ -10,6 +11,7 @@ export default function App() {
       <Route path="/recipe/:slug" element={<RecipeDetailPage />} />
       <Route path="/recipe/:slug/edit" element={<AddRecipePage />} />
       <Route path="/add" element={<AddRecipePage />} />
+      <Route path="/about" element={<AboutPage />} />
     </Routes>
   )
 }

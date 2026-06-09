@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom'
 import Icon from './Icon'
 
-const navLinks = ['Browse', 'About']
+const navLinks = [
+  { label: 'Browse', to: '/' },
+  { label: 'About', to: '/about' },
+]
 
 interface NavbarProps {
   /** Which top-level link should render as active. */
@@ -23,22 +26,23 @@ export default function Navbar({ active = 'Browse' }: NavbarProps) {
 
         {/* Navigation Links (Desktop) */}
         <div className="hidden md:flex gap-md h-full items-center">
-          {navLinks.map((label) =>
+          {navLinks.map(({ label, to }) =>
             label === active ? (
-              <span
+              <Link
                 key={label}
+                to={to}
                 className="text-primary border-b-2 border-primary pb-1 font-body text-body-md cursor-pointer"
               >
                 {label}
-              </span>
+              </Link>
             ) : (
-              <a
+              <Link
                 key={label}
-                href="#"
+                to={to}
                 className="text-secondary hover:text-primary font-body text-body-md cursor-pointer active:opacity-70 hover:bg-surface-container-low transition-colors duration-200 px-sm py-xs rounded"
               >
                 {label}
-              </a>
+              </Link>
             ),
           )}
         </div>

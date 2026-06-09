@@ -46,7 +46,10 @@ export default function CollectionPage() {
         {/* Page Header */}
         <div className="mb-lg md:mb-xl text-center md:text-left flex flex-col md:flex-row justify-between gap-md md:items-start">
           <div>
-            <h1 className="font-display text-display text-on-surface mb-xs">Curated Collections</h1>
+            <p className="font-label-lg text-label-lg text-primary uppercase tracking-wider mb-sm">
+            Browse
+          </p>
+          <h1 className="font-display text-display text-on-surface mb-md">A calmer kind of cookbook.</h1>
             <p className="font-body text-body-lg text-on-surface-variant max-w-2xl">
               Discover seasonal favorites and timeless classics, thoughtfully organized to inspire
               your next culinary meditation.

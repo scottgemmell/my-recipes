@@ -3,6 +3,7 @@ import Icon from './Icon'
 
 const navLinks = [
   { label: 'Browse', to: '/' },
+  { label: 'Favourites', to: '/favourites' },
   { label: 'About', to: '/about' },
 ]
 

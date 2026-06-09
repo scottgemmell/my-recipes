@@ -3,6 +3,7 @@ import CollectionPage from './pages/CollectionPage'
 import RecipeDetailPage from './pages/RecipeDetailPage'
 import AddRecipePage from './pages/AddRecipePage'
 import AboutPage from './pages/AboutPage'
+import FavouritesPage from './pages/FavouritesPage'
 
 export default function App() {
   return (
@@ -12,6 +13,7 @@ export default function App() {
       <Route path="/recipe/:slug/edit" element={<AddRecipePage />} />
       <Route path="/add" element={<AddRecipePage />} />
       <Route path="/about" element={<AboutPage />} />
+      <Route path="/favourites" element={<FavouritesPage />} />
     </Routes>
   )
 }

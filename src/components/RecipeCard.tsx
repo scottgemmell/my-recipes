@@ -128,7 +128,7 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
         </div>
         <div className="mt-md pt-sm border-t flex items-center justify-between text-body-sm font-body-sm border-outline-variant/30">
           <MetaStat icon="schedule" label={recipe.time} />
-          <MetaStat icon={recipe.servingsIcon} label={recipe.servings} />
+          <MetaStat icon="restaurant" label={recipe.servings} />
           <MetaStat icon={recipe.difficultyIcon} label={recipe.difficulty} />
         </div>
       </div>

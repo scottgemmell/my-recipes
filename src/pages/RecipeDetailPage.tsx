@@ -147,7 +147,11 @@ export default function RecipeDetailPage() {
               <div className="flex flex-wrap items-center gap-y-md gap-x-lg pt-md mt-sm border-t border-outline-variant/30">
                 <MetaItem icon="schedule" label="Total Time" value={recipe.time} />
                 <MetaItem icon="restaurant" label="Yield" value={recipe.servings} />
-                <MetaItem icon="signal_cellular_alt" label="Difficulty" value={recipe.difficulty} />
+                <MetaItem
+                  icon={recipe.difficultyIcon}
+                  label="Difficulty"
+                  value={recipe.difficulty}
+                />
                 {recipe.calories && (
                   <MetaItem icon="local_fire_department" label="Calories" value={recipe.calories} />
                 )}

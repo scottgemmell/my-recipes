@@ -5,6 +5,7 @@ import type { Recipe } from '../features/recipes/types'
 import Icon from './Icon'
 import RecipeImage from './RecipeImage'
 import { isNewRecipe } from '../features/recipes/recent'
+import { iconForDifficulty, isHardDifficulty } from '../features/recipes/difficulty'
 
 interface RecipeCardProps {
   recipe: Recipe
@@ -29,9 +30,17 @@ function FavoriteButton({ recipe }: RecipeCardProps) {
   )
 }
 
-function MetaStat({ icon, label }: { icon: string; label: string }) {
+function MetaStat({
+  icon,
+  label,
+  tone = 'text-primary',
+}: {
+  icon: string
+  label: string
+  tone?: string
+}) {
   return (
-    <div className="flex items-center gap-xs text-primary">
+    <div className={`flex items-center gap-xs ${tone}`}>
       <Icon name={icon} className="text-[16px]" />
       <span className="font-bold">{label}</span>
     </div>
@@ -129,7 +138,11 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
         <div className="mt-md pt-sm border-t flex items-center justify-between text-body-sm font-body-sm border-outline-variant/30">
           <MetaStat icon="schedule" label={recipe.time} />
           <MetaStat icon="restaurant" label={recipe.servings} />
-          <MetaStat icon={recipe.difficultyIcon} label={recipe.difficulty} />
+          <MetaStat
+            icon={iconForDifficulty(recipe.difficulty)}
+            label={recipe.difficulty}
+            tone={isHardDifficulty(recipe.difficulty) ? 'text-error' : 'text-primary'}
+          />
         </div>
       </div>
     </article>

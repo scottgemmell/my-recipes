@@ -7,6 +7,7 @@ import RecipeImage from '../components/RecipeImage'
 import RecipeDetailSkeleton from '../components/RecipeDetailSkeleton'
 import ConfirmDialog from '../components/ConfirmDialog'
 import { isNewRecipe } from '../features/recipes/recent'
+import { iconForDifficulty, isHardDifficulty } from '../features/recipes/difficulty'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import {
   deleteRecipe,
@@ -15,15 +16,27 @@ import {
   toggleIngredient,
 } from '../features/recipes/recipesSlice'
 
-function MetaItem({ icon, label, value }: { icon: string; label: string; value: string }) {
+function MetaItem({
+  icon,
+  label,
+  value,
+  tone,
+}: {
+  icon: string
+  label: string
+  value: string
+  tone?: string
+}) {
   return (
     <div className="flex items-center gap-sm">
-      <Icon name={icon} className="text-primary" />
+      <Icon name={icon} className={tone ?? 'text-primary'} />
       <div className="flex flex-col">
         <span className="font-label-lg text-[12px] text-secondary uppercase tracking-wider">
           {label}
         </span>
-        <span className="font-body text-body-md text-on-surface font-bold">{value}</span>
+        <span className={`font-body text-body-md font-bold ${tone ?? 'text-on-surface'}`}>
+          {value}
+        </span>
       </div>
     </div>
   )
@@ -148,9 +161,10 @@ export default function RecipeDetailPage() {
                 <MetaItem icon="schedule" label="Total Time" value={recipe.time} />
                 <MetaItem icon="restaurant" label="Yield" value={recipe.servings} />
                 <MetaItem
-                  icon={recipe.difficultyIcon}
+                  icon={iconForDifficulty(recipe.difficulty)}
                   label="Difficulty"
                   value={recipe.difficulty}
+                  tone={isHardDifficulty(recipe.difficulty) ? 'text-error' : undefined}
                 />
                 {recipe.calories && (
                   <MetaItem icon="local_fire_department" label="Calories" value={recipe.calories} />

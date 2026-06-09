@@ -275,10 +275,17 @@ function IngredientsField() {
                       e.preventDefault()
                       moveRow(dragIndex, i)
                     }}
-                    className={`flex items-center gap-sm rounded-md ${
-                      isOver ? 'ring-2 ring-primary ring-offset-2 ring-offset-surface-container-lowest' : ''
-                    } ${isDragging ? 'opacity-40' : ''}`}
+                    className={`relative flex items-center gap-sm rounded-md ${
+                      isDragging ? 'opacity-40' : ''
+                    }`}
                   >
+                    {isOver && (
+                      <div
+                        className={`pointer-events-none absolute left-0 right-0 h-0.5 rounded bg-primary ${
+                          (dragIndex ?? 0) < i ? '-bottom-1' : '-top-1'
+                        }`}
+                      />
+                    )}
                     <span
                       draggable
                       onDragStart={(e) => {

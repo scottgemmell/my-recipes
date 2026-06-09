@@ -21,11 +21,16 @@ function FavoriteButton({ recipe }: RecipeCardProps) {
       onClick={() => dispatch(toggleFavorite(recipe.id))}
       className={
         recipe.favorite
-          ? 'shrink-0 text-error transition-colors'
-          : 'shrink-0 hover:text-error transition-colors text-on-surface-variant'
+          ? 'shrink-0 text-error transition-transform duration-150 active:scale-90'
+          : 'shrink-0 text-on-surface-variant hover:text-error transition-[color,transform] duration-150 active:scale-90'
       }
     >
-      <Icon name={recipe.favorite ? 'favorite' : 'favorite_border'} filled={recipe.favorite} />
+      <Icon
+        key={recipe.favorite ? 'favorite' : 'unfavorite'}
+        name={recipe.favorite ? 'favorite' : 'favorite_border'}
+        filled={recipe.favorite}
+        className={recipe.favorite ? 'animate-pop' : ''}
+      />
     </button>
   )
 }

@@ -11,26 +11,40 @@ interface RecipeImageProps {
 const escapeXml = (value: string): string =>
   value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
+/** Soft pastel { background, accent } pairs for the placeholder cards. */
+const palette = [
+  { bg: '#dff1e1', fg: '#5b8c6a' },
+  { bg: '#d9ecdc', fg: '#6a9472' },
+  { bg: '#f3ecc0', fg: '#9a8b3e' },
+  { bg: '#f7ded0', fg: '#b07a5e' },
+  { bg: '#f2d6e6', fg: '#a96d92' },
+  { bg: '#f8ddc0', fg: '#bf8049' },
+]
+
+/** Deterministically pick a palette entry from the label text. */
+function paletteFor(label: string) {
+  let hash = 0
+  for (let i = 0; i < label.length; i += 1) hash = (hash * 31 + label.charCodeAt(i)) >>> 0
+  return palette[hash % palette.length]
+}
+
 /**
- * An on-brand SVG placeholder rendered when a remote image is missing or fails
- * to load. Returned as a data URI so it never makes a network request.
+ * A soft placeholder rendered when an image is missing or fails to load: a
+ * pastel card with a subtle diagonal hatch and the dish name as an uppercase,
+ * letter-spaced caption. Returned as a data URI so it never hits the network.
  */
 function placeholderFor(label: string): string {
-  const text = escapeXml(label)
+  const { bg, fg } = paletteFor(label)
+  const text = escapeXml(label.toUpperCase())
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#ecefe9"/>
-      <stop offset="100%" stop-color="#cae7cb"/>
-    </linearGradient>
+    <pattern id="hatch" patternUnits="userSpaceOnUse" width="11" height="11" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="11" stroke="${fg}" stroke-width="1.4" stroke-opacity="0.13"/>
+    </pattern>
   </defs>
-  <rect width="800" height="600" fill="url(#bg)"/>
-  <g fill="none" stroke="#236939" stroke-opacity="0.30">
-    <circle cx="400" cy="248" r="90" stroke-width="6"/>
-    <circle cx="400" cy="248" r="66" stroke-width="4"/>
-  </g>
-  <text x="400" y="416" text-anchor="middle" font-family="'Playfair Display', Georgia, serif" font-size="40" font-weight="700" fill="#236939" fill-opacity="0.85">${text}</text>
-  <text x="400" y="458" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="16" letter-spacing="4" fill="#4a654e" fill-opacity="0.65">CULINARY ZEN</text>
+  <rect width="800" height="600" fill="${bg}"/>
+  <rect width="800" height="600" fill="url(#hatch)"/>
+  <text x="400" y="300" text-anchor="middle" dominant-baseline="middle" font-family="ui-monospace, 'SFMono-Regular', Menlo, 'Courier New', monospace" font-size="30" letter-spacing="6" fill="${fg}" fill-opacity="0.9">${text}</text>
 </svg>`
   return `data:image/svg+xml,${encodeURIComponent(svg)}`
 }

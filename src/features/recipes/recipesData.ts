@@ -1,7 +1,4 @@
 import type { Recipe } from './types'
-import risottoImg from '../../assets/recipes/wild-mushroom-risotto.svg'
-import tomatoSoupImg from '../../assets/recipes/roasted-tomato-basil-soup.svg'
-import turmericLatteImg from '../../assets/recipes/golden-turmeric-latte.svg'
 import capreseImage from '../../assets/images/recipes/classic-caprese-salad.png'
 import chickenImage from '../../assets/images/recipes/lemon-herb-roasted-chicken.png'
 import eggplantImage from '../../assets/images/recipes/miso-glazed-eggplant.png'
@@ -322,7 +319,7 @@ export const recipes: Recipe[] = [
       'Creamy arborio rice slow-stirred with earthy wild mushrooms, white wine, and a generous shower of parmesan.',
     description:
       'A meditative dish that rewards patience. Arborio rice is coaxed to a silky finish one ladle at a time, then folded through with pan-seared wild mushrooms, fresh thyme, and aged parmesan for a deeply savoury bowl of comfort.',
-    image: risottoImg,
+    image: '',
     imageAlt: 'Branded Culinary Zen illustration of Wild Mushroom Risotto.',
     time: '40m',
     servings: '4 Servings',
@@ -376,7 +373,7 @@ export const recipes: Recipe[] = [
       'Vine tomatoes slow-roasted until jammy, then blitzed with fresh basil into a velvety, soul-warming bowl.',
     description:
       'Roasting concentrates the tomatoes into something deep and sweet before they are blended smooth with garlic and a handful of fresh basil. Simple, nourishing, and endlessly comforting on a quiet afternoon.',
-    image: tomatoSoupImg,
+    image: '',
     imageAlt: 'Branded Culinary Zen illustration of Roasted Tomato and Basil Soup.',
     time: '50m',
     servings: '4 Servings',
@@ -428,7 +425,7 @@ export const recipes: Recipe[] = [
       'A soothing, caffeine-free blend of turmeric, ginger, and warm spices frothed into creamy plant milk.',
     description:
       'Often called golden milk, this gently spiced latte is a calming ritual in a cup. Turmeric and fresh ginger are warmed with oat milk and a whisper of black pepper to help everything bloom, then sweetened with a touch of maple.',
-    image: turmericLatteImg,
+    image: '',
     imageAlt: 'Branded Culinary Zen illustration of a Golden Turmeric Latte.',
     time: '10m',
     servings: '1 Serving',

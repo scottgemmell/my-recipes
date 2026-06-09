@@ -4,6 +4,7 @@ import { toggleFavorite } from '../features/recipes/recipesSlice'
 import type { Recipe } from '../features/recipes/types'
 import Icon from './Icon'
 import RecipeImage from './RecipeImage'
+import { isNewRecipe } from '../features/recipes/recent'
 
 interface RecipeCardProps {
   recipe: Recipe
@@ -37,10 +38,15 @@ function MetaStat({ icon, label }: { icon: string; label: string }) {
   )
 }
 
-/** Tag-cloud of small uppercase pills shown on each card. */
-function TagList({ tags }: { tags: string[] }) {
+/** Tag-cloud of small uppercase pills shown on each card. New comes first. */
+function TagList({ tags, isNew }: { tags: string[]; isNew: boolean }) {
   return (
     <div className="flex flex-wrap gap-xs">
+      {isNew && (
+        <span className="bg-primary text-on-primary font-label-sm text-label-sm uppercase tracking-wider px-2 py-[2px] rounded">
+          New
+        </span>
+      )}
       {tags.map((tag) => (
         <span
           key={tag}
@@ -70,7 +76,7 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
         <div className="p-md flex flex-col justify-between grow">
           <div>
             <div className="flex items-start justify-between gap-sm mb-sm">
-              <TagList tags={recipe.tags} />
+              <TagList tags={recipe.tags} isNew={isNewRecipe(recipe.createdAt)} />
               <FavoriteButton recipe={recipe} />
             </div>
             <Link to={to}>
@@ -108,7 +114,7 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
       <div className="p-md flex flex-col justify-between grow">
         <div>
           <div className="flex items-start justify-between gap-sm mb-sm">
-            <TagList tags={recipe.tags} />
+            <TagList tags={recipe.tags} isNew={isNewRecipe(recipe.createdAt)} />
             <FavoriteButton recipe={recipe} />
           </div>
           <Link to={to}>

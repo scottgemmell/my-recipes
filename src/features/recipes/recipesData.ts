@@ -42,7 +42,73 @@ const img = {
   cream: creamImg,
 }
 
-export const recipes: Recipe[] = [
+const daysAgo = (n: number): string =>
+  new Date(Date.now() - n * 24 * 60 * 60 * 1000).toISOString()
+
+// How many days ago each seed recipe was "added" (drives the date-based New
+// tag). Only the bean salad is recent; the rest are well over 4 days old.
+const ageDaysBySlug: Record<string, number> = {
+  'easy-italian-bean-salad': 0,
+  'lemon-herb-roasted-chicken': 12,
+  'miso-glazed-eggplant': 9,
+  'classic-caprese-salad': 18,
+  'artisan-sourdough': 7,
+  'matcha-panna-cotta': 15,
+  'wild-mushroom-risotto': 6,
+  'roasted-tomato-basil-soup': 10,
+  'golden-turmeric-latte': 5,
+}
+
+const seed: Omit<Recipe, 'createdAt'>[] = [
+  {
+    id: '9',
+    slug: 'easy-italian-bean-salad',
+    title: 'Easy Italian Bean Salad',
+    category: 'Salad',
+    tags: ['Salad', 'Italian', 'Vegan'],
+    excerpt:
+      'Creamy cannellini and borlotti beans tossed with cherry tomatoes, red onion, and a bright lemon-herb dressing.',
+    description:
+      'A no-cook Italian salad that comes together in minutes. Two kinds of beans are folded through juicy cherry tomatoes, thinly sliced red onion, and plenty of parsley, then dressed simply with good olive oil, lemon, and garlic.',
+    image: '',
+    imageAlt: 'Easy Italian Bean Salad',
+    time: '15 mins',
+    servings: '4 Servings',
+    difficulty: 'Easy',
+    servingsIcon: 'restaurant',
+    difficultyIcon: 'signal_cellular_alt',
+    calories: '240 kcal',
+    favorite: false,
+    ingredients: [
+      { id: 'i1', name: 'Cannellini beans, drained', amount: '1 can' },
+      { id: 'i2', name: 'Borlotti beans, drained', amount: '1 can' },
+      { id: 'i3', name: 'Cherry tomatoes, halved', amount: '250 g' },
+      { id: 'i4', name: 'Red onion, thinly sliced', amount: '1/2' },
+      { id: 'i5', name: 'Fresh parsley, chopped', amount: '1 handful' },
+      { id: 'i6', name: 'Extra virgin olive oil', amount: '3 tbsp' },
+      { id: 'i7', name: 'Lemon, juiced', amount: '1' },
+      { id: 'i8', name: 'Garlic clove, grated', amount: '1' },
+      { id: 'i9', name: 'Sea salt and black pepper', amount: 'to taste' },
+    ],
+    steps: [
+      {
+        title: 'Combine',
+        description:
+          'Tip both cans of drained beans into a large bowl with the cherry tomatoes, red onion, and parsley.',
+      },
+      {
+        title: 'Dress',
+        description:
+          'Whisk the olive oil, lemon juice, and grated garlic together, then pour over the salad.',
+      },
+      {
+        title: 'Toss and Rest',
+        description:
+          'Toss gently to coat, season to taste, and rest for 10 minutes so the flavours meld before serving.',
+      },
+    ],
+    gallery: [],
+  },
   {
     id: '1',
     slug: 'lemon-herb-roasted-chicken',
@@ -463,3 +529,8 @@ export const recipes: Recipe[] = [
     gallery: [],
   },
 ]
+
+export const recipes: Recipe[] = seed.map((recipe) => ({
+  ...recipe,
+  createdAt: daysAgo(ageDaysBySlug[recipe.slug] ?? 10),
+}))

@@ -2,7 +2,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import recipesReducer from '../features/recipes/recipesSlice'
 
 /** Bump the version suffix to invalidate previously persisted state. */
-const STORAGE_KEY = 'culinary-zen:recipes:v1'
+const STORAGE_KEY = 'culinary-zen:recipes:v2'
 
 type RecipesState = ReturnType<typeof recipesReducer>
 

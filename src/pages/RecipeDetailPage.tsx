@@ -6,6 +6,7 @@ import Icon from '../components/Icon'
 import RecipeImage from '../components/RecipeImage'
 import RecipeDetailSkeleton from '../components/RecipeDetailSkeleton'
 import ConfirmDialog from '../components/ConfirmDialog'
+import { isNewRecipe } from '../features/recipes/recent'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import {
   deleteRecipe,
@@ -106,6 +107,11 @@ export default function RecipeDetailPage() {
             <div className="flex flex-col gap-sm md:gap-md">
               {/* Tags */}
               <div className="flex flex-wrap gap-sm">
+                {isNewRecipe(recipe.createdAt) && (
+                  <span className="bg-primary text-on-primary font-label-sm text-label-sm uppercase tracking-wider px-2 py-[2px] rounded">
+                    New
+                  </span>
+                )}
                 {recipe.tags.map((tag) => (
                   <span
                     key={tag}

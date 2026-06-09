@@ -318,13 +318,14 @@ export default function AddRecipePage() {
     const newRecipe: Recipe = {
       id: `r-${Date.now()}`,
       slug: newSlug,
-      category: 'New',
-      tags: ['New'],
+      category: 'Recipe',
+      tags: [],
       difficulty: 'Easy',
       servingsIcon: 'restaurant',
       difficultyIcon: 'signal_cellular_alt',
       gallery: [],
       favorite: false,
+      createdAt: new Date().toISOString(),
       ...editable,
     }
 

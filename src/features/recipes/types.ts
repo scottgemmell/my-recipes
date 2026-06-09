@@ -42,4 +42,6 @@ export interface Recipe {
   /** Marks the large hero card in the collection grid. */
   featured?: boolean
   favorite: boolean
+  /** ISO date string for when the recipe was added (drives the "New" tag). */
+  createdAt: string
 }

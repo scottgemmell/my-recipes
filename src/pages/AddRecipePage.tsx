@@ -20,9 +20,12 @@ interface FormValues {
   tags?: string
   time?: string
   yield?: string
+  difficulty?: string
   ingredients?: string
   instructions?: string
 }
+
+const DIFFICULTIES = ['Easy', 'Medium', 'Hard']
 
 /** Split a comma-separated tags string into a clean, de-duplicated list. */
 function parseTags(text: string): string[] {
@@ -182,6 +185,34 @@ function TextAreaField({
   )
 }
 
+/** Label + native select, wired to a React Final Form field. */
+function SelectField({
+  name,
+  label,
+  options,
+}: {
+  name: string
+  label: string
+  options: string[]
+}) {
+  return (
+    <Field name={name}>
+      {({ input }) => (
+        <div className="flex flex-col gap-base">
+          <label className="font-label-lg text-label-lg text-on-surface">{label}</label>
+          <select {...input} className={`${baseInput} ${okBorder} cursor-pointer`}>
+            {options.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+    </Field>
+  )
+}
+
 /** Drag-and-drop / click-to-browse hero image picker storing a data URL. */
 function HeroImageField() {
   const inputRef = useRef<HTMLInputElement>(null)
@@ -291,7 +322,7 @@ export default function AddRecipePage() {
     )
   }
 
-  const initialValues: FormValues | undefined = editingRecipe
+  const initialValues: FormValues = editingRecipe
     ? {
         image: editingRecipe.image || undefined,
         title: editingRecipe.title,
@@ -299,10 +330,11 @@ export default function AddRecipePage() {
         tags: editingRecipe.tags.join(', '),
         time: editingRecipe.time === '—' ? '' : editingRecipe.time,
         yield: editingRecipe.servings === '—' ? '' : editingRecipe.servings,
+        difficulty: editingRecipe.difficulty,
         ingredients: ingredientsToText(editingRecipe.ingredients),
         instructions: stepsToText(editingRecipe.steps),
       }
-    : undefined
+    : { difficulty: 'Easy' }
 
   const onSubmit = (values: FormValues) => {
     const title = values.title!.trim()
@@ -316,6 +348,7 @@ export default function AddRecipePage() {
       imageAlt: title,
       time: values.time?.trim() || '—',
       servings: values.yield?.trim() || '—',
+      difficulty: values.difficulty || 'Easy',
       ingredients: parseIngredients(values.ingredients ?? ''),
       steps: parseSteps(values.instructions ?? ''),
     }
@@ -337,7 +370,6 @@ export default function AddRecipePage() {
       id: `r-${Date.now()}`,
       slug: newSlug,
       category: 'Recipe',
-      difficulty: 'Easy',
       servingsIcon: 'restaurant',
       difficultyIcon: 'signal_cellular_alt',
       gallery: [],
@@ -396,9 +428,10 @@ export default function AddRecipePage() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-md pt-md border-t border-outline-variant/30">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-md pt-md border-t border-outline-variant/30">
                 <InputField name="time" label="Total Time" placeholder="e.g., 45 mins" />
                 <InputField name="yield" label="Yield" placeholder="e.g., 4 servings" />
+                <SelectField name="difficulty" label="Difficulty" options={DIFFICULTIES} />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-md md:gap-lg pt-md border-t border-outline-variant/30">

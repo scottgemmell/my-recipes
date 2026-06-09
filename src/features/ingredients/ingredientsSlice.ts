@@ -28,10 +28,16 @@ const ingredientsSlice = createSlice({
       const ing = state.items.find((i) => i.id === action.payload.id)
       if (ing) ing.imageKey = action.payload.imageKey
     },
+    /** Rename an ingredient (its id — and therefore recipe links — stays). */
+    renameIngredient(state, action: PayloadAction<{ id: string; name: string }>) {
+      const ing = state.items.find((i) => i.id === action.payload.id)
+      if (ing) ing.name = action.payload.name
+    },
   },
 })
 
-export const { addIngredient, setIngredientImage } = ingredientsSlice.actions
+export const { addIngredient, setIngredientImage, renameIngredient } =
+  ingredientsSlice.actions
 
 export default ingredientsSlice.reducer
 

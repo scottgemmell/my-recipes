@@ -49,7 +49,13 @@ export default function Navbar({ active = 'Browse' }: NavbarProps) {
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-md">
+        <div className="flex items-center gap-sm">
+          <Link
+            to="/add-ingredient"
+            className="hidden md:block border border-primary text-primary px-md py-[12px] rounded font-label-lg text-label-lg cursor-pointer active:opacity-70 hover:bg-surface-container-low transition-all duration-200"
+          >
+            Add Ingredient
+          </Link>
           <Link
             to="/add"
             className="hidden md:block bg-primary text-on-primary px-md py-[12px] rounded font-label-lg text-label-lg cursor-pointer active:opacity-70 hover:brightness-110 transition-all duration-200"

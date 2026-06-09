@@ -8,6 +8,7 @@ export default function App() {
     <Routes>
       <Route path="/" element={<CollectionPage />} />
       <Route path="/recipe/:slug" element={<RecipeDetailPage />} />
+      <Route path="/recipe/:slug/edit" element={<AddRecipePage />} />
       <Route path="/add" element={<AddRecipePage />} />
     </Routes>
   )

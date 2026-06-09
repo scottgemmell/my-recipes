@@ -1,11 +1,16 @@
 import { useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Form, Field } from 'react-final-form'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import Icon from '../components/Icon'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
-import { addRecipe, selectRecipes } from '../features/recipes/recipesSlice'
+import {
+  addRecipe,
+  selectRecipeBySlug,
+  selectRecipes,
+  updateRecipe,
+} from '../features/recipes/recipesSlice'
 import type { Recipe } from '../features/recipes/types'
 
 interface FormValues {
@@ -222,40 +227,83 @@ function HeroImageField() {
 export default function AddRecipePage() {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
+  const { slug } = useParams()
   const recipes = useAppSelector(selectRecipes)
+  const editingRecipe = useAppSelector(selectRecipeBySlug(slug ?? ''))
+  const isEditing = Boolean(slug)
+
+  if (isEditing && !editingRecipe) {
+    return (
+      <div className="min-h-screen flex flex-col bg-surface-container-lowest">
+        <Navbar active="" />
+        <main className="flex-1 flex flex-col items-center justify-center gap-md text-center px-margin-mobile">
+          <h1 className="font-display text-headline-lg text-on-surface">Recipe not found</h1>
+          <Link to="/" className="font-label-lg text-label-lg text-primary hover:underline">
+            ← Back to Collections
+          </Link>
+        </main>
+        <Footer />
+      </div>
+    )
+  }
+
+  const initialValues: FormValues | undefined = editingRecipe
+    ? {
+        image: editingRecipe.image || undefined,
+        title: editingRecipe.title,
+        description: editingRecipe.description,
+        time: editingRecipe.time === '—' ? '' : editingRecipe.time,
+        yield: editingRecipe.servings === '—' ? '' : editingRecipe.servings,
+        ingredients: editingRecipe.ingredients
+          .map((i) => [i.amount, i.name].filter(Boolean).join(' '))
+          .join('\n'),
+        instructions: editingRecipe.steps.map((s) => s.description).join('\n'),
+      }
+    : undefined
 
   const onSubmit = (values: FormValues) => {
     const title = values.title!.trim()
-    const base = slugify(title) || 'recipe'
-    const existing = new Set(recipes.map((r) => r.slug))
-    let slug = base
-    let n = 2
-    while (existing.has(slug)) slug = `${base}-${n++}`
-
     const description = values.description?.trim() ?? ''
-    const newRecipe: Recipe = {
-      id: `r-${Date.now()}`,
-      slug,
+    const editable = {
       title,
-      category: 'New',
-      tags: ['New'],
-      excerpt: description,
       description,
+      excerpt: description,
       image: values.image ?? '',
       imageAlt: title,
       time: values.time?.trim() || '—',
       servings: values.yield?.trim() || '—',
+      ingredients: parseIngredients(values.ingredients ?? ''),
+      steps: parseSteps(values.instructions ?? ''),
+    }
+
+    if (editingRecipe) {
+      // Preserve id, slug, tags, favorite, etc. — only the editable fields change.
+      dispatch(updateRecipe({ ...editingRecipe, ...editable }))
+      navigate(`/recipe/${editingRecipe.slug}`)
+      return
+    }
+
+    const base = slugify(title) || 'recipe'
+    const existing = new Set(recipes.map((r) => r.slug))
+    let newSlug = base
+    let n = 2
+    while (existing.has(newSlug)) newSlug = `${base}-${n++}`
+
+    const newRecipe: Recipe = {
+      id: `r-${Date.now()}`,
+      slug: newSlug,
+      category: 'New',
+      tags: ['New'],
       difficulty: 'Easy',
       servingsIcon: 'restaurant',
       difficultyIcon: 'signal_cellular_alt',
-      ingredients: parseIngredients(values.ingredients ?? ''),
-      steps: parseSteps(values.instructions ?? ''),
       gallery: [],
       favorite: false,
+      ...editable,
     }
 
     dispatch(addRecipe(newRecipe))
-    navigate(`/recipe/${slug}`)
+    navigate(`/recipe/${newSlug}`)
   }
 
   return (
@@ -265,14 +313,16 @@ export default function AddRecipePage() {
       <main className="flex-1 w-full max-w-4xl mx-auto px-margin-mobile md:px-margin-desktop py-lg flex flex-col gap-lg">
         <div className="text-center max-w-2xl mx-auto mb-md">
           <h1 className="font-display text-headline-lg-mobile md:text-headline-lg text-on-surface mb-xs">
-            Craft a New Recipe
+            {isEditing ? 'Edit Recipe' : 'Craft a New Recipe'}
           </h1>
           <p className="font-body text-body-lg text-secondary">
-            Share your culinary creations with clarity and elegance.
+            {isEditing
+              ? 'Refine the details and save your changes.'
+              : 'Share your culinary creations with clarity and elegance.'}
           </p>
         </div>
 
-        <Form<FormValues> onSubmit={onSubmit}>
+        <Form<FormValues> onSubmit={onSubmit} initialValues={initialValues}>
           {({ handleSubmit }) => (
             <form
               onSubmit={handleSubmit}
@@ -325,17 +375,17 @@ export default function AddRecipePage() {
               <div className="pt-lg flex flex-col md:flex-row items-center justify-end gap-md border-t border-outline-variant/30 mt-md">
                 <button
                   type="button"
-                  onClick={() => navigate('/')}
+                  onClick={() => navigate(isEditing ? `/recipe/${editingRecipe!.slug}` : '/')}
                   className="w-full md:w-auto px-6 py-3 rounded-full border border-tertiary font-label-lg text-label-lg text-on-surface hover:bg-surface-container-low transition-colors duration-200"
                 >
-                  Save as Draft
+                  {isEditing ? 'Cancel' : 'Save as Draft'}
                 </button>
                 <button
                   type="submit"
                   className="w-full md:w-auto px-6 py-3 rounded-full bg-primary font-label-lg text-label-lg text-on-primary hover:brightness-110 transition-all duration-200 flex items-center justify-center gap-2 shadow-[0_2px_8px_rgba(74,101,79,0.2)]"
                 >
                   <Icon name="done" filled className="text-[20px]" />
-                  Publish Recipe
+                  {isEditing ? 'Save Changes' : 'Publish Recipe'}
                 </button>
               </div>
             </form>

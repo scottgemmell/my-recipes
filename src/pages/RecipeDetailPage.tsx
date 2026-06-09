@@ -90,6 +90,14 @@ export default function RecipeDetailPage() {
               <p className="font-body text-body-lg text-on-surface-variant max-w-3xl">
                 {recipe.description}
               </p>
+              <div>
+                <Link
+                  to={`/recipe/${recipe.slug}/edit`}
+                  className="inline-flex items-center gap-xs font-label-lg text-label-lg text-primary hover:underline decoration-primary underline-offset-4"
+                >
+                  <Icon name="edit" className="text-[18px]" /> Edit Recipe
+                </Link>
+              </div>
               {/* Meta Info */}
               <div className="flex flex-wrap items-center gap-y-md gap-x-lg pt-md mt-sm border-t border-outline-variant/30">
                 <MetaItem icon="schedule" label="Total Time" value={recipe.time} />

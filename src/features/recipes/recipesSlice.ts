@@ -39,11 +39,20 @@ const recipesSlice = createSlice({
       // Insert just after the featured card so it's visible without "Load More".
       state.items.splice(1, 0, action.payload)
     },
+    updateRecipe(state, action: PayloadAction<Recipe>) {
+      const index = state.items.findIndex((r) => r.id === action.payload.id)
+      if (index !== -1) state.items[index] = action.payload
+    },
   },
 })
 
-export const { toggleFavorite, toggleIngredient, clearChecklist, addRecipe } =
-  recipesSlice.actions
+export const {
+  toggleFavorite,
+  toggleIngredient,
+  clearChecklist,
+  addRecipe,
+  updateRecipe,
+} = recipesSlice.actions
 
 export default recipesSlice.reducer
 

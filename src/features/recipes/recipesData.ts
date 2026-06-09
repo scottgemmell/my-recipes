@@ -2,6 +2,7 @@ import type { Recipe } from './types'
 import risottoImg from '../../assets/recipes/wild-mushroom-risotto.svg'
 import tomatoSoupImg from '../../assets/recipes/roasted-tomato-basil-soup.svg'
 import turmericLatteImg from '../../assets/recipes/golden-turmeric-latte.svg'
+import capreseImage from '../../assets/images/recipes/classic-caprese-salad.png'
 
 /**
  * Seed recipes for the Stitch "Culinary Zen" design.
@@ -19,7 +20,7 @@ const img = {
   // Dish photos (stable TheMealDB meal thumbnails).
   chicken: `${meals}/cj56fs1762340001.jpg`,
   eggplant: `${meals}/1oz4nb1765687990.jpg`,
-  caprese: `${meals}/k29viq1585565980.jpg`,
+  caprese: capreseImage,
   sourdough: `${meals}/lmc6r51764365554.jpg`,
   matcha: `${meals}/1549542877.jpg`,
   // Ingredient photos (stable TheMealDB ingredient images).

@@ -14,11 +14,10 @@ export default function CollectionPage() {
     if (idx <= 0) return recipes
     return [recipes[idx], ...recipes.slice(0, idx), ...recipes.slice(idx + 1)]
   }, [recipes])
-  const initialVisible = 5
-  const remaining = Math.max(orderedRecipes.length - initialVisible, 0)
+  const PAGE_SIZE = 8
 
   const [loading, setLoading] = useState(true)
-  const [showAll, setShowAll] = useState(false)
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
   const [loadingMore, setLoadingMore] = useState(false)
 
   // Simulate an initial load so the skeleton state is shown on first paint.
@@ -30,13 +29,15 @@ export default function CollectionPage() {
   const handleLoadMore = () => {
     setLoadingMore(true)
     setTimeout(() => {
-      setShowAll(true)
+      setVisibleCount((count) => count + PAGE_SIZE)
       setLoadingMore(false)
     }, 900)
   }
 
-  const visibleRecipes = showAll ? orderedRecipes : orderedRecipes.slice(0, initialVisible)
-  const hasMore = !showAll && remaining > 0
+  const visibleRecipes = orderedRecipes.slice(0, visibleCount)
+  const remaining = Math.max(orderedRecipes.length - visibleCount, 0)
+  const nextBatch = Math.min(PAGE_SIZE, remaining)
+  const hasMore = remaining > 0
 
   return (
     <div className="min-h-screen flex flex-col bg-surface">
@@ -76,7 +77,7 @@ export default function CollectionPage() {
           {loading ? (
             <>
               <FeaturedCardSkeleton />
-              {Array.from({ length: initialVisible - 1 }).map((_, i) => (
+              {Array.from({ length: PAGE_SIZE - 1 }).map((_, i) => (
                 <CardSkeleton key={`skeleton-${i}`} />
               ))}
             </>
@@ -86,7 +87,7 @@ export default function CollectionPage() {
                 <RecipeCard key={recipe.id} recipe={recipe} />
               ))}
               {loadingMore &&
-                Array.from({ length: remaining }).map((_, i) => (
+                Array.from({ length: nextBatch }).map((_, i) => (
                   <CardSkeleton key={`skeleton-more-${i}`} />
                 ))}
             </>

@@ -17,7 +17,7 @@ export default function CollectionPage() {
 
   // Simulate an initial load so the skeleton state is shown on first paint.
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 800)
+    const timer = setTimeout(() => setLoading(false), 900)
     return () => clearTimeout(timer)
   }, [])
 

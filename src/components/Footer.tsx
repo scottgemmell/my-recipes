@@ -7,7 +7,7 @@ export default function Footer() {
           <span className="font-display">Recipes</span>
         </div>
         <p className="font-body text-body-sm text-on-surface-variant">
-          &copy; 2026 MY Recipes. Crafted for mindful cooking.
+          &copy; 2026 MY Recipes. Crafted for very mindful cooking.
         </p>
       </div>
     </footer>

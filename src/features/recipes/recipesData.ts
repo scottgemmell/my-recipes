@@ -3,37 +3,46 @@ import risottoImg from '../../assets/recipes/wild-mushroom-risotto.svg'
 import tomatoSoupImg from '../../assets/recipes/roasted-tomato-basil-soup.svg'
 import turmericLatteImg from '../../assets/recipes/golden-turmeric-latte.svg'
 import capreseImage from '../../assets/images/recipes/classic-caprese-salad.png'
+import chickenImage from '../../assets/images/recipes/lemon-herb-roasted-chicken.png'
+import eggplantImage from '../../assets/images/recipes/miso-glazed-eggplant.png'
+import sourdoughImage from '../../assets/images/recipes/artisan-sourdough.png'
+import matchaImage from '../../assets/images/recipes/matcha-panna-cotta.png'
+import tomatoImg from '../../assets/images/ingredients/heirloom-tomatoes.png'
+import mozzarellaImg from '../../assets/images/ingredients/buffalo-mozzarella.png'
+import basilImg from '../../assets/images/ingredients/fresh-basil.png'
+import oliveOilImg from '../../assets/images/ingredients/extra-virgin-olive-oil.png'
+import rosemaryImg from '../../assets/images/ingredients/rosemary.png'
+import lemonImg from '../../assets/images/ingredients/lemon.png'
+import aubergineImg from '../../assets/images/ingredients/aubergine.png'
+import sesameImg from '../../assets/images/ingredients/sesame-seeds.png'
+import breadFlourImg from '../../assets/images/ingredients/bread-flour.png'
+import creamImg from '../../assets/images/ingredients/cream.png'
 
 /**
  * Seed recipes for the Stitch "Culinary Zen" design.
  *
- * Copy is from the original Stitch design files. The placeholder images those
- * files used were temporary (expiring) Google-hosted URLs, so the image URLs
- * here point at TheMealDB (https://www.themealdb.com) — a free, key-less food
- * database whose media URLs are stable: meal thumbnails for the dish photos and
- * dedicated ingredient images for the galleries.
+ * All imagery is bundled locally: dish hero photos under assets/images/recipes/
+ * and ingredient gallery photos under assets/images/ingredients/ (the original
+ * Stitch design images where available).
  */
-const meals = 'https://www.themealdb.com/images/media/meals'
-const ingredients = 'https://www.themealdb.com/images/ingredients'
-
 const img = {
-  // Dish photos (stable TheMealDB meal thumbnails).
-  chicken: `${meals}/cj56fs1762340001.jpg`,
-  eggplant: `${meals}/1oz4nb1765687990.jpg`,
+  // Dish hero photos (bundled locally).
+  chicken: chickenImage,
+  eggplant: eggplantImage,
   caprese: capreseImage,
-  sourdough: `${meals}/lmc6r51764365554.jpg`,
-  matcha: `${meals}/1549542877.jpg`,
-  // Ingredient photos (stable TheMealDB ingredient images).
-  rosemary: `${ingredients}/Rosemary.png`,
-  lemon: `${ingredients}/Lemon.png`,
-  aubergine: `${ingredients}/Aubergine.png`,
-  sesame: `${ingredients}/Sesame%20Seed.png`,
-  tomato: `${ingredients}/Tomatoes.png`,
-  mozzarella: `${ingredients}/Mozzarella.png`,
-  basil: `${ingredients}/Basil.png`,
-  oliveOil: `${ingredients}/Olive%20Oil.png`,
-  breadFlour: `${ingredients}/Bread%20Flour.png`,
-  cream: `${ingredients}/Cream.png`,
+  sourdough: sourdoughImage,
+  matcha: matchaImage,
+  // Ingredient photos (bundled locally).
+  rosemary: rosemaryImg,
+  lemon: lemonImg,
+  aubergine: aubergineImg,
+  sesame: sesameImg,
+  tomato: tomatoImg,
+  mozzarella: mozzarellaImg,
+  basil: basilImg,
+  oliveOil: oliveOilImg,
+  breadFlour: breadFlourImg,
+  cream: creamImg,
 }
 
 export const recipes: Recipe[] = [

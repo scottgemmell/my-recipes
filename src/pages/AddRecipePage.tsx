@@ -38,23 +38,51 @@ const slugify = (value: string) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
 
+// Each ingredient line is "name | amount" (amount optional). Splitting on the
+// first "|" keeps the name and amount as separate fields so they round-trip
+// through editing and still render name-left / amount-right.
 function parseIngredients(text: string): Recipe['ingredients'] {
   return text
     .split('\n')
     .map((line) => line.trim())
     .filter(Boolean)
-    .map((line, i) => ({ id: `i${i + 1}`, name: line, amount: '' }))
+    .map((line, i) => {
+      const sep = line.indexOf('|')
+      const name = (sep === -1 ? line : line.slice(0, sep)).trim()
+      const amount = sep === -1 ? '' : line.slice(sep + 1).trim()
+      return { id: `i${i + 1}`, name, amount }
+    })
 }
 
+/** Serialise stored ingredients back into the "name | amount" textarea format. */
+function ingredientsToText(ingredients: Recipe['ingredients']): string {
+  return ingredients
+    .map((i) => (i.amount ? `${i.name} | ${i.amount}` : i.name))
+    .join('\n')
+}
+
+// Each step line is "title | description" (title optional). With no "|" the
+// line is the description and gets an auto "Step N" title. This mirrors the
+// ingredient format so step titles round-trip through editing.
 function parseSteps(text: string): Recipe['steps'] {
   return text
     .split('\n')
     .map((line) => line.trim())
     .filter(Boolean)
-    .map((line, i) => ({
-      title: `Step ${i + 1}`,
-      description: line.replace(/^\s*\d+[.)]\s*/, ''),
-    }))
+    .map((line, i) => {
+      const sep = line.indexOf('|')
+      if (sep === -1) {
+        return { title: `Step ${i + 1}`, description: line.replace(/^\s*\d+[.)]\s*/, '') }
+      }
+      return { title: line.slice(0, sep).trim(), description: line.slice(sep + 1).trim() }
+    })
+}
+
+/** Serialise stored steps back into the "title | description" textarea format. */
+function stepsToText(steps: Recipe['steps']): string {
+  return steps
+    .map((s) => (/^Step \d+$/.test(s.title) ? s.description : `${s.title} | ${s.description}`))
+    .join('\n')
 }
 
 /** Label + input + inline error, wired to a React Final Form field. */
@@ -254,10 +282,8 @@ export default function AddRecipePage() {
         description: editingRecipe.description,
         time: editingRecipe.time === '—' ? '' : editingRecipe.time,
         yield: editingRecipe.servings === '—' ? '' : editingRecipe.servings,
-        ingredients: editingRecipe.ingredients
-          .map((i) => [i.amount, i.name].filter(Boolean).join(' '))
-          .join('\n'),
-        instructions: editingRecipe.steps.map((s) => s.description).join('\n'),
+        ingredients: ingredientsToText(editingRecipe.ingredients),
+        instructions: stepsToText(editingRecipe.steps),
       }
     : undefined
 
@@ -355,19 +381,21 @@ export default function AddRecipePage() {
                 <TextAreaField
                   name="ingredients"
                   label="Ingredients"
-                  hint="One per line"
+                  hint="One per line · name | amount"
                   rows={12}
                   validate={required}
-                  placeholder={'1 cup all-purpose flour\n2 tsp sea salt\n1 tbsp olive oil...'}
+                  placeholder={
+                    'All-purpose flour | 1 cup\nSea salt | 2 tsp\nOlive oil | 1 tbsp'
+                  }
                 />
                 <TextAreaField
                   name="instructions"
                   label="Instructions"
-                  hint="Step-by-step"
+                  hint="One per line · title | step"
                   rows={12}
                   validate={required}
                   placeholder={
-                    '1. Preheat the oven to 400°F (200°C).\n2. In a large mixing bowl...\n3. Bake for 35 minutes until golden brown.'
+                    'Prep | Heat the oven to 400°F (200°C).\nMix | Combine the dry ingredients in a bowl.\nBake | Bake for 35 minutes until golden brown.'
                   }
                 />
               </div>

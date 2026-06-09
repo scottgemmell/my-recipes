@@ -14,10 +14,11 @@ export default function CollectionPage() {
     if (idx <= 0) return recipes
     return [recipes[idx], ...recipes.slice(0, idx), ...recipes.slice(idx + 1)]
   }, [recipes])
-  const PAGE_SIZE = 8
+  const INITIAL_COUNT = 8
+  const BATCH_SIZE = 6
 
   const [loading, setLoading] = useState(true)
-  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
+  const [visibleCount, setVisibleCount] = useState(INITIAL_COUNT)
   const [loadingMore, setLoadingMore] = useState(false)
 
   // Simulate an initial load so the skeleton state is shown on first paint.
@@ -29,14 +30,14 @@ export default function CollectionPage() {
   const handleLoadMore = () => {
     setLoadingMore(true)
     setTimeout(() => {
-      setVisibleCount((count) => count + PAGE_SIZE)
+      setVisibleCount((count) => count + BATCH_SIZE)
       setLoadingMore(false)
     }, 900)
   }
 
   const visibleRecipes = orderedRecipes.slice(0, visibleCount)
   const remaining = Math.max(orderedRecipes.length - visibleCount, 0)
-  const nextBatch = Math.min(PAGE_SIZE, remaining)
+  const nextBatch = Math.min(BATCH_SIZE, remaining)
   const hasMore = remaining > 0
 
   return (
@@ -77,7 +78,7 @@ export default function CollectionPage() {
           {loading ? (
             <>
               <FeaturedCardSkeleton />
-              {Array.from({ length: PAGE_SIZE - 1 }).map((_, i) => (
+              {Array.from({ length: INITIAL_COUNT - 1 }).map((_, i) => (
                 <CardSkeleton key={`skeleton-${i}`} />
               ))}
             </>

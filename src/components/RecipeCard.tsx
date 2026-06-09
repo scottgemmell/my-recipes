@@ -19,8 +19,8 @@ function FavoriteButton({ recipe }: RecipeCardProps) {
       onClick={() => dispatch(toggleFavorite(recipe.id))}
       className={
         recipe.favorite
-          ? 'text-error transition-colors'
-          : 'hover:text-error transition-colors text-on-surface-variant'
+          ? 'shrink-0 text-error transition-colors'
+          : 'shrink-0 hover:text-error transition-colors text-on-surface-variant'
       }
     >
       <Icon name={recipe.favorite ? 'favorite' : 'favorite_border'} filled={recipe.favorite} />
@@ -33,6 +33,22 @@ function MetaStat({ icon, label }: { icon: string; label: string }) {
     <div className="flex items-center gap-xs text-primary">
       <Icon name={icon} className="text-[16px]" />
       <span className="font-bold">{label}</span>
+    </div>
+  )
+}
+
+/** Tag-cloud of small uppercase pills shown on each card. */
+function TagList({ tags }: { tags: string[] }) {
+  return (
+    <div className="flex flex-wrap gap-xs">
+      {tags.map((tag) => (
+        <span
+          key={tag}
+          className="bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider px-2 py-[2px] rounded"
+        >
+          {tag}
+        </span>
+      ))}
     </div>
   )
 }
@@ -53,10 +69,8 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
         </Link>
         <div className="p-md flex flex-col justify-between grow">
           <div>
-            <div className="flex items-center justify-between mb-xs">
-              <span className="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">
-                {recipe.category}
-              </span>
+            <div className="flex items-start justify-between gap-sm mb-sm">
+              <TagList tags={recipe.tags} />
               <FavoriteButton recipe={recipe} />
             </div>
             <Link to={to}>
@@ -71,7 +85,7 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
           <div className="mt-lg pt-sm border-t flex items-center justify-between border-outline-variant/30">
             <Link
               to={to}
-              className="font-label-md text-label-md text-primary flex items-center gap-xs hover:underline decoration-primary underline-offset-4"
+              className="font-body-md text-body-md text-primary flex items-center gap-xs hover:underline decoration-primary underline-offset-4"
             >
               View Recipe <Icon name="arrow_forward" className="text-[16px]" />
             </Link>
@@ -93,10 +107,8 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
       </Link>
       <div className="p-md flex flex-col justify-between grow">
         <div>
-          <div className="flex items-center justify-between mb-xs">
-            <span className="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">
-              {recipe.category}
-            </span>
+          <div className="flex items-start justify-between gap-sm mb-sm">
+            <TagList tags={recipe.tags} />
             <FavoriteButton recipe={recipe} />
           </div>
           <Link to={to}>
@@ -108,7 +120,7 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
             {recipe.excerpt}
           </p>
         </div>
-        <div className="mt-md pt-sm border-t flex items-center justify-between text-label-sm font-label-sm border-outline-variant/30">
+        <div className="mt-md pt-sm border-t flex items-center justify-between text-body-sm font-body-sm border-outline-variant/30">
           <MetaStat icon="schedule" label={recipe.time} />
           <MetaStat icon={recipe.servingsIcon} label={recipe.servings} />
           <MetaStat icon={recipe.difficultyIcon} label={recipe.difficulty} />

@@ -57,4 +57,25 @@
       0 10px 25px -5px rgba(35, 105, 57, 0.1),
       0 8px 10px -6px rgba(35, 105, 57, 0.1);
   }
+
+  /* Shimmer loading skeleton */
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      theme('colors.surface-container') 25%,
+      theme('colors.surface-container-low') 50%,
+      theme('colors.surface-container') 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }

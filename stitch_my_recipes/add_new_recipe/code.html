@@ -1,0 +1,144 @@
+<!DOCTYPE html><html class="light" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Culinary Zen - Add Recipe</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Playfair+Display:wght@600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"primary-fixed-dim": "#90d69d", "surface-container-lowest": "#ffffff", "inverse-surface": "#2d312d", "surface-dim": "#d8dbd4", "on-secondary-fixed": "#07200f", error: "#ba1a1a", "on-secondary-container": "#4f6952", "primary-container": "#86cc93", "secondary-fixed": "#cdeacd", "surface-container-highest": "#e0e3dd", "on-error": "#ffffff", "on-tertiary-fixed": "#3d0416", tertiary: "#914758", "tertiary-container": "#ffa2b4", primary: "#276b3c", "secondary-container": "#cae7cb", "surface-variant": "#e0e3dd", "tertiary-fixed": "#ffd9de", "on-surface": "#191d19", "surface-container-high": "#e6e9e2", "surface-tint": "#276b3c", "on-secondary": "#ffffff", "on-surface-variant": "#404940", surface: "#f7faf3", "on-tertiary": "#ffffff", "surface-container": "#ecefe8", "on-primary-container": "#0d572a", "surface-container-low": "#f2f5ee", "tertiary-fixed-dim": "#ffb1bf", "outline-variant": "#c0c9bd", "surface-bright": "#f7faf3", "on-secondary-fixed-variant": "#334d37", secondary: "#4b654e", "inverse-on-surface": "#eff2eb", "primary-fixed": "#abf3b7", outline: "#707a6f", "on-background": "#191d19", background: "#f7faf3", "on-tertiary-fixed-variant": "#743041", "on-primary": "#ffffff", "secondary-fixed-dim": "#b1ceb2", "on-primary-fixed-variant": "#045226", "error-container": "#ffdad6", "inverse-primary": "#90d69d", "on-tertiary-container": "#7a3545", "on-primary-fixed": "#00210b", "on-error-container": "#93000a"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}, spacing: {"margin-mobile": "16px", md: "24px", lg: "48px", "margin-desktop": "40px", xs: "4px", xl: "80px", gutter: "24px", "container-max": "1200px", sm: "12px", base: "8px"}, fontFamily: {"headline-md": ["Playfair Display", "serif"], "body-sm": ["Inter", "sans-serif"], "body-lg": ["Inter", "sans-serif"], display: ["Playfair Display"], "label-sm": ["Inter", "sans-serif"], "headline-lg-mobile": ["Playfair Display", "serif"], "label-lg": ["Inter", "sans-serif"], "label-md": ["Inter", "sans-serif"], "body-md": ["Inter", "sans-serif"], "headline-sm": ["Playfair Display", "serif"], "headline-lg": ["Playfair Display", "serif"], headline: ["Playfair Display"], body: ["Inter"], label: ["Inter"]}, fontSize: {"headline-md": ["24px", {lineHeight: "32px", fontWeight: "600"}], "body-sm": ["14px", {lineHeight: "20px", fontWeight: "400"}], "body-lg": ["18px", {lineHeight: "28px", fontWeight: "400"}], display: ["48px", {lineHeight: "56px", letterSpacing: "-0.02em", fontWeight: "700"}], "label-sm": ["11px", {lineHeight: "16px", fontWeight: "500"}], "headline-lg-mobile": ["28px", {lineHeight: "36px", fontWeight: "700"}], "label-lg": ["14px", {lineHeight: "20px", letterSpacing: "0.05em", fontWeight: "600"}], "label-md": ["12px", {lineHeight: "16px", fontWeight: "500"}], "body-md": ["16px", {lineHeight: "24px", fontWeight: "400"}], "headline-sm": ["20px", {lineHeight: "28px", fontWeight: "600"}], "headline-lg": ["32px", {lineHeight: "40px", fontWeight: "700"}]}}}};</script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col selection:bg-primary-container selection:text-on-primary-container bg-surface-container-lowest">
+<!-- Transactional Header (Suppressed Main Nav) -->
+<nav class="w-full top-0 sticky border-b border-tertiary/10 z-50 bg-surface-container-lowest">
+<div class="flex justify-between items-center h-20 px-margin-desktop max-w-container-max mx-auto">
+<!-- Brand & Search -->
+<div class="flex items-center gap-lg">
+<div class="font-display text-headline-md text-primary cursor-pointer active:opacity-70"><span class="font-body-md font-bold">[ MY ]</span> <span class="font-display">Recipes</span></div>
+<div class="hidden lg:flex items-center bg-surface-container-low rounded-full px-4 py-2 gap-2 border border-tertiary/10">
+<span class="material-symbols-outlined text-secondary text-[20px]">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-sm placeholder:text-outline w-48" placeholder="Search recipes..." type="text">
+</div>
+</div>
+<!-- Navigation Links (Desktop) -->
+<div class="hidden md:flex gap-md h-full items-center">
+<a class="text-secondary hover:text-primary font-body-md text-body-md cursor-pointer active:opacity-70 hover:bg-surface-container-low transition-colors duration-200 px-sm py-xs rounded" href="#">Browse</a>
+<a class="text-secondary hover:text-primary font-body-md text-body-md cursor-pointer active:opacity-70 hover:bg-surface-container-low transition-colors duration-200 px-sm py-xs rounded" href="#">Collections</a>
+<a class="text-secondary hover:text-primary font-body-md text-body-md cursor-pointer active:opacity-70 hover:bg-surface-container-low transition-colors duration-200 px-sm py-xs rounded" href="#">Ingredients</a>
+<a class="text-secondary hover:text-primary font-body-md text-body-md cursor-pointer active:opacity-70 hover:bg-surface-container-low transition-colors duration-200 px-sm py-xs rounded" href="#">About</a>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-md">
+<button class="hidden md:block bg-primary text-on-primary px-md py-[12px] rounded font-label-md text-label-md cursor-pointer active:opacity-70 hover:bg-surface-tint transition-colors duration-200">
+                    Add Recipe
+                </button>
+<button class="text-secondary hover:text-primary cursor-pointer active:opacity-70 hover:bg-surface-container-low transition-colors duration-200 p-xs rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+<!-- Mobile Menu Toggle -->
+<button class="md:hidden text-secondary p-xs">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 w-full max-w-4xl mx-auto px-margin-mobile md:px-margin-desktop py-lg flex flex-col gap-lg">
+<div class="text-center max-w-2xl mx-auto mb-md">
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-xs">Craft a New Recipe</h1>
+<p class="font-body-lg text-body-lg text-secondary">Share your culinary creations with clarity and elegance.</p>
+</div>
+<form class="flex flex-col gap-lg bg-surface-container-lowest rounded-xl p-md md:p-lg border border-tertiary/10 shadow-[0_4px_24px_rgba(141,170,145,0.04)]">
+<!-- Image Upload Area -->
+<section class="flex flex-col gap-base group cursor-pointer">
+<label class="font-label-lg text-label-lg text-on-surface">Hero Image</label>
+<div class="w-full h-48 md:h-72 border-2 border-dashed rounded-lg flex flex-col items-center justify-center transition-all duration-300 group-hover:bg-surface-container-low group-hover:border-primary/50 group-hover:shadow-[0_8px_32px_rgba(141,170,145,0.08)] relative overflow-hidden bg-surface-container-lowest outline-variant">
+<span class="material-symbols-outlined text-4xl mb-xs transition-transform duration-300 group-hover:scale-110 group-hover:text-primary text-secondary">add_photo_alternate</span>
+<p class="font-body-md text-body-md text-secondary">Drag and drop, or click to browse</p>
+<p class="font-label-sm text-label-sm mt-2 text-secondary">High-resolution JPEG or PNG</p>
+</div>
+</section>
+<!-- Basic Info -->
+<div class="flex flex-col gap-md">
+<div class="flex flex-col gap-base">
+<label class="font-label-lg text-label-lg text-on-surface" for="recipe-title">Recipe Title</label>
+<input class="w-full border rounded-md px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors placeholder:text-outline bg-surface-container-lowest outline-variant" id="recipe-title" placeholder="e.g., Rustic Sourdough Boule" type="text">
+</div>
+<div class="flex flex-col gap-base">
+<label class="font-label-lg text-label-lg text-on-surface" for="recipe-desc">Description</label>
+<textarea class="w-full border rounded-md px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors placeholder:text-outline resize-y bg-surface-container-lowest outline-variant" id="recipe-desc" placeholder="Briefly describe the flavor profile, origin, or why you love this dish..." rows="3"></textarea>
+</div>
+</div>
+<!-- Details Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md pt-md border-t border-tertiary/10">
+<div class="flex flex-col gap-base">
+<label class="font-label-lg text-label-lg text-on-surface" for="recipe-time">Total Time</label>
+<input class="w-full border rounded-md px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors placeholder:text-outline bg-surface-container-lowest outline-variant" id="recipe-time" placeholder="e.g., 45 mins" type="text">
+</div>
+<div class="flex flex-col gap-base">
+<label class="font-label-lg text-label-lg text-on-surface" for="recipe-yield">Yield</label>
+<input class="w-full border rounded-md px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors placeholder:text-outline bg-surface-container-lowest outline-variant" id="recipe-yield" placeholder="e.g., 4 servings" type="text">
+</div>
+</div><div class="grid grid-cols-1 md:grid-cols-2 gap-md md:gap-lg pt-md border-t border-tertiary/10">
+<div class="flex flex-col gap-base">
+<div class="flex items-center justify-between">
+<label class="font-label-lg text-label-lg text-on-surface" for="recipe-ingredients">Ingredients</label>
+<span class="font-label-sm text-label-sm text-tertiary">One per line</span>
+</div>
+<textarea class="w-full border rounded-md px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors placeholder:text-outline resize-y whitespace-pre bg-surface-container-lowest outline-variant" id="recipe-ingredients" placeholder="1 cup all-purpose flour
+2 tsp sea salt
+1 tbsp olive oil..." rows="12"></textarea>
+</div>
+<div class="flex flex-col gap-base">
+<div class="flex items-center justify-between">
+<label class="font-label-lg text-label-lg text-on-surface" for="recipe-instructions">Instructions</label>
+<span class="font-label-sm text-label-sm text-tertiary">Step-by-step</span>
+</div>
+<textarea class="w-full border rounded-md px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors placeholder:text-outline resize-y whitespace-pre bg-surface-container-lowest outline-variant" id="recipe-instructions" placeholder="1. Preheat the oven to 400°F (200°C).
+2. In a large mixing bowl...
+3. Bake for 35 minutes until golden brown." rows="12"></textarea>
+</div>
+</div>
+<!-- Action Area -->
+<div class="pt-lg flex flex-col md:flex-row items-center justify-end gap-md border-t border-tertiary/10 mt-md">
+<button class="w-full md:w-auto px-6 py-3 rounded-full border border-tertiary font-label-lg text-label-lg text-on-surface hover:bg-surface-container-low transition-colors duration-200" type="button">
+                    Save as Draft
+                </button>
+<button class="w-full md:w-auto px-6 py-3 rounded-full bg-primary font-label-lg text-label-lg text-on-primary hover:bg-surface-tint transition-colors duration-200 flex items-center justify-center gap-2 shadow-[0_2px_8px_rgba(74,101,79,0.2)] hover:shadow-[0_4px_12px_rgba(74,101,79,0.3)]" type="submit">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">done</span>
+                    Publish Recipe
+                </button>
+</div>
+</form>
+</main>
+<!-- Footer intentionally suppressed for transactional view -->
+
+
+
+
+
+
+<footer class="dark:bg-surface-container-lowest w-full py-xl border-t mt-auto bg-surface-container-lowest border-outline-variant/30">
+<div class="flex flex-col items-center gap-base max-w-container-max mx-auto px-margin-desktop">
+<h2 class="font-display text-headline-sm text-primary dark:text-primary-fixed-dim mb-sm"><span class="font-body-md uppercase font-bold">[ MY ]</span> <span class="font-display">Recipes</span></h2>
+<div class="flex flex-wrap justify-center gap-md mb-sm">
+<a class="text-secondary hover:text-primary font-body-md text-body-sm transition-colors" href="#">Privacy Policy</a>
+<a class="text-secondary hover:text-primary font-body-md text-body-sm transition-colors" href="#">Terms of Service</a>
+<a class="text-secondary hover:text-primary font-body-md text-body-sm transition-colors" href="#">Support</a>
+<a class="text-secondary hover:text-primary font-body-md text-body-sm transition-colors" href="#">Contact</a>
+</div>
+<p class="font-body-sm text-body-sm dark:text-secondary-fixed-dim text-on-surface-variant">© 2026 [ MY ] Recipes. Crafted for mindful cooking.</p>
+</div>
+</footer>
+
+
+
+</body></html>

@@ -45,9 +45,12 @@ export default function Navbar({ active = 'Collections' }: NavbarProps) {
 
         {/* Actions */}
         <div className="flex items-center gap-md">
-          <button className="hidden md:block bg-primary text-on-primary px-md py-[12px] rounded font-label-lg text-label-lg cursor-pointer active:opacity-70 hover:brightness-110 transition-all duration-200">
+          <Link
+            to="/add"
+            className="hidden md:block bg-primary text-on-primary px-md py-[12px] rounded font-label-lg text-label-lg cursor-pointer active:opacity-70 hover:brightness-110 transition-all duration-200"
+          >
             Add Recipe
-          </button>
+          </Link>
           <button className="md:hidden text-secondary p-xs">
             <Icon name="menu" />
           </button>

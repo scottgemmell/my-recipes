@@ -35,10 +35,15 @@ const recipesSlice = createSlice({
     clearChecklist(state, action: PayloadAction<string>) {
       delete state.checkedIngredients[action.payload]
     },
+    addRecipe(state, action: PayloadAction<Recipe>) {
+      // Insert just after the featured card so it's visible without "Load More".
+      state.items.splice(1, 0, action.payload)
+    },
   },
 })
 
-export const { toggleFavorite, toggleIngredient, clearChecklist } = recipesSlice.actions
+export const { toggleFavorite, toggleIngredient, clearChecklist, addRecipe } =
+  recipesSlice.actions
 
 export default recipesSlice.reducer
 

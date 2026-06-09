@@ -1,8 +1,10 @@
+import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import Icon from '../components/Icon'
 import RecipeImage from '../components/RecipeImage'
+import RecipeDetailSkeleton from '../components/RecipeDetailSkeleton'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import {
   selectCheckedIngredients,
@@ -29,6 +31,25 @@ export default function RecipeDetailPage() {
   const dispatch = useAppDispatch()
   const recipe = useAppSelector(selectRecipeBySlug(slug))
   const checked = useAppSelector(selectCheckedIngredients(recipe?.id ?? ''))
+
+  // Simulate a load each time a recipe is opened (including when navigating
+  // between recipes), showing the skeleton state first.
+  const [loading, setLoading] = useState(true)
+  useEffect(() => {
+    setLoading(true)
+    const timer = setTimeout(() => setLoading(false), 800)
+    return () => clearTimeout(timer)
+  }, [slug])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col bg-surface">
+        <Navbar active="Browse" />
+        <RecipeDetailSkeleton />
+        <Footer />
+      </div>
+    )
+  }
 
   if (!recipe) {
     return (

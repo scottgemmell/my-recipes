@@ -4,6 +4,7 @@ import RecipeDetailPage from './pages/RecipeDetailPage'
 import AddRecipePage from './pages/AddRecipePage'
 import AboutPage from './pages/AboutPage'
 import FavouritesPage from './pages/FavouritesPage'
+import TagPage from './pages/TagPage'
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
       <Route path="/add" element={<AddRecipePage />} />
       <Route path="/about" element={<AboutPage />} />
       <Route path="/favourites" element={<FavouritesPage />} />
+      <Route path="/tag/:tag" element={<TagPage />} />
     </Routes>
   )
 }

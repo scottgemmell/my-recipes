@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import RecipeImage from './RecipeImage'
 import Icon from './Icon'
+import TagList from './TagList'
 import { useAppDispatch } from '../app/hooks'
 import { toggleFavorite } from '../features/recipes/recipesSlice'
 import { isNewRecipe } from '../features/recipes/recent'
@@ -29,28 +30,24 @@ export default function FavoriteRow({ recipe }: { recipe: Recipe }) {
 
       <div className="flex flex-col justify-center grow gap-sm p-md md:px-lg min-w-0">
         <div className="flex items-start justify-between gap-sm">
-          <div className="flex flex-wrap gap-xs">
-            {isNewRecipe(recipe.createdAt) && (
-              <span className="bg-primary text-on-primary font-label-sm text-label-sm uppercase tracking-wider px-2 py-[2px] rounded">
-                New
-              </span>
-            )}
-            {recipe.tags.map((tag) => (
-              <span
-                key={tag}
-                className="bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider px-2 py-[2px] rounded"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
+          <TagList tags={recipe.tags} isNew={isNewRecipe(recipe.createdAt)} />
           <button
             type="button"
-            aria-label="Remove from favorites"
+            aria-pressed={recipe.favorite}
+            aria-label={recipe.favorite ? 'Remove from favorites' : 'Add to favorites'}
             onClick={() => dispatch(toggleFavorite(recipe.id))}
-            className="shrink-0 text-error transition-transform duration-150 active:scale-90"
+            className={
+              recipe.favorite
+                ? 'shrink-0 text-error transition-transform duration-150 active:scale-90'
+                : 'shrink-0 text-on-surface-variant hover:text-error transition-[color,transform] duration-150 active:scale-90'
+            }
           >
-            <Icon name="favorite" filled />
+            <Icon
+              key={recipe.favorite ? 'favorite' : 'unfavorite'}
+              name={recipe.favorite ? 'favorite' : 'favorite_border'}
+              filled={recipe.favorite}
+              className={recipe.favorite ? 'animate-pop' : ''}
+            />
           </button>
         </div>
 

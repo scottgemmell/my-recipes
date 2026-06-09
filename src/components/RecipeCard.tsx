@@ -4,6 +4,7 @@ import { toggleFavorite } from '../features/recipes/recipesSlice'
 import type { Recipe } from '../features/recipes/types'
 import Icon from './Icon'
 import RecipeImage from './RecipeImage'
+import TagList from './TagList'
 import { isNewRecipe } from '../features/recipes/recent'
 import { iconForDifficulty, isHardDifficulty } from '../features/recipes/difficulty'
 
@@ -48,27 +49,6 @@ function MetaStat({
     <div className={`flex items-center gap-xs ${tone}`}>
       <Icon name={icon} className="text-[16px]" />
       <span className="font-bold">{label}</span>
-    </div>
-  )
-}
-
-/** Tag-cloud of small uppercase pills shown on each card. New comes first. */
-function TagList({ tags, isNew }: { tags: string[]; isNew: boolean }) {
-  return (
-    <div className="flex flex-wrap gap-xs">
-      {isNew && (
-        <span className="bg-primary text-on-primary font-label-sm text-label-sm uppercase tracking-wider px-2 py-[2px] rounded">
-          New
-        </span>
-      )}
-      {tags.map((tag) => (
-        <span
-          key={tag}
-          className="bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider px-2 py-[2px] rounded"
-        >
-          {tag}
-        </span>
-      ))}
     </div>
   )
 }

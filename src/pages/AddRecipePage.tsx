@@ -234,7 +234,7 @@ export default function AddRecipePage() {
 
   if (isEditing && !editingRecipe) {
     return (
-      <div className="min-h-screen flex flex-col bg-surface-container-lowest">
+      <div className="min-h-screen flex flex-col bg-surface">
         <Navbar active="" />
         <main className="flex-1 flex flex-col items-center justify-center gap-md text-center px-margin-mobile">
           <h1 className="font-display text-headline-lg text-on-surface">Recipe not found</h1>
@@ -307,7 +307,7 @@ export default function AddRecipePage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-surface-container-lowest">
+    <div className="min-h-screen flex flex-col bg-surface">
       <Navbar active="" />
 
       <main className="flex-1 w-full max-w-4xl mx-auto px-margin-mobile md:px-margin-desktop py-lg flex flex-col gap-lg">

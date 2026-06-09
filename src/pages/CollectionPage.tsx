@@ -1,6 +1,5 @@
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
-import Icon from '../components/Icon'
 import RecipeCard from '../components/RecipeCard'
 import { useAppSelector } from '../app/hooks'
 import { selectRecipes } from '../features/recipes/recipesSlice'
@@ -21,14 +20,6 @@ export default function CollectionPage() {
               Discover seasonal favorites and timeless classics, thoughtfully organized to inspire
               your next culinary meditation.
             </p>
-            <div className="flex items-center justify-center md:justify-start gap-sm mt-md">
-              <button className="px-sm py-[6px] border rounded-full text-label-md font-label-md text-on-surface-variant hover:border-primary hover:text-primary transition-colors flex items-center gap-xs border-outline">
-                <Icon name="filter_list" className="text-[16px]" /> Filters
-              </button>
-              <button className="px-sm py-[6px] border rounded-full text-label-md font-label-md text-on-surface-variant hover:border-primary hover:text-primary transition-colors flex items-center gap-xs border-outline">
-                Sort by <Icon name="expand_more" className="text-[16px]" />
-              </button>
-            </div>
           </div>
 
           {/* Recipe count */}

@@ -58,14 +58,6 @@ export default function RecipeDetailPage() {
             className="w-full h-full object-cover"
             src={recipe.image}
           />
-          <div className="absolute bottom-8 right-8 bg-surface-container-lowest/80 backdrop-blur-md px-6 py-4 rounded-xl border border-outline-variant flex flex-col items-center">
-            <span className="font-display text-headline-lg text-primary leading-none">
-              {recipe.ingredients.length}
-            </span>
-            <span className="font-label-lg text-[11px] text-on-surface-variant uppercase tracking-widest mt-1">
-              Unique Ingredients
-            </span>
-          </div>
         </section>
 
         {/* Content Container (overlaps hero) */}

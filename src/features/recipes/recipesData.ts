@@ -56,7 +56,6 @@ export const recipes: Recipe[] = [
     servingsIcon: 'restaurant',
     difficultyIcon: 'signal_cellular_alt_2_bar',
     calories: '520 kcal',
-    featured: true,
     favorite: false,
     ingredients: [
       { id: 'i1', name: 'Whole chicken', amount: '1 (1.5kg)' },
@@ -167,6 +166,7 @@ export const recipes: Recipe[] = [
     servingsIcon: 'restaurant',
     difficultyIcon: 'signal_cellular_alt',
     calories: '190 kcal',
+    featured: true,
     favorite: true,
     ingredients: [
       { id: 'i1', name: 'Heirloom Tomatoes, sliced', amount: '2 large' },

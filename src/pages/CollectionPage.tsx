@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import RecipeCard from '../components/RecipeCard'
@@ -8,8 +8,14 @@ import { selectRecipes } from '../features/recipes/recipesSlice'
 
 export default function CollectionPage() {
   const recipes = useAppSelector(selectRecipes)
+  // Render the featured recipe first — its card spans two columns at the top.
+  const orderedRecipes = useMemo(() => {
+    const idx = recipes.findIndex((r) => r.featured)
+    if (idx <= 0) return recipes
+    return [recipes[idx], ...recipes.slice(0, idx), ...recipes.slice(idx + 1)]
+  }, [recipes])
   const initialVisible = 5
-  const remaining = Math.max(recipes.length - initialVisible, 0)
+  const remaining = Math.max(orderedRecipes.length - initialVisible, 0)
 
   const [loading, setLoading] = useState(true)
   const [showAll, setShowAll] = useState(false)
@@ -29,7 +35,7 @@ export default function CollectionPage() {
     }, 900)
   }
 
-  const visibleRecipes = showAll ? recipes : recipes.slice(0, initialVisible)
+  const visibleRecipes = showAll ? orderedRecipes : orderedRecipes.slice(0, initialVisible)
   const hasMore = !showAll && remaining > 0
 
   return (

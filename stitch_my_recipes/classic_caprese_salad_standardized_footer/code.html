@@ -1,0 +1,353 @@
+<!DOCTYPE html><html lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Recipe Detail - Culinary Zen</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Playfair+Display:wght@600;700&amp;display=swap" rel="stylesheet">
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-lowest": "#ffffff",
+                        "outline-variant": "#c0c9bd",
+                        "on-secondary-fixed": "#07200f",
+                        "surface-tint": "#266b3b",
+                        "inverse-primary": "#90d79c",
+                        "secondary-fixed-dim": "#b1ceb2",
+                        "on-tertiary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed": "#ffd9de",
+                        "error": "#ba1a1a",
+                        "on-secondary-fixed-variant": "#334d37",
+                        "primary-fixed": "#abf3b6",
+                        "on-primary": "#ffffff",
+                        "primary-fixed-dim": "#90d79c",
+                        "on-primary-fixed-variant": "#035225",
+                        "tertiary-fixed-dim": "#ffb1bf",
+                        "on-tertiary-container": "#fffbff",
+                        "on-surface-variant": "#404940",
+                        "surface-container-highest": "#e0e3dd",
+                        "primary-container": "#3e824f",
+                        "on-surface": "#181d19",
+                        "tertiary-container": "#ac5c6d",
+                        "on-secondary-container": "#506b54",
+                        "surface": "#f7faf4",
+                        "secondary": "#4a654e",
+                        "on-tertiary-fixed": "#3d0416",
+                        "on-error-container": "#93000a",
+                        "surface-variant": "#e0e3dd",
+                        "on-secondary": "#ffffff",
+                        "inverse-on-surface": "#eff2eb",
+                        "on-primary-fixed": "#00210b",
+                        "surface-container-high": "#e6e9e3",
+                        "surface-container": "#ecefe9",
+                        "background": "#f7faf4",
+                        "secondary-fixed": "#cceacd",
+                        "surface-bright": "#f7faf4",
+                        "inverse-surface": "#2d312d",
+                        "on-tertiary-fixed-variant": "#743041",
+                        "tertiary": "#8e4555",
+                        "on-error": "#ffffff",
+                        "on-background": "#181d19",
+                        "primary": "#236939",
+                        "on-primary-container": "#f7fff3",
+                        "surface-container-low": "#f1f5ee",
+                        "secondary-container": "#cceacd",
+                        "surface-dim": "#d8dbd5",
+                        "outline": "#707a6f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "xs": "4px",
+                        "md": "24px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "40px",
+                        "container-max": "1200px",
+                        "sm": "12px",
+                        "lg": "48px",
+                        "xl": "80px",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "headline-sm": ["Playfair Display"],
+                        "body-lg": ["Inter"],
+                        "label-lg": ["Inter"],
+                        "headline-lg": ["Playfair Display"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Playfair Display"],
+                        "headline-lg-mobile": ["Playfair Display"],
+                        "display": ["Playfair Display"]
+                    },
+                    "fontSize": {
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+                        "display": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill-icon {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        .ingredient-checkbox {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 1px solid #c0c9bd; /* outline-variant */
+            border-radius: 4px;
+            background-color: #ffffff;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .ingredient-checkbox:checked {
+            background-color: #236939; /* primary */
+            border-color: #236939;
+        }
+        
+        .ingredient-checkbox:checked::after {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 2px;
+            width: 6px;
+            height: 12px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .hover-lift {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(35, 105, 57, 0.1), 0 8px 10px -6px rgba(35, 105, 57, 0.1);
+        }
+    </style>
+</head>
+<body class="text-on-surface antialiased bg-surface">
+<!-- TopNavBar -->
+<nav class="w-full top-0 sticky border-b border-outline-variant/30 z-50 bg-surface-container-lowest">
+<div class="flex justify-between items-center h-20 px-margin-desktop max-w-container-max mx-auto">
+<!-- Brand -->
+<div class="font-display text-headline-md text-primary cursor-pointer active:opacity-70">
+<span class="font-body-md uppercase">[ My ]</span> <span class="font-display">Recipes</span>
+</div>
+<!-- Navigation Links (Desktop) -->
+<div class="hidden md:flex gap-md h-full items-center">
+<a class="text-primary border-b-2 border-primary pb-1 font-body-md text-body-md cursor-pointer active:opacity-70" href="#">Browse</a>
+<a class="text-secondary hover:text-primary font-body-md text-body-md cursor-pointer active:opacity-70 hover:bg-surface-container-low transition-colors duration-200 px-sm py-xs rounded" href="#">Collections</a>
+<a class="text-secondary hover:text-primary font-body-md text-body-md cursor-pointer active:opacity-70 hover:bg-surface-container-low transition-colors duration-200 px-sm py-xs rounded" href="#">Ingredients</a>
+<a class="text-secondary hover:text-primary font-body-md text-body-md cursor-pointer active:opacity-70 hover:bg-surface-container-low transition-colors duration-200 px-sm py-xs rounded" href="#">About</a>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-md">
+<button class="hidden md:block bg-primary text-on-primary px-md py-[12px] rounded font-label-lg text-label-lg cursor-pointer active:opacity-70 hover:brightness-110 transition-all duration-200">
+                Add Recipe
+            </button>
+<button class="text-secondary hover:text-primary cursor-pointer active:opacity-70 hover:bg-surface-container-low transition-colors duration-200 p-xs rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+<button class="md:hidden text-secondary p-xs">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</div>
+</nav>
+<main class="pb-xl">
+<!-- Hero Section -->
+<section class="w-full relative h-[614px] min-h-[400px] bg-surface-container-high">
+<img alt="Hero Image" class="w-full h-full object-cover" data-alt="A professional, clean, top-down culinary photography shot of a vibrant tricolor salad with arugula, radicchio, and endive, lightly dressed. Soft natural lighting, minimal and elegant style. Consistent with Culinary Zen brand." src="https://lh3.googleusercontent.com/aida/AP1WRLscsFHkEuvrl2BsPAsknfu4SOfUN-4JT4JPg4Ds2B5du8iv7PVwQSWSYcOXf8-cMrFziWOsggo6OK6MlztN28v5FxczbssGPi0nssflqwGjWbezfBYJcfwl92LySW6vBZneM9JrjtJbvX2YSw4aW_s-mcVlFmgyj2jqiask3wO6VC_DQZDhf5Q6D09SiYpiw_Ca9diupYE75kMtwkWytXLmFr7lknSyvX6k0XLdLQaxS4xMN05HQBFZ_0s">
+<div class="absolute bottom-8 right-8 bg-surface-container-lowest/80 backdrop-blur-md px-6 py-4 rounded-xl border border-outline-variant flex flex-col items-center">
+
+<span class="font-label-lg text-[11px] text-on-surface-variant uppercase tracking-widest mt-1">Unique Ingredients</span>
+</div>
+</section>
+<!-- Content Container -->
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop -mt-12 relative z-10">
+<!-- Recipe Header Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-md md:p-lg hover-lift mb-lg">
+<div class="flex flex-col gap-sm md:gap-md">
+<!-- Tags -->
+<div class="flex flex-wrap gap-sm">
+<span class="bg-surface-container-high text-on-surface-variant font-label-lg px-3 py-1 rounded-full tracking-wider">Vegetarian</span>
+<span class="bg-surface-container-high text-on-surface-variant font-label-lg px-3 py-1 rounded-full tracking-wider">Appetizer</span>
+<span class="bg-surface-container-high text-on-surface-variant font-label-lg px-3 py-1 rounded-full tracking-wider">Salad</span>
+</div>
+<!-- Title -->
+<h1 class="font-display text-headline-lg-mobile md:text-display text-on-surface">Classic Caprese Salad</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-3xl">A timeless Italian classic that celebrates the simplicity of fresh ingredients. Creamy buffalo mozzarella, sun-ripened tomatoes, and fragrant basil are brought together with a drizzle of premium extra virgin olive oil and a pinch of sea salt.</p>
+<!-- Meta Info -->
+<div class="flex flex-wrap items-center gap-y-md gap-x-lg pt-md mt-sm border-t border-outline-variant/30">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">schedule</span>
+<div class="flex flex-col">
+<span class="font-label-lg text-[12px] text-secondary uppercase tracking-wider">Total Time</span>
+<span class="font-body-md text-on-surface font-bold">10 mins</span>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">restaurant</span>
+<div class="flex flex-col">
+<span class="font-label-lg text-[12px] text-secondary uppercase tracking-wider">Yield</span>
+<span class="font-body-md text-on-surface font-bold">2 Servings</span>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">signal_cellular_alt</span>
+<div class="flex flex-col">
+<span class="font-label-lg text-[12px] text-secondary uppercase tracking-wider">Difficulty</span>
+<span class="font-body-md text-on-surface font-bold">Easy</span>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">local_fire_department</span>
+<div class="flex flex-col">
+<span class="font-label-lg text-[12px] text-secondary uppercase tracking-wider">Calories</span>
+<span class="font-body-md text-on-surface font-bold">190 kcal</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Recipe Split Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-lg md:gap-gutter items-start">
+<!-- Ingredients Column -->
+<div class="md:col-span-4 bg-surface-container-lowest rounded-xl border border-outline-variant p-md">
+<h2 class="font-headline-sm text-on-surface mb-md pb-xs border-b border-outline-variant/30">Ingredients</h2>
+<ul class="flex flex-col gap-sm"><li class="flex justify-between items-baseline py-xs border-b border-outline-variant/10 last:border-0 group">
+  <span class="font-body-md text-on-surface group-hover:text-primary transition-colors">Heirloom Tomatoes, sliced</span>
+  <span class="font-body-md text-secondary font-bold">2 large</span>
+</li>
+<li class="flex justify-between items-baseline py-xs border-b border-outline-variant/10 last:border-0 group">
+  <span class="font-body-md text-on-surface group-hover:text-primary transition-colors">Buffalo Mozzarella, sliced</span>
+  <span class="font-body-md text-secondary font-bold">8 oz</span>
+</li>
+<li class="flex justify-between items-baseline py-xs border-b border-outline-variant/10 last:border-0 group">
+  <span class="font-body-md text-on-surface group-hover:text-primary transition-colors">Fresh Basil leaves</span>
+  <span class="font-body-md text-secondary font-bold">1 bunch</span>
+</li>
+<li class="flex justify-between items-baseline py-xs border-b border-outline-variant/10 last:border-0 group">
+  <span class="font-body-md text-on-surface group-hover:text-primary transition-colors">Extra Virgin Olive Oil</span>
+  <span class="font-body-md text-secondary font-bold">2 tbsp</span>
+</li>
+<li class="flex justify-between items-baseline py-xs border-b border-outline-variant/10 last:border-0 group">
+  <span class="font-body-md text-on-surface group-hover:text-primary transition-colors">Sea salt and black pepper</span>
+  <span class="font-body-md text-secondary font-bold">to taste</span>
+</li></ul>
+</div>
+<!-- Method Column -->
+<div class="md:col-span-8 space-y-lg">
+<h2 class="font-headline-md text-on-surface pb-sm border-b border-outline-variant/30">Instructions</h2>
+<div class="flex flex-col gap-lg">
+<div class="flex gap-md items-start group">
+<div class="font-display text-primary opacity-30 group-hover:opacity-100 transition-opacity flex-shrink-0 pt-1 text-display w-16">01</div>
+<div class="flex-1">
+<h3 class="font-headline-sm text-on-surface mb-xs">Prepare the Ingredients</h3>
+<p class="font-body-lg text-on-surface-variant leading-relaxed">Wash and dry the tomatoes and basil. Slice the tomatoes and buffalo mozzarella into thick, even rounds.</p>
+</div>
+</div>
+<div class="flex gap-md items-start group">
+<div class="font-display text-primary opacity-30 group-hover:opacity-100 transition-opacity flex-shrink-0 pt-1 text-display w-16">02</div>
+<div class="flex-1">
+<h3 class="font-headline-sm text-on-surface mb-xs">Layer the Salad</h3>
+<p class="font-body-lg text-on-surface-variant leading-relaxed">On a large serving platter, alternate slices of tomato and mozzarella, tucking a fresh basil leaf between each layer.</p>
+</div>
+</div>
+<div class="flex gap-md items-start group">
+<div class="font-display text-primary opacity-30 group-hover:opacity-100 transition-opacity flex-shrink-0 pt-1 text-display w-16">03</div>
+<div class="flex-1">
+<h3 class="font-headline-sm text-on-surface mb-xs">Season and Dress</h3>
+<p class="font-body-lg text-on-surface-variant leading-relaxed">Drizzle the extra virgin olive oil generously over the arranged salad.</p>
+</div>
+</div>
+<div class="flex gap-md items-start group">
+<div class="font-display text-primary opacity-30 group-hover:opacity-100 transition-opacity flex-shrink-0 pt-1 text-display w-16">04</div>
+<div class="flex-1">
+<h3 class="font-headline-sm text-on-surface mb-xs">Final Touch</h3>
+<p class="font-body-lg text-on-surface-variant leading-relaxed">Sprinkle with a pinch of sea salt and a few grinds of black pepper. Serve immediately at room temperature for the best flavor.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<section class="mt-xl pt-lg border-t border-outline-variant/30">
+<h2 class="font-headline-md text-on-surface mb-md">Ingredient Gallery</h2>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-md">
+<div class="flex flex-col gap-sm">
+<div class="aspect-square rounded-xl overflow-hidden border border-outline-variant bg-surface-container">
+<img alt="Sliced Heirloom Tomatoes" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLsGgmgoQoCavvDzDoTfct8Fl7zT3r2GeMDRfDwYPm1GMiNoR6-RU1f-TgOabodKFrSSt-Rx5xLbXkDqUGyMKWLqDKqefHSWVQUsM0r56M6r_zvpZR4EFK2-Rq7osAYL65n6qaXm3Ur1TKarUALMi6H2rRn38hOQBtCj-zS_WzOnZGu2ro6KhrQqIXz4cKADq9HQYZ_7-PG0XgmYQLl-NFu4CPAm8s9Rjc7neGQYWNZyXntymOvTP8eWAy-1">
+</div>
+<span class="font-label-lg text-on-surface-variant text-center">Sliced Heirloom Tomatoes</span>
+</div>
+<div class="flex flex-col gap-sm">
+<div class="aspect-square rounded-xl overflow-hidden border border-outline-variant bg-surface-container">
+<img alt="Sliced Buffalo Mozzarella" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLtqv5ZyROoVbEohmM6lQvf1a97wSWT0UzTan4CnrohNeH8yvb-vHzZy7GSvgwXTaGarnobEK7mXUwSldoQh_2BGTRO6HT5acW4VzBl3n3DO8pMHq-3nUC3-kHH5HNxvK8j7V9hgDNMhMyjVrNCF6SzRE9sTVoGe26yIgJ14Nn-89jQrxzo4uWYu_xzZ4DyOMhTc4UKPVeHu80Bxn6DKWYLeisk93n1YGsIBG03tQQiRGHwx_TGbNLDOm9mA">
+</div>
+<span class="font-label-lg text-on-surface-variant text-center">Sliced Buffalo Mozzarella</span>
+</div>
+<div class="flex flex-col gap-sm">
+<div class="aspect-square rounded-xl overflow-hidden border border-outline-variant bg-surface-container">
+<img alt="Fresh Basil Leaves" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLuEvR4xY8JdbGx6pAb7uHDz4BjIBxwpbzr2KG7Z-0_1zCRr9CNrP2C5bwxUTe7EVSYmpOyJNTF_JuEpoJmH3V8bODi8cY0WQwJP3Qn0iY6vSTNGt0qfWYboSb-4r2RRs9GyfmenUBAJyQU9Hxbw5opf1qPIQr-8ZkbKRUniE9CDnF89LZdICVqoZpKASHC13hmcheV_pCRr5Vj433gQ2rCI05IulNChGp0HdLC5nl0oG7ftjhhtuluauYAM">
+</div>
+<span class="font-label-lg text-on-surface-variant text-center">Fresh Basil Leaves</span>
+</div>
+<div class="flex flex-col gap-sm">
+<div class="aspect-square rounded-xl overflow-hidden border border-outline-variant bg-surface-container">
+<img alt="Extra Virgin Olive Oil" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLur2XgmsWN__3Jsc2YoJrL1MsImSC57eq-RNojFopOi_ZlKM_BmTLUHG6trdwhoZ1etNp4yP_JX4bQ17ueQ8iC9ombFTPsrzY0lwNq4D5JJIQKHIXadsm5w4hAlvq8PFgqsWc-mmVghgchbHoDoHbQoHoyhZf4uJF545Pa51FYTjtRO6Sj-4_kzIfJxSh0rhURC0BKrf5zvijcc1NZVxNd1eMbdK-cn1ETE8RQV3qM0bkemS6PppOrw00ZS">
+</div>
+<span class="font-label-lg text-on-surface-variant text-center">Extra Virgin Olive Oil</span>
+</div>
+</div>
+</section>
+</div>
+</main>
+<footer class="w-full py-xl border-t mt-auto bg-surface-container border-outline-variant/30"><div class="flex flex-col items-center gap-md max-w-container-max mx-auto px-margin-desktop"><div class="font-display text-headline-sm text-primary mb-sm"><span class="font-body-md uppercase">[ MY ]</span> <span class="font-display">Recipes</span></div><div class="flex flex-wrap justify-center gap-md mb-sm"><a href="#" class="text-body-sm text-on-surface-variant hover:text-primary transition-colors">Privacy Policy</a><span class="text-outline-variant/30">|</span><a href="#" class="text-body-sm text-on-surface-variant hover:text-primary transition-colors">Terms of Service</a><span class="text-outline-variant/30">|</span><a href="#" class="text-body-sm text-on-surface-variant hover:text-primary transition-colors">Support</a><span class="text-outline-variant/30">|</span><a href="#" class="text-body-sm text-on-surface-variant hover:text-primary transition-colors">Contact</a></div><p class="font-body-sm text-body-sm text-on-surface-variant">© 2026 [ MY ] Recipes. Crafted for mindful cooking.</p></div></footer>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const checkboxes = document.querySelectorAll('.ingredient-checkbox');
+        checkboxes.forEach(box => {
+            box.addEventListener('change', (e) => {
+                const label = e.target.nextElementSibling;
+                if(e.target.checked) {
+                    label.classList.add('line-through', 'opacity-50');
+                } else {
+                    label.classList.remove('line-through', 'opacity-50');
+                }
+            });
+        });
+    });
+</script>
+
+
+
+
+</body></html>

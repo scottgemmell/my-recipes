@@ -11,13 +11,8 @@ import {
   selectRecipes,
   updateRecipe,
 } from '../features/recipes/recipesSlice'
-import {
-  addIngredient,
-  selectCatalog,
-  setIngredientImage,
-} from '../features/ingredients/ingredientsSlice'
-import { makeIngredientId } from '../features/ingredients/ingredientsData'
-import { INGREDIENT_IMAGES, resolveImageKey } from '../features/ingredients/imageRegistry'
+import { addIngredient, selectCatalog } from '../features/ingredients/ingredientsSlice'
+import { IngredientThumb } from '../components/IngredientImagePicker'
 import type { Recipe } from '../features/recipes/types'
 
 interface IngredientRow {
@@ -210,66 +205,6 @@ function SelectField({
   )
 }
 
-/** Small ingredient image preview (or a placeholder when none is set). */
-function IngredientThumb({ imageKey, alt }: { imageKey?: string; alt: string }) {
-  const src = resolveImageKey(imageKey)
-  if (src) return <img src={src} alt={alt} className="w-full h-full object-cover" />
-  return (
-    <div className="w-full h-full flex items-center justify-center text-outline">
-      <Icon name="image" className="text-[20px]" />
-    </div>
-  )
-}
-
-/** Grid of bundled images to choose from, plus a "no image" option. */
-function ImagePickerPanel({
-  title,
-  onPick,
-  onClear,
-  onClose,
-}: {
-  title: string
-  onPick: (key: string) => void
-  onClear: () => void
-  onClose: () => void
-}) {
-  return (
-    <div className="border border-outline-variant rounded-lg p-sm bg-surface-container-low flex flex-col gap-sm">
-      <div className="flex items-center justify-between">
-        <span className="font-label-lg text-label-lg text-on-surface">{title}</span>
-        <button
-          type="button"
-          onClick={onClose}
-          className="text-secondary hover:text-on-surface"
-          aria-label="Close image picker"
-        >
-          <Icon name="close" className="text-[18px]" />
-        </button>
-      </div>
-      <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 max-h-64 overflow-y-auto pr-1">
-        {INGREDIENT_IMAGES.map((img) => (
-          <button
-            key={img.key}
-            type="button"
-            onClick={() => onPick(img.key)}
-            title={img.key}
-            className="aspect-square rounded-md overflow-hidden border border-outline-variant hover:border-primary transition-colors"
-          >
-            <img src={img.src} alt={img.key} className="w-full h-full object-cover" />
-          </button>
-        ))}
-      </div>
-      <button
-        type="button"
-        onClick={onClear}
-        className="self-start font-label-sm text-label-sm text-secondary hover:text-error"
-      >
-        No image
-      </button>
-    </div>
-  )
-}
-
 /**
  * Ingredients editor: each row picks a catalog ingredient + amount. New
  * ingredients can be added to the catalog (with a bundled image), and an
@@ -277,41 +212,31 @@ function ImagePickerPanel({
  */
 function IngredientsField() {
   const catalog = useAppSelector(selectCatalog)
-  const dispatch = useAppDispatch()
-  const [adding, setAdding] = useState(false)
-  const [newName, setNewName] = useState('')
-  const [newImageKey, setNewImageKey] = useState<string | undefined>(undefined)
-  const [picker, setPicker] = useState<{ mode: 'new' } | { mode: 'edit'; id: string } | null>(
-    null,
-  )
+  const [searching, setSearching] = useState(false)
+  const [query, setQuery] = useState('')
 
   const byId = new Map(catalog.map((c) => [c.id, c]))
-  const sorted = [...catalog].sort((a, b) => a.name.localeCompare(b.name))
+  const sortedCatalog = [...catalog].sort((a, b) => a.name.localeCompare(b.name))
 
   return (
     <Field<IngredientRow[]> name="ingredients" validate={validateIngredients}>
       {({ input, meta }) => {
-        const rows: IngredientRow[] = input.value || []
+        const rows: IngredientRow[] = (input.value || []).filter((r) => r.ingredientId)
         const setRows = (next: IngredientRow[]) => input.onChange(next)
         const showError = (meta.touched || meta.submitFailed) && meta.error
+        const addedIds = new Set(rows.map((r) => r.ingredientId))
 
-        const addCatalogIngredient = () => {
-          const name = newName.trim()
-          if (!name) return
-          const id = makeIngredientId(name, catalog)
-          dispatch(addIngredient({ id, name, imageKey: newImageKey }))
-          const emptyIdx = rows.findIndex((r) => !r.ingredientId)
-          if (emptyIdx !== -1) {
-            const next = rows.slice()
-            next[emptyIdx] = { ...next[emptyIdx], ingredientId: id }
-            setRows(next)
-          } else {
-            setRows([...rows, { ingredientId: id, amount: '' }])
-          }
-          setNewName('')
-          setNewImageKey(undefined)
-          setAdding(false)
+        const addRow = (id: string) => {
+          if (!addedIds.has(id)) setRows([...rows, { ingredientId: id, amount: '' }])
         }
+        const removeRow = (id: string) => setRows(rows.filter((r) => r.ingredientId !== id))
+        const setAmount = (id: string, amount: string) =>
+          setRows(rows.map((r) => (r.ingredientId === id ? { ...r, amount } : r)))
+
+        const q = query.trim().toLowerCase()
+        const results = sortedCatalog.filter(
+          (c) => !addedIds.has(c.id) && (!q || c.name.toLowerCase().includes(q)),
+        )
 
         return (
           <section className="flex flex-col gap-base">
@@ -323,54 +248,27 @@ function IngredientsField() {
             </div>
 
             <div className="flex flex-col gap-sm">
-              {rows.map((row, i) => {
+              {rows.map((row) => {
                 const cat = byId.get(row.ingredientId)
                 return (
-                  <div key={i} className="flex items-center gap-sm">
-                    <button
-                      type="button"
-                      disabled={!row.ingredientId}
-                      onClick={() =>
-                        row.ingredientId && setPicker({ mode: 'edit', id: row.ingredientId })
-                      }
-                      className="w-11 h-11 shrink-0 rounded-md overflow-hidden border border-outline-variant bg-surface-container disabled:opacity-50"
-                      title={row.ingredientId ? 'Change image' : 'Pick an ingredient first'}
-                    >
+                  <div key={row.ingredientId} className="flex items-center gap-sm">
+                    <div className="w-11 h-11 shrink-0 rounded-md overflow-hidden border border-outline-variant bg-surface-container">
                       <IngredientThumb imageKey={cat?.imageKey} alt={cat?.name ?? ''} />
-                    </button>
-                    <div className="flex-1 min-w-0">
-                      <select
-                        value={row.ingredientId}
-                        onChange={(e) => {
-                          const next = rows.slice()
-                          next[i] = { ...next[i], ingredientId: e.target.value }
-                          setRows(next)
-                        }}
-                        className={`${baseInput} ${okBorder} cursor-pointer`}
-                      >
-                        <option value="">Select an ingredient…</option>
-                        {sorted.map((c) => (
-                          <option key={c.id} value={c.id}>
-                            {c.name}
-                          </option>
-                        ))}
-                      </select>
                     </div>
+                    <span className="flex-1 min-w-0 font-body text-body-md text-on-surface truncate">
+                      {cat?.name ?? row.ingredientId}
+                    </span>
                     <div className="w-24 md:w-32 shrink-0">
                       <input
                         value={row.amount}
-                        onChange={(e) => {
-                          const next = rows.slice()
-                          next[i] = { ...next[i], amount: e.target.value }
-                          setRows(next)
-                        }}
+                        onChange={(e) => setAmount(row.ingredientId, e.target.value)}
                         placeholder="Amount"
                         className={`${baseInput} ${okBorder}`}
                       />
                     </div>
                     <button
                       type="button"
-                      onClick={() => setRows(rows.filter((_, j) => j !== i))}
+                      onClick={() => removeRow(row.ingredientId)}
                       className="shrink-0 text-secondary hover:text-error p-xs"
                       aria-label="Remove ingredient"
                     >
@@ -379,6 +277,11 @@ function IngredientsField() {
                   </div>
                 )
               })}
+              {rows.length === 0 && (
+                <p className="font-body text-body-sm text-secondary">
+                  No ingredients yet — use “Add ingredient” to choose from the catalog.
+                </p>
+              )}
             </div>
 
             {showError && <p className="font-label-sm text-label-sm text-error">{meta.error}</p>}
@@ -386,68 +289,46 @@ function IngredientsField() {
             <div className="flex flex-wrap gap-md">
               <button
                 type="button"
-                onClick={() => setRows([...rows, { ingredientId: '', amount: '' }])}
+                onClick={() => {
+                  setSearching((v) => !v)
+                  setQuery('')
+                }}
                 className="inline-flex items-center gap-xs font-label-lg text-label-lg text-primary hover:underline"
               >
-                <Icon name="add" className="text-[18px]" /> Add ingredient
-              </button>
-              <button
-                type="button"
-                onClick={() => setAdding((v) => !v)}
-                className="inline-flex items-center gap-xs font-label-lg text-label-lg text-secondary hover:text-on-surface"
-              >
-                <Icon name="add_circle" className="text-[18px]" /> New ingredient
+                <Icon name={searching ? 'remove' : 'add'} className="text-[18px]" /> Add ingredient
               </button>
             </div>
 
-            {adding && (
+            {searching && (
               <div className="border border-outline-variant rounded-lg p-sm bg-surface-container-low flex flex-col gap-sm">
-                <span className="font-label-lg text-label-lg text-on-surface">New ingredient</span>
-                <div className="flex items-center gap-sm">
-                  <button
-                    type="button"
-                    onClick={() => setPicker({ mode: 'new' })}
-                    className="w-11 h-11 shrink-0 rounded-md overflow-hidden border border-outline-variant bg-surface-container"
-                    title="Choose image"
-                  >
-                    <IngredientThumb imageKey={newImageKey} alt="" />
-                  </button>
-                  <input
-                    value={newName}
-                    onChange={(e) => setNewName(e.target.value)}
-                    placeholder="Ingredient name (e.g., Black Pepper)"
-                    className={`${baseInput} ${okBorder} flex-1`}
-                  />
-                  <button
-                    type="button"
-                    onClick={addCatalogIngredient}
-                    className="shrink-0 px-4 py-2 rounded-full bg-primary text-on-primary font-label-lg text-label-lg hover:brightness-110"
-                  >
-                    Add
-                  </button>
+                <input
+                  value={query}
+                  autoFocus
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search ingredients…"
+                  className={`${baseInput} ${okBorder}`}
+                />
+                <div className="flex flex-col gap-1 max-h-64 overflow-y-auto pr-1">
+                  {results.map((c) => (
+                    <button
+                      key={c.id}
+                      type="button"
+                      onClick={() => addRow(c.id)}
+                      className="flex items-center gap-sm p-1 rounded-md hover:bg-surface-container text-left"
+                    >
+                      <div className="w-9 h-9 shrink-0 rounded overflow-hidden border border-outline-variant bg-surface-container">
+                        <IngredientThumb imageKey={c.imageKey} alt={c.name} />
+                      </div>
+                      <span className="font-body text-body-md text-on-surface">{c.name}</span>
+                    </button>
+                  ))}
+                  {results.length === 0 && (
+                    <p className="font-body text-body-sm text-secondary p-1">
+                      No matching ingredients. Add it on the Add Ingredient page first.
+                    </p>
+                  )}
                 </div>
               </div>
-            )}
-
-            {picker && (
-              <ImagePickerPanel
-                title={
-                  picker.mode === 'new'
-                    ? 'Choose an image'
-                    : `Image for ${byId.get(picker.id)?.name ?? 'ingredient'}`
-                }
-                onPick={(key) => {
-                  if (picker.mode === 'new') setNewImageKey(key)
-                  else dispatch(setIngredientImage({ id: picker.id, imageKey: key }))
-                  setPicker(null)
-                }}
-                onClear={() => {
-                  if (picker.mode === 'new') setNewImageKey(undefined)
-                  else dispatch(setIngredientImage({ id: picker.id, imageKey: undefined }))
-                  setPicker(null)
-                }}
-                onClose={() => setPicker(null)}
-              />
             )}
           </section>
         )
@@ -585,7 +466,7 @@ export default function AddRecipePage() {
             })),
             instructions: stepsToText(editingRecipe.steps),
           }
-        : { difficulty: 'Easy', ingredients: [{ ingredientId: '', amount: '' }] },
+        : { difficulty: 'Easy', ingredients: [] },
     [editingRecipe],
   )
 

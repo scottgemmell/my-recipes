@@ -81,8 +81,8 @@ export default function RecipeDetailPage() {
           />
         </section>
 
-        {/* Content Container (overlaps hero) */}
-        <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop -mt-12 relative z-10">
+        {/* Content Container (overlaps hero ~100px on desktop) */}
+        <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop -mt-12 md:-mt-[150px] relative z-10">
           <Link
             to="/"
             className="inline-flex items-center gap-xs mb-md font-label-lg text-label-lg text-on-primary bg-primary/90 backdrop-blur px-sm py-xs rounded-full hover:bg-primary transition-colors"

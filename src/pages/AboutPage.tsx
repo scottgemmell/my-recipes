@@ -26,24 +26,20 @@ export default function AboutPage() {
     <div className="min-h-screen flex flex-col bg-surface">
       <Navbar active="About" />
 
-      <main className="flex-grow w-full max-w-3xl mx-auto px-margin-mobile md:px-margin-desktop py-lg md:py-xl">
+      <main className="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-lg md:py-xl">
         <header className="mb-lg md:mb-xl">
           <p className="font-label-lg text-label-lg text-primary uppercase tracking-wider mb-sm">
             About
           </p>
           <h1 className="font-display text-display text-on-surface mb-md">A calmer kind of cookbook.</h1>
-          <p className="font-body text-body-lg text-on-surface-variant">
-            <span className="font-bold">[ My ] Recipes</span> is a personal cookbook for the dishes
-            worth making again — a calm, uncluttered home for the meals you actually cook.
-          </p>
+          
         </header>
 
         <div className="space-y-md font-body text-body-md text-on-surface-variant">
-          <p>
-            Built on the Culinary Zen design system, the app favors a refined palette of meadow
-            greens, an editorial typographic rhythm, and plenty of breathing room — so your recipes
-            take center stage, free of noise and clutter.
-          </p>
+        <p className="font-body text-body-lg text-on-surface-variant">
+                    <span className="font-bold">[ My ] Recipes</span> is a personal cookbook for the dishes
+                    worth making again — a calm, uncluttered home for the meals you actually cook.
+                  </p>
           <p>
             Every recipe is yours to shape: create your own, edit freely, tag and favorite the
             keepers, and check off ingredients as you go. There are no accounts and no paywalls —

@@ -17,10 +17,26 @@ interface FormValues {
   image?: string
   title?: string
   description?: string
+  tags?: string
   time?: string
   yield?: string
   ingredients?: string
   instructions?: string
+}
+
+/** Split a comma-separated tags string into a clean, de-duplicated list. */
+function parseTags(text: string): string[] {
+  const seen = new Set<string>()
+  const result: string[] = []
+  for (const raw of text.split(',')) {
+    const tag = raw.trim()
+    const key = tag.toLowerCase()
+    if (tag && !seen.has(key)) {
+      seen.add(key)
+      result.push(tag)
+    }
+  }
+  return result
 }
 
 const baseInput =
@@ -280,6 +296,7 @@ export default function AddRecipePage() {
         image: editingRecipe.image || undefined,
         title: editingRecipe.title,
         description: editingRecipe.description,
+        tags: editingRecipe.tags.join(', '),
         time: editingRecipe.time === '—' ? '' : editingRecipe.time,
         yield: editingRecipe.servings === '—' ? '' : editingRecipe.servings,
         ingredients: ingredientsToText(editingRecipe.ingredients),
@@ -294,6 +311,7 @@ export default function AddRecipePage() {
       title,
       description,
       excerpt: description,
+      tags: parseTags(values.tags ?? ''),
       image: values.image ?? '',
       imageAlt: title,
       time: values.time?.trim() || '—',
@@ -319,7 +337,6 @@ export default function AddRecipePage() {
       id: `r-${Date.now()}`,
       slug: newSlug,
       category: 'Recipe',
-      tags: [],
       difficulty: 'Easy',
       servingsIcon: 'restaurant',
       difficultyIcon: 'signal_cellular_alt',
@@ -370,6 +387,12 @@ export default function AddRecipePage() {
                   placeholder="Briefly describe the flavor profile, origin, or why you love this dish..."
                   rows={3}
                   validate={required}
+                />
+                <InputField
+                  name="tags"
+                  label="Tags"
+                  hint="Comma-separated"
+                  placeholder="e.g., Salad, Italian, Vegan"
                 />
               </div>
 

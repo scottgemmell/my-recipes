@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import Icon from '../components/Icon'
 import RecipeImage from '../components/RecipeImage'
 import RecipeDetailSkeleton from '../components/RecipeDetailSkeleton'
+import ConfirmDialog from '../components/ConfirmDialog'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import {
+  deleteRecipe,
   selectCheckedIngredients,
   selectRecipeBySlug,
   toggleIngredient,
@@ -29,8 +31,11 @@ function MetaItem({ icon, label, value }: { icon: string; label: string; value: 
 export default function RecipeDetailPage() {
   const { slug = '' } = useParams()
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
   const recipe = useAppSelector(selectRecipeBySlug(slug))
   const checked = useAppSelector(selectCheckedIngredients(recipe?.id ?? ''))
+
+  const [confirmOpen, setConfirmOpen] = useState(false)
 
   // Simulate a load each time a recipe is opened (including when navigating
   // between recipes), showing the skeleton state first.
@@ -64,6 +69,12 @@ export default function RecipeDetailPage() {
         <Footer />
       </div>
     )
+  }
+
+  const handleDelete = () => {
+    setConfirmOpen(false)
+    dispatch(deleteRecipe(recipe.id))
+    navigate('/')
   }
 
   return (
@@ -111,13 +122,20 @@ export default function RecipeDetailPage() {
               <p className="font-body text-body-lg text-on-surface-variant max-w-3xl">
                 {recipe.description}
               </p>
-              <div>
+              <div className="flex items-center gap-md">
                 <Link
                   to={`/recipe/${recipe.slug}/edit`}
                   className="inline-flex items-center gap-xs font-label-lg text-label-lg text-primary hover:underline decoration-primary underline-offset-4"
                 >
                   <Icon name="edit" className="text-[18px]" /> Edit Recipe
                 </Link>
+                <button
+                  type="button"
+                  onClick={() => setConfirmOpen(true)}
+                  className="inline-flex items-center gap-xs font-label-lg text-label-lg text-error hover:underline decoration-error underline-offset-4"
+                >
+                  <Icon name="delete" className="text-[18px]" /> Delete Recipe
+                </button>
               </div>
               {/* Meta Info */}
               <div className="flex flex-wrap items-center gap-y-md gap-x-lg pt-md mt-sm border-t border-outline-variant/30">
@@ -240,6 +258,16 @@ export default function RecipeDetailPage() {
       </main>
 
       <Footer />
+
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Delete recipe?"
+        message={`"${recipe.title}" will be permanently removed. This can't be undone.`}
+        confirmLabel="Delete"
+        destructive
+        onConfirm={handleDelete}
+        onCancel={() => setConfirmOpen(false)}
+      />
     </div>
   )
 }

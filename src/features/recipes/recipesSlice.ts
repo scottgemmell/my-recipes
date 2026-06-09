@@ -43,6 +43,10 @@ const recipesSlice = createSlice({
       const index = state.items.findIndex((r) => r.id === action.payload.id)
       if (index !== -1) state.items[index] = action.payload
     },
+    deleteRecipe(state, action: PayloadAction<string>) {
+      state.items = state.items.filter((r) => r.id !== action.payload)
+      delete state.checkedIngredients[action.payload]
+    },
   },
 })
 
@@ -52,6 +56,7 @@ export const {
   clearChecklist,
   addRecipe,
   updateRecipe,
+  deleteRecipe,
 } = recipesSlice.actions
 
 export default recipesSlice.reducer

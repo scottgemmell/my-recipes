@@ -21,3 +21,6 @@ npm-debug.log*
 .idea
 .DS_Store
 *.local
+
+# Windows "mark of the web" alternate-data-stream files
+*Zone.Identifier

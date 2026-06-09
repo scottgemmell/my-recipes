@@ -2,15 +2,18 @@ import { useMemo, useState } from 'react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import Icon from '../components/Icon'
+import ConfirmDialog from '../components/ConfirmDialog'
 import { IngredientThumb, ImagePickerPanel } from '../components/IngredientImagePicker'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import {
   addIngredient,
+  deleteIngredient,
   renameIngredient,
   selectCatalog,
   setIngredientImage,
 } from '../features/ingredients/ingredientsSlice'
 import { makeIngredientId } from '../features/ingredients/ingredientsData'
+import { imageSrc } from '../features/ingredients/imageRegistry'
 
 const baseInput =
   'w-full border rounded-md px-4 py-3 font-body text-body-md text-on-surface bg-surface-container-lowest placeholder:text-outline transition-colors focus:outline-none focus:ring-1 border-outline-variant focus:ring-primary focus:border-primary'
@@ -23,18 +26,22 @@ export default function AddIngredientPage() {
 
   const [newName, setNewName] = useState('')
   const [newImageKey, setNewImageKey] = useState<string | undefined>(undefined)
+  const [newImageUrl, setNewImageUrl] = useState<string | undefined>(undefined)
   const [picker, setPicker] = useState<PickerTarget>(null)
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
 
   // Stable order (by id) so renaming a row never makes it jump position.
   const ordered = useMemo(() => [...catalog].sort((a, b) => a.id.localeCompare(b.id)), [catalog])
+  const deleteTarget = catalog.find((c) => c.id === confirmDeleteId)
 
   const addNew = () => {
     const name = newName.trim()
     if (!name) return
     const id = makeIngredientId(name, catalog)
-    dispatch(addIngredient({ id, name, imageKey: newImageKey }))
+    dispatch(addIngredient({ id, name, imageKey: newImageKey, imageUrl: newImageUrl }))
     setNewName('')
     setNewImageKey(undefined)
+    setNewImageUrl(undefined)
   }
 
   return (
@@ -60,9 +67,12 @@ export default function AddIngredientPage() {
                 type="button"
                 onClick={() => setPicker({ mode: 'new' })}
                 className="w-12 h-12 shrink-0 rounded-md overflow-hidden border border-outline-variant bg-surface-container"
-                title="Choose image"
+                title="Choose or upload an image"
               >
-                <IngredientThumb imageKey={newImageKey} alt="" />
+                <IngredientThumb
+                  src={imageSrc({ imageKey: newImageKey, imageUrl: newImageUrl })}
+                  alt=""
+                />
               </button>
               <input
                 value={newName}
@@ -91,7 +101,7 @@ export default function AddIngredientPage() {
             <div className="flex items-center justify-between">
               <label className="font-label-lg text-label-lg text-on-surface">Ingredients</label>
               <span className="font-label-sm text-label-sm text-tertiary">
-                {ordered.length} total · click an image to change it
+                {ordered.length} total · click an image to change or upload it
               </span>
             </div>
             <div className="flex flex-col gap-sm">
@@ -103,7 +113,7 @@ export default function AddIngredientPage() {
                     className="w-12 h-12 shrink-0 rounded-md overflow-hidden border border-outline-variant bg-surface-container"
                     title="Change image"
                   >
-                    <IngredientThumb imageKey={ing.imageKey} alt={ing.name} />
+                    <IngredientThumb src={imageSrc(ing)} alt={ing.name} />
                   </button>
                   <input
                     value={ing.name}
@@ -113,6 +123,15 @@ export default function AddIngredientPage() {
                     className={`${baseInput} flex-1`}
                     aria-label={`Name for ${ing.name}`}
                   />
+                  <button
+                    type="button"
+                    onClick={() => setConfirmDeleteId(ing.id)}
+                    className="shrink-0 text-secondary hover:text-error p-xs"
+                    aria-label={`Delete ${ing.name}`}
+                    title="Delete ingredient"
+                  >
+                    <Icon name="delete" className="text-[20px]" />
+                  </button>
                 </div>
               ))}
             </div>
@@ -133,17 +152,34 @@ export default function AddIngredientPage() {
             <ImagePickerPanel
               title={
                 picker.mode === 'new'
-                  ? 'Choose an image'
+                  ? 'Choose or upload an image'
                   : `Image for ${catalog.find((c) => c.id === picker.id)?.name ?? 'ingredient'}`
               }
               onPick={(key) => {
-                if (picker.mode === 'new') setNewImageKey(key)
-                else dispatch(setIngredientImage({ id: picker.id, imageKey: key }))
+                if (picker.mode === 'new') {
+                  setNewImageKey(key)
+                  setNewImageUrl(undefined)
+                } else {
+                  dispatch(setIngredientImage({ id: picker.id, imageKey: key }))
+                }
+                setPicker(null)
+              }}
+              onUpload={(dataUrl) => {
+                if (picker.mode === 'new') {
+                  setNewImageUrl(dataUrl)
+                  setNewImageKey(undefined)
+                } else {
+                  dispatch(setIngredientImage({ id: picker.id, imageUrl: dataUrl }))
+                }
                 setPicker(null)
               }}
               onClear={() => {
-                if (picker.mode === 'new') setNewImageKey(undefined)
-                else dispatch(setIngredientImage({ id: picker.id, imageKey: undefined }))
+                if (picker.mode === 'new') {
+                  setNewImageKey(undefined)
+                  setNewImageUrl(undefined)
+                } else {
+                  dispatch(setIngredientImage({ id: picker.id }))
+                }
                 setPicker(null)
               }}
               onClose={() => setPicker(null)}
@@ -151,6 +187,19 @@ export default function AddIngredientPage() {
           </div>
         </div>
       )}
+
+      <ConfirmDialog
+        open={confirmDeleteId !== null}
+        title="Delete ingredient?"
+        message={`"${deleteTarget?.name ?? 'This ingredient'}" will be removed from the catalog. Recipes that use it will lose its image.`}
+        confirmLabel="Delete"
+        destructive
+        onConfirm={() => {
+          if (confirmDeleteId) dispatch(deleteIngredient(confirmDeleteId))
+          setConfirmDeleteId(null)
+        }}
+        onCancel={() => setConfirmDeleteId(null)}
+      />
     </div>
   )
 }

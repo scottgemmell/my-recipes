@@ -20,23 +20,30 @@ const ingredientsSlice = createSlice({
         state.items.push(action.payload)
       }
     },
-    /** Change (or clear) the image of an existing catalog ingredient. */
+    /** Set (or clear) an ingredient's image — a bundled key and/or an uploaded url. */
     setIngredientImage(
       state,
-      action: PayloadAction<{ id: string; imageKey?: string }>,
+      action: PayloadAction<{ id: string; imageKey?: string; imageUrl?: string }>,
     ) {
       const ing = state.items.find((i) => i.id === action.payload.id)
-      if (ing) ing.imageKey = action.payload.imageKey
+      if (ing) {
+        ing.imageKey = action.payload.imageKey
+        ing.imageUrl = action.payload.imageUrl
+      }
     },
     /** Rename an ingredient (its id — and therefore recipe links — stays). */
     renameIngredient(state, action: PayloadAction<{ id: string; name: string }>) {
       const ing = state.items.find((i) => i.id === action.payload.id)
       if (ing) ing.name = action.payload.name
     },
+    /** Remove an ingredient from the catalog. */
+    deleteIngredient(state, action: PayloadAction<string>) {
+      state.items = state.items.filter((i) => i.id !== action.payload)
+    },
   },
 })
 
-export const { addIngredient, setIngredientImage, renameIngredient } =
+export const { addIngredient, setIngredientImage, renameIngredient, deleteIngredient } =
   ingredientsSlice.actions
 
 export default ingredientsSlice.reducer

@@ -3,6 +3,8 @@ export interface CatalogIngredient {
   name: string
   /** Key into the bundled image registry (see imageRegistry.ts). Optional. */
   imageKey?: string
+  /** A user-uploaded image as a (downscaled) data URL. Takes precedence over imageKey. */
+  imageUrl?: string
 }
 
 /** Lower-cased, hyphenated slug — also how catalog ids are derived from names. */

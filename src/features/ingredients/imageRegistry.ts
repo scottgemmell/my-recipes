@@ -31,3 +31,8 @@ const byKey: Record<string, string> = Object.fromEntries(
 export function resolveImageKey(key?: string): string | undefined {
   return key ? byKey[key] : undefined
 }
+
+/** Resolve an ingredient's displayable image: an uploaded data URL wins, else its bundled key. */
+export function imageSrc(ing?: { imageKey?: string; imageUrl?: string }): string | undefined {
+  return ing?.imageUrl || resolveImageKey(ing?.imageKey)
+}

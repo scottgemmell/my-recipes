@@ -12,6 +12,7 @@ import {
   updateRecipe,
 } from '../features/recipes/recipesSlice'
 import { addIngredient, selectCatalog } from '../features/ingredients/ingredientsSlice'
+import { imageSrc } from '../features/ingredients/imageRegistry'
 import { IngredientThumb } from '../components/IngredientImagePicker'
 import type { Recipe } from '../features/recipes/types'
 
@@ -214,6 +215,8 @@ function IngredientsField() {
   const catalog = useAppSelector(selectCatalog)
   const [searching, setSearching] = useState(false)
   const [query, setQuery] = useState('')
+  const [dragIndex, setDragIndex] = useState<number | null>(null)
+  const [overIndex, setOverIndex] = useState<number | null>(null)
 
   const byId = new Map(catalog.map((c) => [c.id, c]))
   const sortedCatalog = [...catalog].sort((a, b) => a.name.localeCompare(b.name))
@@ -232,6 +235,15 @@ function IngredientsField() {
         const removeRow = (id: string) => setRows(rows.filter((r) => r.ingredientId !== id))
         const setAmount = (id: string, amount: string) =>
           setRows(rows.map((r) => (r.ingredientId === id ? { ...r, amount } : r)))
+        const moveRow = (from: number | null, to: number) => {
+          setDragIndex(null)
+          setOverIndex(null)
+          if (from === null || from === to) return
+          const next = rows.slice()
+          const [moved] = next.splice(from, 1)
+          next.splice(to, 0, moved)
+          setRows(next)
+        }
 
         const q = query.trim().toLowerCase()
         const results = sortedCatalog.filter(
@@ -248,12 +260,43 @@ function IngredientsField() {
             </div>
 
             <div className="flex flex-col gap-sm">
-              {rows.map((row) => {
+              {rows.map((row, i) => {
                 const cat = byId.get(row.ingredientId)
+                const isDragging = dragIndex === i
+                const isOver = overIndex === i && dragIndex !== null && dragIndex !== i
                 return (
-                  <div key={row.ingredientId} className="flex items-center gap-sm">
+                  <div
+                    key={row.ingredientId}
+                    onDragOver={(e) => {
+                      e.preventDefault()
+                      if (overIndex !== i) setOverIndex(i)
+                    }}
+                    onDrop={(e) => {
+                      e.preventDefault()
+                      moveRow(dragIndex, i)
+                    }}
+                    className={`flex items-center gap-sm rounded-md ${
+                      isOver ? 'ring-2 ring-primary ring-offset-2 ring-offset-surface-container-lowest' : ''
+                    } ${isDragging ? 'opacity-40' : ''}`}
+                  >
+                    <span
+                      draggable
+                      onDragStart={(e) => {
+                        setDragIndex(i)
+                        if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move'
+                      }}
+                      onDragEnd={() => {
+                        setDragIndex(null)
+                        setOverIndex(null)
+                      }}
+                      className="shrink-0 cursor-grab active:cursor-grabbing text-secondary hover:text-on-surface"
+                      title="Drag to reorder"
+                      aria-label="Drag to reorder"
+                    >
+                      <Icon name="drag_indicator" className="text-[20px]" />
+                    </span>
                     <div className="w-11 h-11 shrink-0 rounded-md overflow-hidden border border-outline-variant bg-surface-container">
-                      <IngredientThumb imageKey={cat?.imageKey} alt={cat?.name ?? ''} />
+                      <IngredientThumb src={imageSrc(cat)} alt={cat?.name ?? ''} />
                     </div>
                     <span className="flex-1 min-w-0 font-body text-body-md text-on-surface truncate">
                       {cat?.name ?? row.ingredientId}
@@ -317,7 +360,7 @@ function IngredientsField() {
                       className="flex items-center gap-sm p-1 rounded-md hover:bg-surface-container text-left"
                     >
                       <div className="w-9 h-9 shrink-0 rounded overflow-hidden border border-outline-variant bg-surface-container">
-                        <IngredientThumb imageKey={c.imageKey} alt={c.name} />
+                        <IngredientThumb src={imageSrc(c)} alt={c.name} />
                       </div>
                       <span className="font-body text-body-md text-on-surface">{c.name}</span>
                     </button>

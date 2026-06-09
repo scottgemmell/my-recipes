@@ -1,6 +1,6 @@
 import type { GalleryItem, Recipe } from '../recipes/types'
 import type { CatalogIngredient } from './ingredientsData'
-import { resolveImageKey } from './imageRegistry'
+import { imageSrc } from './imageRegistry'
 
 /**
  * The detail-page "Ingredient Gallery" for a recipe.
@@ -20,7 +20,7 @@ export function galleryForRecipe(
   for (const ing of recipe.ingredients) {
     if (!ing.ingredientId || seen.has(ing.ingredientId)) continue
     const cat = byId.get(ing.ingredientId)
-    const src = resolveImageKey(cat?.imageKey)
+    const src = imageSrc(cat)
     if (cat && src) {
       seen.add(cat.id)
       items.push({ label: cat.name, image: src })

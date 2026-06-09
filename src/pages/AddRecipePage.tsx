@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Form, Field } from 'react-final-form'
 import Navbar from '../components/Navbar'
@@ -11,7 +11,19 @@ import {
   selectRecipes,
   updateRecipe,
 } from '../features/recipes/recipesSlice'
+import {
+  addIngredient,
+  selectCatalog,
+  setIngredientImage,
+} from '../features/ingredients/ingredientsSlice'
+import { makeIngredientId } from '../features/ingredients/ingredientsData'
+import { INGREDIENT_IMAGES, resolveImageKey } from '../features/ingredients/imageRegistry'
 import type { Recipe } from '../features/recipes/types'
+
+interface IngredientRow {
+  ingredientId: string
+  amount: string
+}
 
 interface FormValues {
   image?: string
@@ -21,7 +33,7 @@ interface FormValues {
   time?: string
   yield?: string
   difficulty?: string
-  ingredients?: string
+  ingredients?: IngredientRow[]
   instructions?: string
 }
 
@@ -57,28 +69,13 @@ const slugify = (value: string) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
 
-// Each ingredient line is "name | amount" (amount optional). Splitting on the
-// first "|" keeps the name and amount as separate fields so they round-trip
-// through editing and still render name-left / amount-right.
-function parseIngredients(text: string): Recipe['ingredients'] {
-  return text
-    .split('\n')
-    .map((line) => line.trim())
-    .filter(Boolean)
-    .map((line, i) => {
-      const sep = line.indexOf('|')
-      const name = (sep === -1 ? line : line.slice(0, sep)).trim()
-      const amount = sep === -1 ? '' : line.slice(sep + 1).trim()
-      return { id: `i${i + 1}`, name, amount }
-    })
-}
+// Map a (possibly legacy free-text) ingredient name to a deterministic catalog
+// id: the slug of the text before the first comma. Seed catalog ids follow the
+// same rule, so e.g. "Heirloom Tomatoes, sliced" -> "heirloom-tomatoes".
+const ingredientIdForName = (name: string) => slugify(name.split(',')[0]) || slugify(name)
 
-/** Serialise stored ingredients back into the "name | amount" textarea format. */
-function ingredientsToText(ingredients: Recipe['ingredients']): string {
-  return ingredients
-    .map((i) => (i.amount ? `${i.name} | ${i.amount}` : i.name))
-    .join('\n')
-}
+const validateIngredients = (rows?: IngredientRow[]) =>
+  rows && rows.some((r) => r.ingredientId) ? undefined : 'Add at least one ingredient'
 
 // Each step line is "title | description" (title optional). With no "|" the
 // line is the description and gets an auto "Step N" title. This mirrors the
@@ -213,6 +210,252 @@ function SelectField({
   )
 }
 
+/** Small ingredient image preview (or a placeholder when none is set). */
+function IngredientThumb({ imageKey, alt }: { imageKey?: string; alt: string }) {
+  const src = resolveImageKey(imageKey)
+  if (src) return <img src={src} alt={alt} className="w-full h-full object-cover" />
+  return (
+    <div className="w-full h-full flex items-center justify-center text-outline">
+      <Icon name="image" className="text-[20px]" />
+    </div>
+  )
+}
+
+/** Grid of bundled images to choose from, plus a "no image" option. */
+function ImagePickerPanel({
+  title,
+  onPick,
+  onClear,
+  onClose,
+}: {
+  title: string
+  onPick: (key: string) => void
+  onClear: () => void
+  onClose: () => void
+}) {
+  return (
+    <div className="border border-outline-variant rounded-lg p-sm bg-surface-container-low flex flex-col gap-sm">
+      <div className="flex items-center justify-between">
+        <span className="font-label-lg text-label-lg text-on-surface">{title}</span>
+        <button
+          type="button"
+          onClick={onClose}
+          className="text-secondary hover:text-on-surface"
+          aria-label="Close image picker"
+        >
+          <Icon name="close" className="text-[18px]" />
+        </button>
+      </div>
+      <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 max-h-64 overflow-y-auto pr-1">
+        {INGREDIENT_IMAGES.map((img) => (
+          <button
+            key={img.key}
+            type="button"
+            onClick={() => onPick(img.key)}
+            title={img.key}
+            className="aspect-square rounded-md overflow-hidden border border-outline-variant hover:border-primary transition-colors"
+          >
+            <img src={img.src} alt={img.key} className="w-full h-full object-cover" />
+          </button>
+        ))}
+      </div>
+      <button
+        type="button"
+        onClick={onClear}
+        className="self-start font-label-sm text-label-sm text-secondary hover:text-error"
+      >
+        No image
+      </button>
+    </div>
+  )
+}
+
+/**
+ * Ingredients editor: each row picks a catalog ingredient + amount. New
+ * ingredients can be added to the catalog (with a bundled image), and an
+ * existing ingredient's image can be changed (which updates it everywhere).
+ */
+function IngredientsField() {
+  const catalog = useAppSelector(selectCatalog)
+  const dispatch = useAppDispatch()
+  const [adding, setAdding] = useState(false)
+  const [newName, setNewName] = useState('')
+  const [newImageKey, setNewImageKey] = useState<string | undefined>(undefined)
+  const [picker, setPicker] = useState<{ mode: 'new' } | { mode: 'edit'; id: string } | null>(
+    null,
+  )
+
+  const byId = new Map(catalog.map((c) => [c.id, c]))
+  const sorted = [...catalog].sort((a, b) => a.name.localeCompare(b.name))
+
+  return (
+    <Field<IngredientRow[]> name="ingredients" validate={validateIngredients}>
+      {({ input, meta }) => {
+        const rows: IngredientRow[] = input.value || []
+        const setRows = (next: IngredientRow[]) => input.onChange(next)
+        const showError = (meta.touched || meta.submitFailed) && meta.error
+
+        const addCatalogIngredient = () => {
+          const name = newName.trim()
+          if (!name) return
+          const id = makeIngredientId(name, catalog)
+          dispatch(addIngredient({ id, name, imageKey: newImageKey }))
+          const emptyIdx = rows.findIndex((r) => !r.ingredientId)
+          if (emptyIdx !== -1) {
+            const next = rows.slice()
+            next[emptyIdx] = { ...next[emptyIdx], ingredientId: id }
+            setRows(next)
+          } else {
+            setRows([...rows, { ingredientId: id, amount: '' }])
+          }
+          setNewName('')
+          setNewImageKey(undefined)
+          setAdding(false)
+        }
+
+        return (
+          <section className="flex flex-col gap-base">
+            <div className="flex items-center justify-between">
+              <label className="font-label-lg text-label-lg text-on-surface">Ingredients</label>
+              <span className="font-label-sm text-label-sm text-tertiary">
+                Pick from the catalog
+              </span>
+            </div>
+
+            <div className="flex flex-col gap-sm">
+              {rows.map((row, i) => {
+                const cat = byId.get(row.ingredientId)
+                return (
+                  <div key={i} className="flex items-center gap-sm">
+                    <button
+                      type="button"
+                      disabled={!row.ingredientId}
+                      onClick={() =>
+                        row.ingredientId && setPicker({ mode: 'edit', id: row.ingredientId })
+                      }
+                      className="w-11 h-11 shrink-0 rounded-md overflow-hidden border border-outline-variant bg-surface-container disabled:opacity-50"
+                      title={row.ingredientId ? 'Change image' : 'Pick an ingredient first'}
+                    >
+                      <IngredientThumb imageKey={cat?.imageKey} alt={cat?.name ?? ''} />
+                    </button>
+                    <div className="flex-1 min-w-0">
+                      <select
+                        value={row.ingredientId}
+                        onChange={(e) => {
+                          const next = rows.slice()
+                          next[i] = { ...next[i], ingredientId: e.target.value }
+                          setRows(next)
+                        }}
+                        className={`${baseInput} ${okBorder} cursor-pointer`}
+                      >
+                        <option value="">Select an ingredient…</option>
+                        {sorted.map((c) => (
+                          <option key={c.id} value={c.id}>
+                            {c.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="w-24 md:w-32 shrink-0">
+                      <input
+                        value={row.amount}
+                        onChange={(e) => {
+                          const next = rows.slice()
+                          next[i] = { ...next[i], amount: e.target.value }
+                          setRows(next)
+                        }}
+                        placeholder="Amount"
+                        className={`${baseInput} ${okBorder}`}
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setRows(rows.filter((_, j) => j !== i))}
+                      className="shrink-0 text-secondary hover:text-error p-xs"
+                      aria-label="Remove ingredient"
+                    >
+                      <Icon name="close" className="text-[20px]" />
+                    </button>
+                  </div>
+                )
+              })}
+            </div>
+
+            {showError && <p className="font-label-sm text-label-sm text-error">{meta.error}</p>}
+
+            <div className="flex flex-wrap gap-md">
+              <button
+                type="button"
+                onClick={() => setRows([...rows, { ingredientId: '', amount: '' }])}
+                className="inline-flex items-center gap-xs font-label-lg text-label-lg text-primary hover:underline"
+              >
+                <Icon name="add" className="text-[18px]" /> Add ingredient
+              </button>
+              <button
+                type="button"
+                onClick={() => setAdding((v) => !v)}
+                className="inline-flex items-center gap-xs font-label-lg text-label-lg text-secondary hover:text-on-surface"
+              >
+                <Icon name="add_circle" className="text-[18px]" /> New ingredient
+              </button>
+            </div>
+
+            {adding && (
+              <div className="border border-outline-variant rounded-lg p-sm bg-surface-container-low flex flex-col gap-sm">
+                <span className="font-label-lg text-label-lg text-on-surface">New ingredient</span>
+                <div className="flex items-center gap-sm">
+                  <button
+                    type="button"
+                    onClick={() => setPicker({ mode: 'new' })}
+                    className="w-11 h-11 shrink-0 rounded-md overflow-hidden border border-outline-variant bg-surface-container"
+                    title="Choose image"
+                  >
+                    <IngredientThumb imageKey={newImageKey} alt="" />
+                  </button>
+                  <input
+                    value={newName}
+                    onChange={(e) => setNewName(e.target.value)}
+                    placeholder="Ingredient name (e.g., Black Pepper)"
+                    className={`${baseInput} ${okBorder} flex-1`}
+                  />
+                  <button
+                    type="button"
+                    onClick={addCatalogIngredient}
+                    className="shrink-0 px-4 py-2 rounded-full bg-primary text-on-primary font-label-lg text-label-lg hover:brightness-110"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {picker && (
+              <ImagePickerPanel
+                title={
+                  picker.mode === 'new'
+                    ? 'Choose an image'
+                    : `Image for ${byId.get(picker.id)?.name ?? 'ingredient'}`
+                }
+                onPick={(key) => {
+                  if (picker.mode === 'new') setNewImageKey(key)
+                  else dispatch(setIngredientImage({ id: picker.id, imageKey: key }))
+                  setPicker(null)
+                }}
+                onClear={() => {
+                  if (picker.mode === 'new') setNewImageKey(undefined)
+                  else dispatch(setIngredientImage({ id: picker.id, imageKey: undefined }))
+                  setPicker(null)
+                }}
+                onClose={() => setPicker(null)}
+              />
+            )}
+          </section>
+        )
+      }}
+    </Field>
+  )
+}
+
 /** Drag-and-drop / click-to-browse hero image picker storing a data URL. */
 function HeroImageField() {
   const inputRef = useRef<HTMLInputElement>(null)
@@ -305,7 +548,46 @@ export default function AddRecipePage() {
   const { slug } = useParams()
   const recipes = useAppSelector(selectRecipes)
   const editingRecipe = useAppSelector(selectRecipeBySlug(slug ?? ''))
+  const catalog = useAppSelector(selectCatalog)
   const isEditing = Boolean(slug)
+
+  // Ensure any legacy (free-text) ingredients on the recipe being edited exist
+  // in the catalog so they can be selected in the picker.
+  useEffect(() => {
+    if (!editingRecipe) return
+    const have = new Set(catalog.map((c) => c.id))
+    editingRecipe.ingredients.forEach((ing) => {
+      const id = ing.ingredientId || ingredientIdForName(ing.name)
+      if (id && !have.has(id)) {
+        dispatch(addIngredient({ id, name: ing.name.split(',')[0].trim() || ing.name }))
+        have.add(id)
+      }
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slug])
+
+  // Memoised so dispatching to the ingredient catalog (add / change image) does
+  // not change the initialValues identity and reset the whole form.
+  const initialValues = useMemo<FormValues>(
+    () =>
+      editingRecipe
+        ? {
+            image: editingRecipe.image || undefined,
+            title: editingRecipe.title,
+            description: editingRecipe.description,
+            tags: editingRecipe.tags.join(', '),
+            time: editingRecipe.time === '—' ? '' : editingRecipe.time,
+            yield: editingRecipe.servings === '—' ? '' : editingRecipe.servings,
+            difficulty: editingRecipe.difficulty,
+            ingredients: editingRecipe.ingredients.map((ing) => ({
+              ingredientId: ing.ingredientId || ingredientIdForName(ing.name),
+              amount: ing.amount,
+            })),
+            instructions: stepsToText(editingRecipe.steps),
+          }
+        : { difficulty: 'Easy', ingredients: [{ ingredientId: '', amount: '' }] },
+    [editingRecipe],
+  )
 
   if (isEditing && !editingRecipe) {
     return (
@@ -322,20 +604,6 @@ export default function AddRecipePage() {
     )
   }
 
-  const initialValues: FormValues = editingRecipe
-    ? {
-        image: editingRecipe.image || undefined,
-        title: editingRecipe.title,
-        description: editingRecipe.description,
-        tags: editingRecipe.tags.join(', '),
-        time: editingRecipe.time === '—' ? '' : editingRecipe.time,
-        yield: editingRecipe.servings === '—' ? '' : editingRecipe.servings,
-        difficulty: editingRecipe.difficulty,
-        ingredients: ingredientsToText(editingRecipe.ingredients),
-        instructions: stepsToText(editingRecipe.steps),
-      }
-    : { difficulty: 'Easy' }
-
   const onSubmit = (values: FormValues) => {
     const title = values.title!.trim()
     const description = values.description?.trim() ?? ''
@@ -349,7 +617,17 @@ export default function AddRecipePage() {
       time: values.time?.trim() || '—',
       servings: values.yield?.trim() || '—',
       difficulty: values.difficulty || 'Easy',
-      ingredients: parseIngredients(values.ingredients ?? ''),
+      ingredients: (values.ingredients ?? [])
+        .filter((r) => r.ingredientId)
+        .map((r, i) => {
+          const cat = catalog.find((c) => c.id === r.ingredientId)
+          return {
+            id: `i${i + 1}`,
+            ingredientId: r.ingredientId,
+            name: cat?.name ?? r.ingredientId,
+            amount: r.amount.trim(),
+          }
+        }),
       steps: parseSteps(values.instructions ?? ''),
     }
 
@@ -434,22 +712,16 @@ export default function AddRecipePage() {
                 <SelectField name="difficulty" label="Difficulty" options={DIFFICULTIES} />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-md md:gap-lg pt-md border-t border-outline-variant/30">
-                <TextAreaField
-                  name="ingredients"
-                  label="Ingredients"
-                  hint="One per line · name | amount"
-                  rows={12}
-                  validate={required}
-                  placeholder={
-                    'All-purpose flour | 1 cup\nSea salt | 2 tsp\nOlive oil | 1 tbsp'
-                  }
-                />
+              <div className="pt-md border-t border-outline-variant/30">
+                <IngredientsField />
+              </div>
+
+              <div className="pt-md border-t border-outline-variant/30">
                 <TextAreaField
                   name="instructions"
                   label="Instructions"
                   hint="One per line · title | step"
-                  rows={12}
+                  rows={10}
                   validate={required}
                   placeholder={
                     'Prep | Heat the oven to 400°F (200°C).\nMix | Combine the dry ingredients in a bowl.\nBake | Bake for 35 minutes until golden brown.'

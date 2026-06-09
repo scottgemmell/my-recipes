@@ -279,10 +279,10 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
     featured: true,
     favorite: true,
     ingredients: [
-      { id: 'i1', name: 'Heirloom Tomatoes, sliced', amount: '2 large' },
-      { id: 'i2', name: 'Buffalo Mozzarella, sliced', amount: '8 oz' },
-      { id: 'i3', name: 'Fresh Basil leaves', amount: '1 bunch' },
-      { id: 'i4', name: 'Extra Virgin Olive Oil', amount: '2 tbsp' },
+      { id: 'i1', name: 'Heirloom Tomatoes, sliced', amount: '2 large', ingredientId: 'heirloom-tomatoes' },
+      { id: 'i2', name: 'Buffalo Mozzarella, sliced', amount: '8 oz', ingredientId: 'buffalo-mozzarella' },
+      { id: 'i3', name: 'Fresh Basil leaves', amount: '1 bunch', ingredientId: 'fresh-basil' },
+      { id: 'i4', name: 'Extra Virgin Olive Oil', amount: '2 tbsp', ingredientId: 'extra-virgin-olive-oil' },
       { id: 'i5', name: 'Sea salt and black pepper', amount: 'to taste' },
     ],
     steps: [
@@ -306,12 +306,8 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
           'Sprinkle with a pinch of sea salt and a few grinds of black pepper. Serve immediately at room temperature for the best flavor.',
       },
     ],
-    gallery: [
-      { label: 'Heirloom Tomatoes', image: img.tomato },
-      { label: 'Buffalo Mozzarella', image: img.mozzarella },
-      { label: 'Fresh Basil', image: img.basil },
-      { label: 'Extra Virgin Olive Oil', image: img.oliveOil },
-    ],
+    // Gallery is derived from the catalog-linked ingredients above.
+    gallery: [],
   },
   {
     id: '4',

@@ -1,35 +1,50 @@
 import { configureStore } from '@reduxjs/toolkit'
 import recipesReducer from '../features/recipes/recipesSlice'
+import ingredientsReducer from '../features/ingredients/ingredientsSlice'
 
 /** Bump the version suffix to invalidate previously persisted state. */
-const STORAGE_KEY = 'culinary-zen:recipes:v2'
+const STORAGE_KEY = 'culinary-zen:recipes:v3'
 
 type RecipesState = ReturnType<typeof recipesReducer>
+type IngredientsState = ReturnType<typeof ingredientsReducer>
 
-/** Load the persisted recipes slice from localStorage, if present and valid. */
-function loadRecipesState(): RecipesState | undefined {
+interface PersistedState {
+  recipes: RecipesState
+  ingredients: IngredientsState
+}
+
+/** Load the persisted slices from localStorage, only if both shapes are valid. */
+function loadState(): PersistedState | undefined {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return undefined
-    const parsed = JSON.parse(raw) as RecipesState
-    if (!parsed || !Array.isArray(parsed.items)) return undefined
-    return parsed
+    const parsed = JSON.parse(raw) as Partial<PersistedState>
+    if (
+      parsed?.recipes &&
+      Array.isArray(parsed.recipes.items) &&
+      parsed?.ingredients &&
+      Array.isArray(parsed.ingredients.items)
+    ) {
+      return { recipes: parsed.recipes, ingredients: parsed.ingredients }
+    }
+    return undefined
   } catch {
     return undefined
   }
 }
 
-const persisted = loadRecipesState()
+const persisted = loadState()
 
 export const store = configureStore({
   reducer: {
     recipes: recipesReducer,
+    ingredients: ingredientsReducer,
   },
-  preloadedState: persisted ? { recipes: persisted } : undefined,
+  preloadedState: persisted,
 })
 
-// Persist the recipes slice to localStorage (throttled) so added recipes,
-// edits, favorites and checklist state survive page reloads.
+// Persist the slices to localStorage (throttled) so added recipes, edits,
+// favorites, checklist state and the ingredient catalog survive page reloads.
 let saveScheduled = false
 store.subscribe(() => {
   if (saveScheduled) return
@@ -37,7 +52,8 @@ store.subscribe(() => {
   window.setTimeout(() => {
     saveScheduled = false
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(store.getState().recipes))
+      const { recipes, ingredients } = store.getState()
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ recipes, ingredients }))
     } catch {
       // Ignore write failures (e.g. storage unavailable or quota exceeded).
     }

@@ -9,6 +9,8 @@ import RecipeDetailSkeleton from '../components/RecipeDetailSkeleton'
 import ConfirmDialog from '../components/ConfirmDialog'
 import { isNewRecipe } from '../features/recipes/recent'
 import { iconForDifficulty, isHardDifficulty } from '../features/recipes/difficulty'
+import { selectCatalog } from '../features/ingredients/ingredientsSlice'
+import { galleryForRecipe } from '../features/ingredients/gallery'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import {
   deleteRecipe,
@@ -49,6 +51,7 @@ export default function RecipeDetailPage() {
   const navigate = useNavigate()
   const recipe = useAppSelector(selectRecipeBySlug(slug))
   const checked = useAppSelector(selectCheckedIngredients(recipe?.id ?? ''))
+  const catalog = useAppSelector(selectCatalog)
 
   const [confirmOpen, setConfirmOpen] = useState(false)
 
@@ -91,6 +94,10 @@ export default function RecipeDetailPage() {
     dispatch(deleteRecipe(recipe.id))
     navigate('/')
   }
+
+  // Gallery is derived from the recipe's catalog-linked ingredients (falling
+  // back to any stored gallery for not-yet-migrated recipes).
+  const gallery = galleryForRecipe(recipe, catalog)
 
   return (
     <div className="min-h-screen flex flex-col bg-surface">
@@ -241,13 +248,13 @@ export default function RecipeDetailPage() {
           </div>
 
           {/* Ingredient Gallery */}
-          {recipe.gallery.length > 0 && (
+          {gallery.length > 0 && (
             <section className="mt-xl pt-lg border-t border-outline-variant/30">
               <h2 className="font-headline-md text-headline-md text-on-surface mb-md">
                 Ingredient Gallery
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-md">
-                {recipe.gallery.map((item) => (
+                {gallery.map((item) => (
                   <div key={item.label} className="flex flex-col gap-sm">
                     <div className="aspect-square rounded-xl overflow-hidden border border-outline-variant bg-surface-container">
                       <RecipeImage

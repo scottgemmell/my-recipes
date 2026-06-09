@@ -2,6 +2,8 @@ export interface Ingredient {
   id: string
   name: string
   amount: string
+  /** Links this line to a catalog ingredient (drives the derived gallery). */
+  ingredientId?: string
 }
 
 export interface Step {

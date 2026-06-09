@@ -1,14 +1,14 @@
 import { Link } from 'react-router-dom'
 import Icon from './Icon'
 
-const navLinks = ['Browse', 'Collections', 'Ingredients', 'About']
+const navLinks = ['Browse', 'About']
 
 interface NavbarProps {
   /** Which top-level link should render as active. */
   active?: string
 }
 
-export default function Navbar({ active = 'Collections' }: NavbarProps) {
+export default function Navbar({ active = 'Browse' }: NavbarProps) {
   return (
     <nav className="w-full top-0 sticky border-b z-50 bg-surface-container-lowest border-outline-variant/30">
       <div className="flex justify-between items-center h-20 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">

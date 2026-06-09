@@ -40,7 +40,7 @@ export default function CollectionPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-surface">
-      <Navbar active="Collections" />
+      <Navbar active="Browse" />
 
       <main className="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-lg md:py-xl">
         {/* Page Header */}

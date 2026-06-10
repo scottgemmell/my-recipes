@@ -2,8 +2,9 @@ import { Link } from 'react-router-dom'
 import RecipeImage from './RecipeImage'
 import Icon from './Icon'
 import TagList from './TagList'
-import { useAppDispatch } from '../app/hooks'
+import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { toggleFavorite } from '../features/recipes/recipesSlice'
+import { selectCanEdit } from '../features/auth/authSlice'
 import { isNewRecipe } from '../features/recipes/recent'
 import { iconForDifficulty, isHardDifficulty } from '../features/recipes/difficulty'
 import type { Recipe } from '../features/recipes/types'
@@ -11,6 +12,7 @@ import type { Recipe } from '../features/recipes/types'
 /** Wide, landscape list item used on the Favourites page (image left, info right). */
 export default function FavoriteRow({ recipe }: { recipe: Recipe }) {
   const dispatch = useAppDispatch()
+  const canEdit = useAppSelector(selectCanEdit)
   const to = `/recipe/${recipe.slug}`
   const hard = isHardDifficulty(recipe.difficulty)
 
@@ -31,6 +33,7 @@ export default function FavoriteRow({ recipe }: { recipe: Recipe }) {
       <div className="flex flex-col justify-center grow gap-sm p-md md:px-lg min-w-0">
         <div className="flex items-start justify-between gap-sm">
           <TagList tags={recipe.tags} isNew={isNewRecipe(recipe.createdAt)} />
+          {canEdit && (
           <button
             type="button"
             aria-pressed={recipe.favorite}
@@ -49,6 +52,7 @@ export default function FavoriteRow({ recipe }: { recipe: Recipe }) {
               className={recipe.favorite ? 'animate-pop' : ''}
             />
           </button>
+          )}
         </div>
 
         <Link to={to}>

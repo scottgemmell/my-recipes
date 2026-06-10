@@ -1,7 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit'
 import recipesReducer from '../features/recipes/recipesSlice'
 import ingredientsReducer from '../features/ingredients/ingredientsSlice'
-import { attachRestSync, type AppData } from '../features/api'
+import authReducer, { loadSession } from '../features/auth/authSlice'
+import { attachRestSync, setAuthToken, type AppData } from '../features/api'
 
 // Ingredient-checklist ticks are UI state, not recipe data — they stay in
 // localStorage rather than the REST backend.
@@ -22,14 +23,21 @@ function loadChecked(): Record<string, string[]> {
  * Subsequent changes are mirrored back via attachRestSync.
  */
 export function createAppStore(data: AppData) {
+  // Restore a still-valid sign-in from this browser session, and arm the API
+  // client with its token so writes carry authorization immediately.
+  const session = loadSession()
+  setAuthToken(session?.credential ?? null)
+
   const store = configureStore({
     reducer: {
       recipes: recipesReducer,
       ingredients: ingredientsReducer,
+      auth: authReducer,
     },
     preloadedState: {
       recipes: { items: data.recipes, checkedIngredients: loadChecked() },
       ingredients: { items: data.ingredients },
+      auth: { session },
     },
   })
 

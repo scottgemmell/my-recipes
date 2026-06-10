@@ -10,11 +10,17 @@ import type { CatalogIngredient } from './ingredients/ingredientsData'
  */
 const API_BASE = '/api'
 
+// Google ID token of the signed-in owner; attached to write requests so the
+// API middleware can verify who is asking. Set from the sign-in flow.
+let authToken: string | null = null
+export function setAuthToken(token: string | null): void {
+  authToken = token
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(`${API_BASE}${path}`, {
-    headers: { 'Content-Type': 'application/json' },
-    ...init,
-  })
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+  if (authToken) headers.Authorization = `Bearer ${authToken}`
+  const res = await fetch(`${API_BASE}${path}`, { headers, ...init })
   if (!res.ok) throw new Error(`${init?.method ?? 'GET'} ${path} -> ${res.status}`)
   return res.json() as Promise<T>
 }

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
-import { useAppDispatch } from '../app/hooks'
+import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { toggleFavorite } from '../features/recipes/recipesSlice'
+import { selectCanEdit } from '../features/auth/authSlice'
 import type { Recipe } from '../features/recipes/types'
 import Icon from './Icon'
 import RecipeImage from './RecipeImage'
@@ -14,6 +15,8 @@ interface RecipeCardProps {
 
 function FavoriteButton({ recipe }: RecipeCardProps) {
   const dispatch = useAppDispatch()
+  const canEdit = useAppSelector(selectCanEdit)
+  if (!canEdit) return null
   return (
     <button
       type="button"

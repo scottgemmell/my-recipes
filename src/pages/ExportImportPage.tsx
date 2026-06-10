@@ -4,6 +4,7 @@ import Footer from '../components/Footer'
 import Icon from '../components/Icon'
 import { useAppSelector } from '../app/hooks'
 import { replaceAll } from '../features/api'
+import { selectCanEdit } from '../features/auth/authSlice'
 
 interface PendingImport {
   json: string
@@ -15,6 +16,7 @@ interface PendingImport {
 export default function ExportImportPage() {
   const recipes = useAppSelector((s) => s.recipes)
   const ingredients = useAppSelector((s) => s.ingredients)
+  const canEdit = useAppSelector(selectCanEdit)
   const fileRef = useRef<HTMLInputElement>(null)
   const [pending, setPending] = useState<PendingImport | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -115,7 +117,8 @@ export default function ExportImportPage() {
             </button>
           </section>
 
-          {/* Import */}
+          {/* Import (owner only — it rewrites the backend) */}
+          {canEdit && (
           <section className="flex flex-col gap-sm pt-md border-t border-outline-variant/30">
             <h2 className="font-headline-sm text-headline-sm text-on-surface">Import a backup</h2>
             <p className="font-body text-body-md text-on-surface-variant">
@@ -176,6 +179,7 @@ export default function ExportImportPage() {
               </div>
             )}
           </section>
+          )}
         </div>
       </main>
 

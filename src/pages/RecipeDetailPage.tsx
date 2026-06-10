@@ -11,6 +11,7 @@ import { isNewRecipe } from '../features/recipes/recent'
 import { iconForDifficulty, isHardDifficulty } from '../features/recipes/difficulty'
 import { selectCatalog } from '../features/ingredients/ingredientsSlice'
 import { galleryForRecipe } from '../features/ingredients/gallery'
+import { selectCanEdit } from '../features/auth/authSlice'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import {
   deleteRecipe,
@@ -52,6 +53,7 @@ export default function RecipeDetailPage() {
   const recipe = useAppSelector(selectRecipeBySlug(slug))
   const checked = useAppSelector(selectCheckedIngredients(recipe?.id ?? ''))
   const catalog = useAppSelector(selectCatalog)
+  const canEdit = useAppSelector(selectCanEdit)
 
   const [confirmOpen, setConfirmOpen] = useState(false)
 
@@ -135,6 +137,7 @@ export default function RecipeDetailPage() {
               <p className="font-body text-body-lg text-on-surface-variant max-w-3xl">
                 {recipe.description}
               </p>
+              {canEdit && (
               <div className="flex flex-wrap items-center gap-sm">
                 <Link
                   to={`/recipe/${recipe.slug}/edit`}
@@ -150,6 +153,7 @@ export default function RecipeDetailPage() {
                   <Icon name="delete" className="text-[18px]" /> Delete Recipe
                 </button>
               </div>
+              )}
               {/* Meta Info */}
               <div className="flex flex-wrap items-center gap-y-md gap-x-lg pt-md mt-sm border-t border-outline-variant/30">
                 <MetaItem icon="schedule" label="Total Time" value={recipe.time} />

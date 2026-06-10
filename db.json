@@ -118,7 +118,7 @@
       "servingsIcon": "restaurant",
       "difficultyIcon": "signal_cellular_alt_2_bar",
       "calories": "520 kcal",
-      "favorite": false,
+      "favorite": true,
       "ingredients": [
         {
           "id": "i1",
@@ -405,7 +405,7 @@
         "Sweet",
         "Quick"
       ],
-      "excerpt": "Tall, golden, cloud-soft pancakes — perfect with butter and maple syrup.",
+      "excerpt": "Thick American-style pancakes that rise tall and stay fluffy. A quick batter, a hot pan, and a stack worth waking up for.",
       "description": "Thick American-style pancakes that rise tall and stay fluffy. A quick batter, a hot pan, and a stack worth waking up for.",
       "image": "/src/assets/images/recipes/fluffy-pancakes.jpg",
       "imageAlt": "Fluffy Pancakes",
@@ -418,9 +418,14 @@
       "favorite": false,
       "ingredients": [
         {
-          "id": "i5",
-          "amount": "30 g",
-          "ingredientId": "butter"
+          "id": "i1",
+          "ingredientId": "butter",
+          "amount": "30 g"
+        },
+        {
+          "id": "i2",
+          "ingredientId": "caster-sugar",
+          "amount": ""
         }
       ],
       "steps": [

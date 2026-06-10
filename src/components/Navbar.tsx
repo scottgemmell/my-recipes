@@ -1,5 +1,8 @@
 import { Link } from 'react-router-dom'
 import Icon from './Icon'
+import GoogleSignIn from './GoogleSignIn'
+import { useAppSelector } from '../app/hooks'
+import { selectCanEdit } from '../features/auth/authSlice'
 
 const navLinks = [
   { label: 'Browse', to: '/' },
@@ -13,6 +16,7 @@ interface NavbarProps {
 }
 
 export default function Navbar({ active = 'Browse' }: NavbarProps) {
+  const canEdit = useAppSelector(selectCanEdit)
   return (
     <nav className="w-full top-0 sticky border-b z-50 bg-surface-container-lowest border-outline-variant/30">
       <div className="flex justify-between items-center h-20 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
@@ -50,18 +54,23 @@ export default function Navbar({ active = 'Browse' }: NavbarProps) {
 
         {/* Actions */}
         <div className="flex items-center gap-sm">
-          <Link
-            to="/add-ingredient"
-            className="hidden md:block border border-primary text-primary px-md py-[12px] rounded font-label-lg text-label-lg cursor-pointer active:opacity-70 hover:bg-surface-container-low transition-all duration-200"
-          >
-            Add Ingredient
-          </Link>
-          <Link
-            to="/add"
-            className="hidden md:block bg-primary text-on-primary px-md py-[12px] rounded font-label-lg text-label-lg cursor-pointer active:opacity-70 hover:brightness-110 transition-all duration-200"
-          >
-            Add Recipe
-          </Link>
+          {canEdit && (
+            <>
+              <Link
+                to="/add-ingredient"
+                className="hidden md:block border border-primary text-primary px-md py-[12px] rounded font-label-lg text-label-lg cursor-pointer active:opacity-70 hover:bg-surface-container-low transition-all duration-200"
+              >
+                Add Ingredient
+              </Link>
+              <Link
+                to="/add"
+                className="hidden md:block bg-primary text-on-primary px-md py-[12px] rounded font-label-lg text-label-lg cursor-pointer active:opacity-70 hover:brightness-110 transition-all duration-200"
+              >
+                Add Recipe
+              </Link>
+            </>
+          )}
+          <GoogleSignIn />
           <button className="md:hidden text-secondary p-xs">
             <Icon name="menu" />
           </button>

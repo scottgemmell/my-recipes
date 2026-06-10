@@ -1,3 +1,31 @@
+export type UploadResult =
+  | { kind: 'asset'; key: string; url: string }
+  | { kind: 'data'; dataUrl: string }
+
+/**
+ * Upload an ingredient image. In dev this POSTs to the upload endpoint, which
+ * writes the file into assets/images/ingredients and returns its key — so the
+ * ingredient stores a filename, not a data URL. If the endpoint isn't available
+ * (e.g. a static production build) it falls back to a data URL.
+ */
+export async function uploadIngredientImage(file: File, name: string): Promise<UploadResult> {
+  const dataUrl = await fileToDataUrl(file, 800)
+  try {
+    const res = await fetch('/__ingredient-upload', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: name || 'ingredient', dataUrl }),
+    })
+    if (res.ok) {
+      const json = (await res.json()) as { key?: string; url?: string }
+      if (json.key && json.url) return { kind: 'asset', key: json.key, url: json.url }
+    }
+  } catch {
+    /* endpoint unavailable — fall back to a data URL */
+  }
+  return { kind: 'data', dataUrl }
+}
+
 /**
  * Read an image File and return a downscaled JPEG data URL.
  *

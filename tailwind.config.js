@@ -46,7 +46,7 @@ export default {
         'surface-bright': '#f7faf4',
         'inverse-surface': '#2d312d',
         'on-tertiary-fixed-variant': '#743041',
-        tertiary: '#8e4555',
+        tertiary: '#9aa09a',
         'on-error': '#ffffff',
         'on-background': '#181d19',
         primary: '#236939',

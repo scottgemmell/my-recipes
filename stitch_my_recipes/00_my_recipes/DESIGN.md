@@ -25,7 +25,7 @@ colors:
   on-secondary: '#ffffff'
   secondary-container: '#cceacd'
   on-secondary-container: '#506b54'
-  tertiary: '#8e4555'
+  tertiary: '#9aa09a'
   on-tertiary: '#ffffff'
   tertiary-container: '#ac5c6d'
   on-tertiary-container: '#fffbff'
@@ -123,7 +123,7 @@ The palette is rooted in nature, using a base of **Warm Off-Whites** (`#fbf9f8`)
 
 - **Primary (Meadow Green):** `#418552` is used for brand identity, primary actions, and active states. It signals growth and freshness.
 - **Secondary (Muted Sage):** `#637e66` is used for supporting text and icons, providing enough contrast for legibility while maintaining the muted organic tone.
-- **Tertiary (Soft Blossom):** A warm pink `#ffa2b4` is used sparingly for special callouts, seasonal badges, or secondary success indicators to provide a sophisticated pop of color.
+- **Tertiary (Soft Stone):** A light grey `#9aa09a` — lighter than the neutral stone (`#747873`) — used sparingly for de-emphasized hint text and subtle borders.
 - **Neutral/Surface:** A range of stone tones derived from `#747873` are used for borders and container backgrounds to create subtle structural separation.
 
 ## Typography

@@ -40,7 +40,11 @@ export interface Recipe {
   calories?: string
   ingredients: Ingredient[]
   steps: Step[]
-  gallery: GalleryItem[]
+  /**
+   * Legacy stored gallery. Galleries are now derived from the ingredients'
+   * catalog images (see galleryForRecipe); the load migration drops this.
+   */
+  gallery?: GalleryItem[]
   /** Marks the large hero card in the collection grid. */
   featured?: boolean
   favorite: boolean

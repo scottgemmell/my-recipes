@@ -1,7 +1,6 @@
 import { useRef } from 'react'
 import Icon from './Icon'
 import { INGREDIENT_IMAGES } from '../features/ingredients/imageRegistry'
-import { fileToDataUrl } from '../features/ingredients/imageUpload'
 
 /** Small ingredient image preview (or a placeholder when none is set). */
 export function IngredientThumb({ src, alt }: { src?: string; alt: string }) {
@@ -17,26 +16,17 @@ export function IngredientThumb({ src, alt }: { src?: string; alt: string }) {
 export function ImagePickerPanel({
   title,
   onPick,
-  onUpload,
+  onUploadFile,
   onClear,
   onClose,
 }: {
   title: string
   onPick: (key: string) => void
-  onUpload: (dataUrl: string) => void
+  onUploadFile: (file: File) => void
   onClear: () => void
   onClose: () => void
 }) {
   const fileRef = useRef<HTMLInputElement>(null)
-
-  const handleFile = async (file?: File) => {
-    if (!file) return
-    try {
-      onUpload(await fileToDataUrl(file))
-    } catch {
-      // ignore unreadable / non-image files
-    }
-  }
 
   return (
     <div className="border border-outline-variant rounded-lg p-sm bg-surface-container-low flex flex-col gap-sm">
@@ -66,7 +56,11 @@ export function ImagePickerPanel({
           type="file"
           accept="image/*"
           className="hidden"
-          onChange={(e) => handleFile(e.target.files?.[0])}
+          onChange={(e) => {
+            const file = e.target.files?.[0]
+            if (file) onUploadFile(file)
+            e.target.value = ''
+          }}
         />
       </div>
 

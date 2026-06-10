@@ -619,7 +619,6 @@ export default function AddRecipePage() {
       category: 'Recipe',
       servingsIcon: 'restaurant',
       difficultyIcon: 'signal_cellular_alt',
-      gallery: [],
       favorite: false,
       createdAt: new Date().toISOString(),
       ...editable,

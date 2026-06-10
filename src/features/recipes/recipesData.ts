@@ -4,16 +4,6 @@ import chickenImage from '../../assets/images/recipes/lemon-herb-roasted-chicken
 import eggplantImage from '../../assets/images/recipes/miso-glazed-eggplant.png'
 import sourdoughImage from '../../assets/images/recipes/artisan-sourdough.png'
 import matchaImage from '../../assets/images/recipes/matcha-panna-cotta.png'
-import tomatoImg from '../../assets/images/ingredients/heirloom-tomatoes.png'
-import mozzarellaImg from '../../assets/images/ingredients/buffalo-mozzarella.png'
-import basilImg from '../../assets/images/ingredients/fresh-basil.png'
-import oliveOilImg from '../../assets/images/ingredients/extra-virgin-olive-oil.png'
-import rosemaryImg from '../../assets/images/ingredients/rosemary.png'
-import lemonImg from '../../assets/images/ingredients/lemon.png'
-import aubergineImg from '../../assets/images/ingredients/aubergine.png'
-import sesameImg from '../../assets/images/ingredients/sesame-seeds.png'
-import breadFlourImg from '../../assets/images/ingredients/bread-flour.png'
-import creamImg from '../../assets/images/ingredients/cream.png'
 // Additional dish hero photos
 import carbonaraImg from '../../assets/images/recipes/spaghetti-carbonara.jpg'
 import margheritaImg from '../../assets/images/recipes/margherita-pizza.jpg'
@@ -28,37 +18,13 @@ import falafelImg from '../../assets/images/recipes/falafel-wrap.jpg'
 import browniesImg from '../../assets/images/recipes/chocolate-brownies.jpg'
 import shakshukaImg from '../../assets/images/recipes/shakshuka.jpg'
 import greenCurryImg from '../../assets/images/recipes/thai-green-curry.jpg'
-// Additional ingredient photos
-import spaghettiImg from '../../assets/images/ingredients/spaghetti.png'
-import fettuccineImg from '../../assets/images/ingredients/fettuccine.png'
-import eggsImg from '../../assets/images/ingredients/eggs.png'
-import parmesanImg from '../../assets/images/ingredients/parmesan.png'
-import baconImg from '../../assets/images/ingredients/bacon.png'
-import plainFlourImg from '../../assets/images/ingredients/plain-flour.png'
-import mincedBeefImg from '../../assets/images/ingredients/minced-beef.png'
-import onionImg from '../../assets/images/ingredients/onion.png'
-import garlicImg from '../../assets/images/ingredients/garlic.png'
-import butterImg from '../../assets/images/ingredients/butter.png'
-import riceNoodlesImg from '../../assets/images/ingredients/rice-noodles.png'
-import prawnsImg from '../../assets/images/ingredients/prawns.png'
-import peanutsImg from '../../assets/images/ingredients/peanuts.png'
-import cucumberImg from '../../assets/images/ingredients/cucumber.png'
-import fetaImg from '../../assets/images/ingredients/feta.png'
-import redOnionImg from '../../assets/images/ingredients/red-onion.png'
-import chickpeasImg from '../../assets/images/ingredients/chickpeas.png'
-import corianderImg from '../../assets/images/ingredients/coriander.png'
-import darkChocolateImg from '../../assets/images/ingredients/dark-chocolate.png'
-import casterSugarImg from '../../assets/images/ingredients/caster-sugar.png'
-import coconutMilkImg from '../../assets/images/ingredients/coconut-milk.png'
-import chickenBreastImg from '../../assets/images/ingredients/chicken-breast.png'
-import limeImg from '../../assets/images/ingredients/lime.png'
 
 /**
  * Seed recipes for the Stitch "Culinary Zen" design.
  *
- * All imagery is bundled locally: dish hero photos under assets/images/recipes/
- * and ingredient gallery photos under assets/images/ingredients/ (the original
- * Stitch design images where available).
+ * Dish hero photos are bundled under assets/images/recipes/. Ingredient images
+ * are resolved from the ingredient catalog via each ingredient's `ingredientId`
+ * — the detail-page gallery is derived (see galleryForRecipe), not stored here.
  */
 const img = {
   // Dish hero photos (bundled locally).
@@ -67,17 +33,6 @@ const img = {
   caprese: capreseImage,
   sourdough: sourdoughImage,
   matcha: matchaImage,
-  // Ingredient photos (bundled locally).
-  rosemary: rosemaryImg,
-  lemon: lemonImg,
-  aubergine: aubergineImg,
-  sesame: sesameImg,
-  tomato: tomatoImg,
-  mozzarella: mozzarellaImg,
-  basil: basilImg,
-  oliveOil: oliveOilImg,
-  breadFlour: breadFlourImg,
-  cream: creamImg,
 }
 
 const daysAgo = (n: number): string =>
@@ -118,15 +73,15 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
     calories: '240 kcal',
     favorite: false,
     ingredients: [
-      { id: 'i1', name: 'Cannellini beans, drained', amount: '1 can' },
-      { id: 'i2', name: 'Borlotti beans, drained', amount: '1 can' },
-      { id: 'i3', name: 'Cherry tomatoes, halved', amount: '250 g' },
-      { id: 'i4', name: 'Red onion, thinly sliced', amount: '1/2' },
-      { id: 'i5', name: 'Fresh parsley, chopped', amount: '1 handful' },
-      { id: 'i6', name: 'Extra virgin olive oil', amount: '3 tbsp' },
-      { id: 'i7', name: 'Lemon, juiced', amount: '1' },
-      { id: 'i8', name: 'Garlic clove, grated', amount: '1' },
-      { id: 'i9', name: 'Sea salt and black pepper', amount: 'to taste' },
+      { id: 'i1', name: 'Cannellini beans, drained', amount: '1 can', ingredientId: 'cannellini-beans' },
+      { id: 'i2', name: 'Borlotti beans, drained', amount: '1 can', ingredientId: 'borlotti-beans' },
+      { id: 'i3', name: 'Cherry tomatoes, halved', amount: '250 g', ingredientId: 'heirloom-tomatoes' },
+      { id: 'i4', name: 'Red onion, thinly sliced', amount: '1/2', ingredientId: 'red-onion' },
+      { id: 'i5', name: 'Fresh parsley, chopped', amount: '1 handful', ingredientId: 'parsley' },
+      { id: 'i6', name: 'Extra virgin olive oil', amount: '3 tbsp', ingredientId: 'extra-virgin-olive-oil' },
+      { id: 'i7', name: 'Lemon, juiced', amount: '1', ingredientId: 'lemon' },
+      { id: 'i8', name: 'Garlic clove, grated', amount: '1', ingredientId: 'garlic' },
+      { id: 'i9', name: 'Sea salt and black pepper', amount: 'to taste', ingredientId: 'salt-and-pepper' },
     ],
     steps: [
       {
@@ -145,7 +100,6 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
           'Toss gently to coat, season to taste, and rest for 10 minutes so the flavours meld before serving.',
       },
     ],
-    gallery: [],
   },
   {
     id: '1',
@@ -168,12 +122,12 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
     calories: '520 kcal',
     favorite: false,
     ingredients: [
-      { id: 'i1', name: 'Whole chicken', amount: '1 (1.5kg)' },
-      { id: 'i2', name: 'Lemons, halved', amount: '2' },
-      { id: 'i3', name: 'Fresh rosemary sprigs', amount: '4' },
-      { id: 'i4', name: 'Garlic cloves', amount: '6' },
-      { id: 'i5', name: 'Extra virgin olive oil', amount: '3 tbsp' },
-      { id: 'i6', name: 'Sea salt and black pepper', amount: 'to taste' },
+      { id: 'i1', name: 'Whole chicken', amount: '1 (1.5kg)', ingredientId: 'whole-chicken' },
+      { id: 'i2', name: 'Lemons, halved', amount: '2', ingredientId: 'lemon' },
+      { id: 'i3', name: 'Fresh rosemary sprigs', amount: '4', ingredientId: 'rosemary' },
+      { id: 'i4', name: 'Garlic cloves', amount: '6', ingredientId: 'garlic' },
+      { id: 'i5', name: 'Extra virgin olive oil', amount: '3 tbsp', ingredientId: 'extra-virgin-olive-oil' },
+      { id: 'i6', name: 'Sea salt and black pepper', amount: 'to taste', ingredientId: 'salt-and-pepper' },
     ],
     steps: [
       {
@@ -197,10 +151,6 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
           'Let the chicken rest for 15 minutes before carving so the juices settle. Serve with the pan drippings.',
       },
     ],
-    gallery: [
-      { label: 'Fresh Rosemary', image: img.rosemary },
-      { label: 'Lemons', image: img.lemon },
-    ],
   },
   {
     id: '2',
@@ -223,12 +173,12 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
     calories: '210 kcal',
     favorite: false,
     ingredients: [
-      { id: 'i1', name: 'Japanese eggplant, halved', amount: '2' },
-      { id: 'i2', name: 'White miso paste', amount: '3 tbsp' },
-      { id: 'i3', name: 'Mirin', amount: '2 tbsp' },
-      { id: 'i4', name: 'Toasted sesame oil', amount: '1 tbsp' },
-      { id: 'i5', name: 'Scallions, sliced', amount: '2' },
-      { id: 'i6', name: 'Toasted sesame seeds', amount: '1 tsp' },
+      { id: 'i1', name: 'Japanese eggplant, halved', amount: '2', ingredientId: 'aubergine' },
+      { id: 'i2', name: 'White miso paste', amount: '3 tbsp', ingredientId: 'miso-paste' },
+      { id: 'i3', name: 'Mirin', amount: '2 tbsp', ingredientId: 'mirin' },
+      { id: 'i4', name: 'Toasted sesame oil', amount: '1 tbsp', ingredientId: 'sesame-oil' },
+      { id: 'i5', name: 'Scallions, sliced', amount: '2', ingredientId: 'scallions' },
+      { id: 'i6', name: 'Toasted sesame seeds', amount: '1 tsp', ingredientId: 'sesame-seeds' },
     ],
     steps: [
       {
@@ -251,10 +201,6 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
         description:
           'Scatter with sliced scallions and toasted sesame seeds. Serve warm.',
       },
-    ],
-    gallery: [
-      { label: 'Aubergine', image: img.aubergine },
-      { label: 'Sesame Seeds', image: img.sesame },
     ],
   },
   {
@@ -283,7 +229,7 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
       { id: 'i2', name: 'Buffalo Mozzarella, sliced', amount: '8 oz', ingredientId: 'buffalo-mozzarella' },
       { id: 'i3', name: 'Fresh Basil leaves', amount: '1 bunch', ingredientId: 'fresh-basil' },
       { id: 'i4', name: 'Extra Virgin Olive Oil', amount: '2 tbsp', ingredientId: 'extra-virgin-olive-oil' },
-      { id: 'i5', name: 'Sea salt and black pepper', amount: 'to taste' },
+      { id: 'i5', name: 'Sea salt and black pepper', amount: 'to taste', ingredientId: 'salt-and-pepper' },
     ],
     steps: [
       {
@@ -306,8 +252,6 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
           'Sprinkle with a pinch of sea salt and a few grinds of black pepper. Serve immediately at room temperature for the best flavor.',
       },
     ],
-    // Gallery is derived from the catalog-linked ingredients above.
-    gallery: [],
   },
   {
     id: '4',
@@ -330,10 +274,10 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
     calories: '180 kcal / slice',
     favorite: false,
     ingredients: [
-      { id: 'i1', name: 'Bread flour', amount: '500 g' },
-      { id: 'i2', name: 'Active sourdough starter', amount: '100 g' },
-      { id: 'i3', name: 'Water', amount: '350 g' },
-      { id: 'i4', name: 'Fine sea salt', amount: '10 g' },
+      { id: 'i1', name: 'Bread flour', amount: '500 g', ingredientId: 'bread-flour' },
+      { id: 'i2', name: 'Active sourdough starter', amount: '100 g', ingredientId: 'sourdough-starter' },
+      { id: 'i3', name: 'Water', amount: '350 g', ingredientId: 'water' },
+      { id: 'i4', name: 'Fine sea salt', amount: '10 g', ingredientId: 'sea-salt' },
     ],
     steps: [
       {
@@ -357,7 +301,6 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
           'Score the chilled dough and bake in a preheated Dutch oven at 230°C until deeply golden.',
       },
     ],
-    gallery: [{ label: 'Bread Flour', image: img.breadFlour }],
   },
   {
     id: '5',
@@ -380,11 +323,11 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
     calories: '240 kcal',
     favorite: false,
     ingredients: [
-      { id: 'i1', name: 'Heavy cream', amount: '400 ml' },
-      { id: 'i2', name: 'Whole milk', amount: '100 ml' },
-      { id: 'i3', name: 'Culinary matcha powder', amount: '2 tsp' },
-      { id: 'i4', name: 'Caster sugar', amount: '50 g' },
-      { id: 'i5', name: 'Gelatin sheets', amount: '3' },
+      { id: 'i1', name: 'Heavy cream', amount: '400 ml', ingredientId: 'cream' },
+      { id: 'i2', name: 'Whole milk', amount: '100 ml', ingredientId: 'milk' },
+      { id: 'i3', name: 'Culinary matcha powder', amount: '2 tsp', ingredientId: 'matcha' },
+      { id: 'i4', name: 'Caster sugar', amount: '50 g', ingredientId: 'caster-sugar' },
+      { id: 'i5', name: 'Gelatin sheets', amount: '3', ingredientId: 'gelatin' },
     ],
     steps: [
       {
@@ -407,7 +350,6 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
           'Pour into glasses and chill for at least 4 hours until just set with a gentle wobble.',
       },
     ],
-    gallery: [{ label: 'Heavy Cream', image: img.cream }],
   },
   {
     id: '6',
@@ -429,15 +371,15 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
     calories: '430 kcal',
     favorite: false,
     ingredients: [
-      { id: 'i1', name: 'Arborio rice', amount: '300 g' },
-      { id: 'i2', name: 'Mixed wild mushrooms', amount: '400 g' },
-      { id: 'i3', name: 'Shallot, finely diced', amount: '1' },
-      { id: 'i4', name: 'Garlic cloves, minced', amount: '2' },
-      { id: 'i5', name: 'Dry white wine', amount: '125 ml' },
-      { id: 'i6', name: 'Warm vegetable stock', amount: '1 L' },
-      { id: 'i7', name: 'Parmesan, grated', amount: '60 g' },
-      { id: 'i8', name: 'Butter', amount: '30 g' },
-      { id: 'i9', name: 'Fresh thyme', amount: '2 sprigs' },
+      { id: 'i1', name: 'Arborio rice', amount: '300 g', ingredientId: 'arborio-rice' },
+      { id: 'i2', name: 'Mixed wild mushrooms', amount: '400 g', ingredientId: 'mushrooms' },
+      { id: 'i3', name: 'Shallot, finely diced', amount: '1', ingredientId: 'shallot' },
+      { id: 'i4', name: 'Garlic cloves, minced', amount: '2', ingredientId: 'garlic' },
+      { id: 'i5', name: 'Dry white wine', amount: '125 ml', ingredientId: 'white-wine' },
+      { id: 'i6', name: 'Warm vegetable stock', amount: '1 L', ingredientId: 'vegetable-stock' },
+      { id: 'i7', name: 'Parmesan, grated', amount: '60 g', ingredientId: 'parmesan' },
+      { id: 'i8', name: 'Butter', amount: '30 g', ingredientId: 'butter' },
+      { id: 'i9', name: 'Fresh thyme', amount: '2 sprigs', ingredientId: 'thyme' },
     ],
     steps: [
       {
@@ -461,7 +403,6 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
           'Fold the mushrooms, parmesan, butter, and thyme through the risotto. Rest for two minutes, then serve.',
       },
     ],
-    gallery: [],
   },
   {
     id: '7',
@@ -483,13 +424,13 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
     calories: '180 kcal',
     favorite: false,
     ingredients: [
-      { id: 'i1', name: 'Ripe vine tomatoes', amount: '1 kg' },
-      { id: 'i2', name: 'Red onion, quartered', amount: '1' },
-      { id: 'i3', name: 'Garlic cloves', amount: '4' },
-      { id: 'i4', name: 'Extra virgin olive oil', amount: '3 tbsp' },
-      { id: 'i5', name: 'Vegetable stock', amount: '500 ml' },
-      { id: 'i6', name: 'Fresh basil', amount: '1 large handful' },
-      { id: 'i7', name: 'Sea salt and black pepper', amount: 'to taste' },
+      { id: 'i1', name: 'Ripe vine tomatoes', amount: '1 kg', ingredientId: 'heirloom-tomatoes' },
+      { id: 'i2', name: 'Red onion, quartered', amount: '1', ingredientId: 'red-onion' },
+      { id: 'i3', name: 'Garlic cloves', amount: '4', ingredientId: 'garlic' },
+      { id: 'i4', name: 'Extra virgin olive oil', amount: '3 tbsp', ingredientId: 'extra-virgin-olive-oil' },
+      { id: 'i5', name: 'Vegetable stock', amount: '500 ml', ingredientId: 'vegetable-stock' },
+      { id: 'i6', name: 'Fresh basil', amount: '1 large handful', ingredientId: 'fresh-basil' },
+      { id: 'i7', name: 'Sea salt and black pepper', amount: 'to taste', ingredientId: 'salt-and-pepper' },
     ],
     steps: [
       {
@@ -513,7 +454,6 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
           'Season to taste and finish with the remaining torn basil and a swirl of olive oil.',
       },
     ],
-    gallery: [],
   },
   {
     id: '8',
@@ -535,13 +475,13 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
     calories: '90 kcal',
     favorite: false,
     ingredients: [
-      { id: 'i1', name: 'Oat milk', amount: '300 ml' },
-      { id: 'i2', name: 'Ground turmeric', amount: '1 tsp' },
-      { id: 'i3', name: 'Fresh ginger, grated', amount: '1 tsp' },
-      { id: 'i4', name: 'Ground cinnamon', amount: '1/4 tsp' },
-      { id: 'i5', name: 'Black pepper', amount: '1 pinch' },
-      { id: 'i6', name: 'Maple syrup', amount: '1 tsp' },
-      { id: 'i7', name: 'Vanilla extract', amount: '1/4 tsp' },
+      { id: 'i1', name: 'Oat milk', amount: '300 ml', ingredientId: 'oat-milk' },
+      { id: 'i2', name: 'Ground turmeric', amount: '1 tsp', ingredientId: 'turmeric' },
+      { id: 'i3', name: 'Fresh ginger, grated', amount: '1 tsp', ingredientId: 'ginger' },
+      { id: 'i4', name: 'Ground cinnamon', amount: '1/4 tsp', ingredientId: 'cinnamon' },
+      { id: 'i5', name: 'Black pepper', amount: '1 pinch', ingredientId: 'black-pepper' },
+      { id: 'i6', name: 'Maple syrup', amount: '1 tsp', ingredientId: 'maple-syrup' },
+      { id: 'i7', name: 'Vanilla extract', amount: '1/4 tsp', ingredientId: 'vanilla' },
     ],
     steps: [
       {
@@ -560,7 +500,6 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
           'Whisk briskly until light and frothy, then pour into your favourite mug.',
       },
     ],
-    gallery: [],
   },
   {
     id: '10',
@@ -582,11 +521,11 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
     calories: '620 kcal',
     favorite: false,
     ingredients: [
-      { id: 'i1', name: 'Spaghetti', amount: '200 g' },
-      { id: 'i2', name: 'Pancetta or bacon, diced', amount: '120 g' },
-      { id: 'i3', name: 'Egg yolks', amount: '3' },
-      { id: 'i4', name: 'Pecorino or parmesan, grated', amount: '50 g' },
-      { id: 'i5', name: 'Black pepper', amount: 'to taste' },
+      { id: 'i1', name: 'Spaghetti', amount: '200 g', ingredientId: 'spaghetti' },
+      { id: 'i2', name: 'Pancetta or bacon, diced', amount: '120 g', ingredientId: 'bacon' },
+      { id: 'i3', name: 'Egg yolks', amount: '3', ingredientId: 'eggs' },
+      { id: 'i4', name: 'Pecorino or parmesan, grated', amount: '50 g', ingredientId: 'parmesan' },
+      { id: 'i5', name: 'Black pepper', amount: 'to taste', ingredientId: 'black-pepper' },
     ],
     steps: [
       {
@@ -608,12 +547,6 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
           'Drain the pasta into the pancetta, then stir through the egg mix off the heat, loosening with pasta water to a silky sauce.',
       },
     ],
-    gallery: [
-      { label: 'Spaghetti', image: spaghettiImg },
-      { label: 'Eggs', image: eggsImg },
-      { label: 'Pancetta', image: baconImg },
-      { label: 'Parmesan', image: parmesanImg },
-    ],
   },
   {
     id: '11',
@@ -634,11 +567,11 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
     calories: '780 kcal',
     favorite: false,
     ingredients: [
-      { id: 'i1', name: 'Pizza dough', amount: '1 ball' },
-      { id: 'i2', name: 'Passata or crushed tomatoes', amount: '100 ml' },
-      { id: 'i3', name: 'Fresh mozzarella, torn', amount: '125 g' },
-      { id: 'i4', name: 'Fresh basil', amount: 'a few leaves' },
-      { id: 'i5', name: 'Extra virgin olive oil', amount: 'to drizzle' },
+      { id: 'i1', name: 'Pizza dough', amount: '1 ball', ingredientId: 'pizza-dough' },
+      { id: 'i2', name: 'Passata or crushed tomatoes', amount: '100 ml', ingredientId: 'heirloom-tomatoes' },
+      { id: 'i3', name: 'Fresh mozzarella, torn', amount: '125 g', ingredientId: 'buffalo-mozzarella' },
+      { id: 'i4', name: 'Fresh basil', amount: 'a few leaves', ingredientId: 'fresh-basil' },
+      { id: 'i5', name: 'Extra virgin olive oil', amount: 'to drizzle', ingredientId: 'extra-virgin-olive-oil' },
     ],
     steps: [
       {
@@ -654,11 +587,6 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
         title: 'Finish',
         description: 'Scatter with fresh basil and a drizzle of olive oil before serving.',
       },
-    ],
-    gallery: [
-      { label: 'Tomatoes', image: tomatoImg },
-      { label: 'Mozzarella', image: mozzarellaImg },
-      { label: 'Fresh Basil', image: basilImg },
     ],
   },
   {
@@ -680,12 +608,12 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
     calories: '560 kcal',
     favorite: false,
     ingredients: [
-      { id: 'i1', name: 'Lasagne sheets', amount: '12' },
-      { id: 'i2', name: 'Minced beef', amount: '500 g' },
-      { id: 'i3', name: 'Tinned tomatoes', amount: '800 g' },
-      { id: 'i4', name: 'Onion, diced', amount: '1' },
-      { id: 'i5', name: 'Butter, flour and milk', amount: 'for the béchamel' },
-      { id: 'i6', name: 'Parmesan, grated', amount: '60 g' },
+      { id: 'i1', name: 'Lasagne sheets', amount: '12', ingredientId: 'lasagne-sheets' },
+      { id: 'i2', name: 'Minced beef', amount: '500 g', ingredientId: 'minced-beef' },
+      { id: 'i3', name: 'Tinned tomatoes', amount: '800 g', ingredientId: 'heirloom-tomatoes' },
+      { id: 'i4', name: 'Onion, diced', amount: '1', ingredientId: 'onion' },
+      { id: 'i5', name: 'Butter, flour and milk', amount: 'for the béchamel', ingredientId: 'bechamel' },
+      { id: 'i6', name: 'Parmesan, grated', amount: '60 g', ingredientId: 'parmesan' },
     ],
     steps: [
       {
@@ -708,12 +636,6 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
           'Bake at 190°C for 40 minutes until golden and bubbling, then rest before slicing.',
       },
     ],
-    gallery: [
-      { label: 'Minced Beef', image: mincedBeefImg },
-      { label: 'Tomatoes', image: tomatoImg },
-      { label: 'Onion', image: onionImg },
-      { label: 'Parmesan', image: parmesanImg },
-    ],
   },
   {
     id: '13',
@@ -735,11 +657,11 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
     calories: '420 kcal',
     favorite: false,
     ingredients: [
-      { id: 'i1', name: 'Penne', amount: '320 g' },
-      { id: 'i2', name: 'Tinned tomatoes', amount: '400 g' },
-      { id: 'i3', name: 'Garlic, sliced', amount: '3 cloves' },
-      { id: 'i4', name: 'Red chilli flakes', amount: '1 tsp' },
-      { id: 'i5', name: 'Extra virgin olive oil', amount: '3 tbsp' },
+      { id: 'i1', name: 'Penne', amount: '320 g', ingredientId: 'penne' },
+      { id: 'i2', name: 'Tinned tomatoes', amount: '400 g', ingredientId: 'heirloom-tomatoes' },
+      { id: 'i3', name: 'Garlic, sliced', amount: '3 cloves', ingredientId: 'garlic' },
+      { id: 'i4', name: 'Red chilli flakes', amount: '1 tsp', ingredientId: 'chilli-flakes' },
+      { id: 'i5', name: 'Extra virgin olive oil', amount: '3 tbsp', ingredientId: 'extra-virgin-olive-oil' },
     ],
     steps: [
       {
@@ -754,11 +676,6 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
         title: 'Toss',
         description: 'Toss the cooked penne through the sauce, loosening with a little pasta water.',
       },
-    ],
-    gallery: [
-      { label: 'Tomatoes', image: tomatoImg },
-      { label: 'Garlic', image: garlicImg },
-      { label: 'Olive Oil', image: oliveOilImg },
     ],
   },
   {
@@ -780,11 +697,11 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
     calories: '590 kcal',
     favorite: false,
     ingredients: [
-      { id: 'i1', name: 'Spaghetti', amount: '400 g' },
-      { id: 'i2', name: 'Minced beef', amount: '500 g' },
-      { id: 'i3', name: 'Tinned tomatoes', amount: '800 g' },
-      { id: 'i4', name: 'Onion, diced', amount: '1' },
-      { id: 'i5', name: 'Garlic, minced', amount: '2 cloves' },
+      { id: 'i1', name: 'Spaghetti', amount: '400 g', ingredientId: 'spaghetti' },
+      { id: 'i2', name: 'Minced beef', amount: '500 g', ingredientId: 'minced-beef' },
+      { id: 'i3', name: 'Tinned tomatoes', amount: '800 g', ingredientId: 'heirloom-tomatoes' },
+      { id: 'i4', name: 'Onion, diced', amount: '1', ingredientId: 'onion' },
+      { id: 'i5', name: 'Garlic, minced', amount: '2 cloves', ingredientId: 'garlic' },
     ],
     steps: [
       {
@@ -796,12 +713,6 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
         description: 'Return the beef, add the tomatoes, and simmer gently for an hour.',
       },
       { title: 'Serve', description: 'Season well and spoon over freshly cooked spaghetti.' },
-    ],
-    gallery: [
-      { label: 'Spaghetti', image: spaghettiImg },
-      { label: 'Minced Beef', image: mincedBeefImg },
-      { label: 'Tomatoes', image: tomatoImg },
-      { label: 'Onion', image: onionImg },
     ],
   },
   {
@@ -823,11 +734,11 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
     calories: '710 kcal',
     favorite: false,
     ingredients: [
-      { id: 'i1', name: 'Fettuccine', amount: '250 g' },
-      { id: 'i2', name: 'Butter', amount: '60 g' },
-      { id: 'i3', name: 'Parmesan, finely grated', amount: '80 g' },
-      { id: 'i4', name: 'Double cream (optional)', amount: '2 tbsp' },
-      { id: 'i5', name: 'Black pepper', amount: 'to taste' },
+      { id: 'i1', name: 'Fettuccine', amount: '250 g', ingredientId: 'fettuccine' },
+      { id: 'i2', name: 'Butter', amount: '60 g', ingredientId: 'butter' },
+      { id: 'i3', name: 'Parmesan, finely grated', amount: '80 g', ingredientId: 'parmesan' },
+      { id: 'i4', name: 'Double cream (optional)', amount: '2 tbsp', ingredientId: 'cream' },
+      { id: 'i5', name: 'Black pepper', amount: 'to taste', ingredientId: 'black-pepper' },
     ],
     steps: [
       {
@@ -843,11 +754,6 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
         title: 'Serve',
         description: 'Loosen with more pasta water as needed and finish with black pepper.',
       },
-    ],
-    gallery: [
-      { label: 'Fettuccine', image: fettuccineImg },
-      { label: 'Parmesan', image: parmesanImg },
-      { label: 'Butter', image: butterImg },
     ],
   },
   {
@@ -869,11 +775,11 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
     calories: '540 kcal',
     favorite: false,
     ingredients: [
-      { id: 'i1', name: 'Flat rice noodles', amount: '200 g' },
-      { id: 'i2', name: 'Prawns', amount: '150 g' },
-      { id: 'i3', name: 'Egg', amount: '1' },
-      { id: 'i4', name: 'Roasted peanuts, crushed', amount: '40 g' },
-      { id: 'i5', name: 'Tamarind, fish sauce and sugar', amount: 'for the sauce' },
+      { id: 'i1', name: 'Flat rice noodles', amount: '200 g', ingredientId: 'rice-noodles' },
+      { id: 'i2', name: 'Prawns', amount: '150 g', ingredientId: 'prawns' },
+      { id: 'i3', name: 'Egg', amount: '1', ingredientId: 'eggs' },
+      { id: 'i4', name: 'Roasted peanuts, crushed', amount: '40 g', ingredientId: 'peanuts' },
+      { id: 'i5', name: 'Tamarind, fish sauce and sugar', amount: 'for the sauce', ingredientId: 'pad-thai-sauce' },
     ],
     steps: [
       {
@@ -888,11 +794,6 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
         title: 'Finish',
         description: 'Toss through beansprouts and serve topped with crushed peanuts and lime.',
       },
-    ],
-    gallery: [
-      { label: 'Rice Noodles', image: riceNoodlesImg },
-      { label: 'Prawns', image: prawnsImg },
-      { label: 'Peanuts', image: peanutsImg },
     ],
   },
   {
@@ -914,11 +815,11 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
     calories: '260 kcal',
     favorite: false,
     ingredients: [
-      { id: 'i1', name: 'Tomatoes, in wedges', amount: '4' },
-      { id: 'i2', name: 'Cucumber, chunked', amount: '1' },
-      { id: 'i3', name: 'Red onion, sliced', amount: '1/2' },
-      { id: 'i4', name: 'Feta', amount: '200 g' },
-      { id: 'i5', name: 'Olive oil and dried oregano', amount: 'to dress' },
+      { id: 'i1', name: 'Tomatoes, in wedges', amount: '4', ingredientId: 'heirloom-tomatoes' },
+      { id: 'i2', name: 'Cucumber, chunked', amount: '1', ingredientId: 'cucumber' },
+      { id: 'i3', name: 'Red onion, sliced', amount: '1/2', ingredientId: 'red-onion' },
+      { id: 'i4', name: 'Feta', amount: '200 g', ingredientId: 'feta' },
+      { id: 'i5', name: 'Olive oil and dried oregano', amount: 'to dress', ingredientId: 'extra-virgin-olive-oil' },
     ],
     steps: [
       {
@@ -933,12 +834,6 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
         title: 'Dress',
         description: 'Drizzle with olive oil and sprinkle generously with dried oregano.',
       },
-    ],
-    gallery: [
-      { label: 'Cucumber', image: cucumberImg },
-      { label: 'Tomatoes', image: tomatoImg },
-      { label: 'Feta', image: fetaImg },
-      { label: 'Red Onion', image: redOnionImg },
     ],
   },
   {
@@ -960,11 +855,11 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
     calories: '320 kcal',
     favorite: false,
     ingredients: [
-      { id: 'i1', name: 'Plain flour', amount: '200 g' },
-      { id: 'i2', name: 'Baking powder', amount: '2 tsp' },
-      { id: 'i3', name: 'Egg', amount: '1' },
-      { id: 'i4', name: 'Milk', amount: '250 ml' },
-      { id: 'i5', name: 'Butter, melted', amount: '30 g' },
+      { id: 'i1', name: 'Plain flour', amount: '200 g', ingredientId: 'plain-flour' },
+      { id: 'i2', name: 'Baking powder', amount: '2 tsp', ingredientId: 'baking-powder' },
+      { id: 'i3', name: 'Egg', amount: '1', ingredientId: 'eggs' },
+      { id: 'i4', name: 'Milk', amount: '250 ml', ingredientId: 'milk' },
+      { id: 'i5', name: 'Butter, melted', amount: '30 g', ingredientId: 'butter' },
     ],
     steps: [
       {
@@ -977,11 +872,6 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
         description: 'Ladle into a hot, lightly buttered pan and cook until bubbles form, then flip.',
       },
       { title: 'Stack', description: 'Stack up and serve with butter and maple syrup.' },
-    ],
-    gallery: [
-      { label: 'Plain Flour', image: plainFlourImg },
-      { label: 'Eggs', image: eggsImg },
-      { label: 'Butter', image: butterImg },
     ],
   },
   {
@@ -1003,11 +893,11 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
     calories: '480 kcal',
     favorite: false,
     ingredients: [
-      { id: 'i1', name: 'Dried chickpeas, soaked', amount: '250 g' },
-      { id: 'i2', name: 'Garlic', amount: '2 cloves' },
-      { id: 'i3', name: 'Fresh coriander and parsley', amount: '1 large handful' },
-      { id: 'i4', name: 'Cumin and ground coriander', amount: '1 tsp each' },
-      { id: 'i5', name: 'Flatbreads and tahini', amount: 'to serve' },
+      { id: 'i1', name: 'Dried chickpeas, soaked', amount: '250 g', ingredientId: 'chickpeas' },
+      { id: 'i2', name: 'Garlic', amount: '2 cloves', ingredientId: 'garlic' },
+      { id: 'i3', name: 'Fresh coriander and parsley', amount: '1 large handful', ingredientId: 'coriander' },
+      { id: 'i4', name: 'Cumin and ground coriander', amount: '1 tsp each', ingredientId: 'cumin-coriander' },
+      { id: 'i5', name: 'Flatbreads and tahini', amount: 'to serve', ingredientId: 'flatbread-tahini' },
     ],
     steps: [
       {
@@ -1022,11 +912,6 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
         title: 'Wrap',
         description: 'Stuff into warm flatbreads with salad and a generous drizzle of tahini.',
       },
-    ],
-    gallery: [
-      { label: 'Chickpeas', image: chickpeasImg },
-      { label: 'Garlic', image: garlicImg },
-      { label: 'Coriander', image: corianderImg },
     ],
   },
   {
@@ -1048,11 +933,11 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
     calories: '230 kcal / square',
     favorite: false,
     ingredients: [
-      { id: 'i1', name: 'Dark chocolate', amount: '200 g' },
-      { id: 'i2', name: 'Butter', amount: '175 g' },
-      { id: 'i3', name: 'Caster sugar', amount: '250 g' },
-      { id: 'i4', name: 'Eggs', amount: '3' },
-      { id: 'i5', name: 'Plain flour', amount: '100 g' },
+      { id: 'i1', name: 'Dark chocolate', amount: '200 g', ingredientId: 'dark-chocolate' },
+      { id: 'i2', name: 'Butter', amount: '175 g', ingredientId: 'butter' },
+      { id: 'i3', name: 'Caster sugar', amount: '250 g', ingredientId: 'caster-sugar' },
+      { id: 'i4', name: 'Eggs', amount: '3', ingredientId: 'eggs' },
+      { id: 'i5', name: 'Plain flour', amount: '100 g', ingredientId: 'plain-flour' },
     ],
     steps: [
       {
@@ -1069,12 +954,6 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
         description:
           'Bake at 180°C for about 25 minutes until set with a slight wobble; cool before cutting.',
       },
-    ],
-    gallery: [
-      { label: 'Dark Chocolate', image: darkChocolateImg },
-      { label: 'Butter', image: butterImg },
-      { label: 'Eggs', image: eggsImg },
-      { label: 'Caster Sugar', image: casterSugarImg },
     ],
   },
   {
@@ -1096,11 +975,11 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
     calories: '300 kcal',
     favorite: false,
     ingredients: [
-      { id: 'i1', name: 'Tinned tomatoes', amount: '400 g' },
-      { id: 'i2', name: 'Onion, sliced', amount: '1' },
-      { id: 'i3', name: 'Garlic', amount: '2 cloves' },
-      { id: 'i4', name: 'Eggs', amount: '4' },
-      { id: 'i5', name: 'Cumin and paprika', amount: '1 tsp each' },
+      { id: 'i1', name: 'Tinned tomatoes', amount: '400 g', ingredientId: 'heirloom-tomatoes' },
+      { id: 'i2', name: 'Onion, sliced', amount: '1', ingredientId: 'onion' },
+      { id: 'i3', name: 'Garlic', amount: '2 cloves', ingredientId: 'garlic' },
+      { id: 'i4', name: 'Eggs', amount: '4', ingredientId: 'eggs' },
+      { id: 'i5', name: 'Cumin and paprika', amount: '1 tsp each', ingredientId: 'cumin-paprika' },
     ],
     steps: [
       {
@@ -1112,12 +991,6 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
         title: 'Poach',
         description: 'Make wells, crack in the eggs, cover, and cook until just set.',
       },
-    ],
-    gallery: [
-      { label: 'Eggs', image: eggsImg },
-      { label: 'Tomatoes', image: tomatoImg },
-      { label: 'Onion', image: onionImg },
-      { label: 'Garlic', image: garlicImg },
     ],
   },
   {
@@ -1139,11 +1012,11 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
     calories: '450 kcal',
     favorite: false,
     ingredients: [
-      { id: 'i1', name: 'Chicken breast, sliced', amount: '400 g' },
-      { id: 'i2', name: 'Coconut milk', amount: '400 ml' },
-      { id: 'i3', name: 'Green curry paste', amount: '3 tbsp' },
-      { id: 'i4', name: 'Lime', amount: '1' },
-      { id: 'i5', name: 'Thai basil', amount: 'a handful' },
+      { id: 'i1', name: 'Chicken breast, sliced', amount: '400 g', ingredientId: 'chicken-breast' },
+      { id: 'i2', name: 'Coconut milk', amount: '400 ml', ingredientId: 'coconut-milk' },
+      { id: 'i3', name: 'Green curry paste', amount: '3 tbsp', ingredientId: 'green-curry-paste' },
+      { id: 'i4', name: 'Lime', amount: '1', ingredientId: 'lime' },
+      { id: 'i5', name: 'Thai basil', amount: 'a handful', ingredientId: 'thai-basil' },
     ],
     steps: [
       {
@@ -1158,11 +1031,6 @@ const seed: Omit<Recipe, 'createdAt'>[] = [
         title: 'Finish',
         description: 'Stir through lime juice and Thai basil, and serve with rice.',
       },
-    ],
-    gallery: [
-      { label: 'Coconut Milk', image: coconutMilkImg },
-      { label: 'Chicken Breast', image: chickenBreastImg },
-      { label: 'Lime', image: limeImg },
     ],
   },
 ]

@@ -27,9 +27,20 @@ const byKey: Record<string, string> = Object.fromEntries(
   INGREDIENT_IMAGES.map((i) => [i.key, i.src]),
 )
 
-/** Resolve a stored image key to the current build's asset URL. */
+// Images uploaded this session: their files exist on disk but aren't in the
+// import.meta.glob registry until a reload, so we resolve them via a dev URL
+// in the meantime. After any reload the glob picks them up natively.
+const runtimeUploads: Record<string, string> = {}
+
+/** Make a just-uploaded image (already written to assets) resolvable now. */
+export function registerUploadedImage(key: string, url: string): void {
+  runtimeUploads[key] = url
+}
+
+/** Resolve a stored image key to a displayable URL. */
 export function resolveImageKey(key?: string): string | undefined {
-  return key ? byKey[key] : undefined
+  if (!key) return undefined
+  return runtimeUploads[key] ?? byKey[key]
 }
 
 /** Resolve an ingredient's displayable image: an uploaded data URL wins, else its bundled key. */

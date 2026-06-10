@@ -26,5 +26,5 @@ export function galleryForRecipe(
       items.push({ label: cat.name, image: src })
     }
   }
-  return items.length > 0 ? items : recipe.gallery
+  return items.length > 0 ? items : (recipe.gallery ?? [])
 }

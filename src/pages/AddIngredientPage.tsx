@@ -13,7 +13,8 @@ import {
   setIngredientImage,
 } from '../features/ingredients/ingredientsSlice'
 import { makeIngredientId } from '../features/ingredients/ingredientsData'
-import { imageSrc } from '../features/ingredients/imageRegistry'
+import { imageSrc, registerUploadedImage } from '../features/ingredients/imageRegistry'
+import { uploadIngredientImage } from '../features/ingredients/imageUpload'
 
 const baseInput =
   'w-full border rounded-md px-4 py-3 font-body text-body-md text-on-surface bg-surface-container-lowest placeholder:text-outline transition-colors focus:outline-none focus:ring-1 border-outline-variant focus:ring-primary focus:border-primary'
@@ -164,14 +165,27 @@ export default function AddIngredientPage() {
                 }
                 setPicker(null)
               }}
-              onUpload={(dataUrl) => {
-                if (picker.mode === 'new') {
-                  setNewImageUrl(dataUrl)
+              onUploadFile={async (file) => {
+                const name =
+                  picker.mode === 'new'
+                    ? newName
+                    : (catalog.find((c) => c.id === picker.id)?.name ?? 'ingredient')
+                setPicker(null)
+                const result = await uploadIngredientImage(file, name)
+                if (result.kind === 'asset') {
+                  registerUploadedImage(result.key, result.url)
+                  if (picker.mode === 'new') {
+                    setNewImageKey(result.key)
+                    setNewImageUrl(undefined)
+                  } else {
+                    dispatch(setIngredientImage({ id: picker.id, imageKey: result.key }))
+                  }
+                } else if (picker.mode === 'new') {
+                  setNewImageUrl(result.dataUrl)
                   setNewImageKey(undefined)
                 } else {
-                  dispatch(setIngredientImage({ id: picker.id, imageUrl: dataUrl }))
+                  dispatch(setIngredientImage({ id: picker.id, imageUrl: result.dataUrl }))
                 }
-                setPicker(null)
               }}
               onClear={() => {
                 if (picker.mode === 'new') {

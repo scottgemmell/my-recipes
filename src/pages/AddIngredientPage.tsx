@@ -16,6 +16,7 @@ import { makeIngredientId } from '../features/ingredients/ingredientsData'
 import { selectRecipes } from '../features/recipes/recipesSlice'
 import { imageSrc, registerUploadedImage } from '../features/ingredients/imageRegistry'
 import { uploadIngredientImage } from '../features/ingredients/imageUpload'
+import { useModalFocus } from '../hooks/useModalFocus'
 
 const baseInput =
   'w-full border rounded-md px-4 py-3 font-body text-body-md text-on-surface bg-surface-container-lowest placeholder:text-outline transition-colors focus:outline-none focus:ring-1 border-outline-variant focus:ring-primary focus:border-primary'
@@ -34,6 +35,8 @@ export default function AddIngredientPage() {
   // Pending renames (id -> draft name). Edits live here until "Save changes"
   // commits them to the catalog; Escape discards a row's draft.
   const [drafts, setDrafts] = useState<Record<string, string>>({})
+  // Focus is trapped in the picker modal while open; Escape closes it.
+  const pickerDialogRef = useModalFocus<HTMLDivElement>(picker !== null, () => setPicker(null))
 
   // Stable order (by id) so renaming a row never makes it jump position.
   const ordered = useMemo(() => [...catalog].sort((a, b) => a.id.localeCompare(b.id)), [catalog])
@@ -139,7 +142,7 @@ export default function AddIngredientPage() {
           <section className="flex flex-col gap-base pt-md border-t border-outline-variant/30">
             <div className="flex items-center justify-between">
               <label className="font-label-lg text-label-lg text-on-surface">Ingredients</label>
-              <span className="font-label-sm text-label-sm text-tertiary">
+              <span className="font-label-sm text-label-sm text-secondary">
                 click an image to change or upload it
               </span>
             </div>
@@ -220,9 +223,16 @@ export default function AddIngredientPage() {
         <div
           className="fixed inset-0 z-[100] flex items-center justify-center p-md"
           onClick={() => setPicker(null)}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Choose an ingredient image"
         >
           <div className="absolute inset-0 bg-on-surface/40 backdrop-blur-sm" />
-          <div className="relative w-full max-w-lg" onClick={(e) => e.stopPropagation()}>
+          <div
+            ref={pickerDialogRef}
+            className="relative w-full max-w-lg"
+            onClick={(e) => e.stopPropagation()}
+          >
             <ImagePickerPanel
               title={
                 picker.mode === 'new'

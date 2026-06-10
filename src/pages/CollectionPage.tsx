@@ -1,8 +1,7 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import RecipeCard from '../components/RecipeCard'
-import CardSkeleton, { FeaturedCardSkeleton } from '../components/CardSkeleton'
 import { useAppSelector } from '../app/hooks'
 import { selectRecipes } from '../features/recipes/recipesSlice'
 
@@ -17,28 +16,10 @@ export default function CollectionPage() {
   const INITIAL_COUNT = 5
   const BATCH_SIZE = 6
 
-  const [loading, setLoading] = useState(true)
   const [visibleCount, setVisibleCount] = useState(INITIAL_COUNT)
-  const [loadingMore, setLoadingMore] = useState(false)
-
-  // Simulate an initial load so the skeleton state is shown on first paint.
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 900)
-    return () => clearTimeout(timer)
-  }, [])
-
-  const handleLoadMore = () => {
-    setLoadingMore(true)
-    setTimeout(() => {
-      setVisibleCount((count) => count + BATCH_SIZE)
-      setLoadingMore(false)
-    }, 900)
-  }
 
   const visibleRecipes = orderedRecipes.slice(0, visibleCount)
-  const remaining = Math.max(orderedRecipes.length - visibleCount, 0)
-  const nextBatch = Math.min(BATCH_SIZE, remaining)
-  const hasMore = remaining > 0
+  const hasMore = orderedRecipes.length > visibleCount
 
   return (
     <div className="min-h-screen flex flex-col bg-surface">
@@ -70,36 +51,22 @@ export default function CollectionPage() {
         </div>
 
         {/* Recipe Grid (bento / masonry feel) */}
-        <div
-          className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-gutter ${
-            loading ? '' : 'card-reveal'
-          }`}
-        >
-          {loading ? (
-            <>
-              <FeaturedCardSkeleton />
-              {Array.from({ length: INITIAL_COUNT - 1 }).map((_, i) => (
-                <CardSkeleton key={`skeleton-${i}`} />
-              ))}
-            </>
-          ) : (
-            <>
-              {visibleRecipes.map((recipe) => (
-                <RecipeCard key={recipe.id} recipe={recipe} />
-              ))}
-              {loadingMore &&
-                Array.from({ length: nextBatch }).map((_, i) => (
-                  <CardSkeleton key={`skeleton-more-${i}`} />
-                ))}
-            </>
-          )}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-gutter card-reveal">
+          {visibleRecipes.map((recipe) => (
+            <RecipeCard key={recipe.id} recipe={recipe} />
+          ))}
         </div>
 
+        {/* Announce list growth to assistive tech. */}
+        <p className="sr-only" aria-live="polite">
+          Showing {visibleRecipes.length} of {orderedRecipes.length} recipes
+        </p>
+
         {/* Load More */}
-        {!loading && hasMore && !loadingMore && (
+        {hasMore && (
           <div className="mt-xl flex justify-center">
             <button
-              onClick={handleLoadMore}
+              onClick={() => setVisibleCount((count) => count + BATCH_SIZE)}
               className="px-[24px] py-[12px] border border-primary text-primary font-body-md text-body-md rounded-full hover:bg-primary hover:text-on-primary transition-colors duration-300"
             >
               Load More Recipes

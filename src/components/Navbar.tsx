@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import Icon from './Icon'
 import GoogleSignIn from './GoogleSignIn'
 import { useAppSelector } from '../app/hooks'
@@ -17,6 +18,22 @@ interface NavbarProps {
 
 export default function Navbar({ active = 'Browse' }: NavbarProps) {
   const canEdit = useAppSelector(selectCanEdit)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const location = useLocation()
+
+  // Close the mobile menu on navigation and on Escape.
+  useEffect(() => {
+    setMenuOpen(false)
+  }, [location.pathname])
+  useEffect(() => {
+    if (!menuOpen) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenuOpen(false)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [menuOpen])
+
   return (
     <nav className="w-full top-0 sticky border-b z-50 bg-surface-container-lowest border-outline-variant/30">
       <div className="flex justify-between items-center h-20 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
@@ -71,11 +88,56 @@ export default function Navbar({ active = 'Browse' }: NavbarProps) {
             </>
           )}
           <GoogleSignIn />
-          <button className="md:hidden text-secondary p-xs">
-            <Icon name="menu" />
+          <button
+            type="button"
+            onClick={() => setMenuOpen((open) => !open)}
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
+            className="md:hidden text-secondary p-xs"
+          >
+            <Icon name={menuOpen ? 'close' : 'menu'} />
           </button>
         </div>
       </div>
+
+      {/* Mobile menu */}
+      {menuOpen && (
+        <div
+          id="mobile-menu"
+          className="md:hidden border-t border-outline-variant/30 bg-surface-container-lowest px-margin-mobile py-sm flex flex-col gap-xs"
+        >
+          {navLinks.map(({ label, to }) => (
+            <Link
+              key={label}
+              to={to}
+              className={`py-sm px-sm rounded font-body text-body-md ${
+                label === active
+                  ? 'text-primary font-semibold bg-surface-container-low'
+                  : 'text-secondary hover:text-primary hover:bg-surface-container-low'
+              }`}
+            >
+              {label}
+            </Link>
+          ))}
+          {canEdit && (
+            <div className="flex flex-col gap-sm pt-sm mt-xs border-t border-outline-variant/30">
+              <Link
+                to="/add"
+                className="bg-primary text-on-primary text-center px-md py-[12px] rounded font-label-lg text-label-lg active:opacity-70"
+              >
+                Add Recipe
+              </Link>
+              <Link
+                to="/add-ingredient"
+                className="border border-primary text-primary text-center px-md py-[12px] rounded font-label-lg text-label-lg active:opacity-70"
+              >
+                Add Ingredient
+              </Link>
+            </div>
+          )}
+        </div>
+      )}
     </nav>
   )
 }

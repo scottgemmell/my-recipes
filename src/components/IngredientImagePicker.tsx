@@ -48,7 +48,7 @@ export function ImagePickerPanel({
       </div>
 
       <div className="flex items-center justify-between gap-sm">
-        <span className="font-label-sm text-label-sm text-tertiary">Pick a bundled image</span>
+        <span className="font-label-sm text-label-sm text-secondary">Pick a bundled image</span>
         <button
           type="button"
           onClick={() => fileRef.current?.click()}

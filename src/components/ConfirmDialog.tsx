@@ -1,4 +1,5 @@
-import { useEffect, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
+import { useModalFocus } from '../hooks/useModalFocus'
 
 interface ConfirmDialogProps {
   open: boolean
@@ -23,14 +24,9 @@ export default function ConfirmDialog({
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
-  useEffect(() => {
-    if (!open) return
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onCancel()
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [open, onCancel])
+  // Focus moves into the dialog, Tab is trapped, Escape cancels, and focus
+  // returns to the trigger on close.
+  const dialogRef = useModalFocus<HTMLDivElement>(open, onCancel)
 
   if (!open) return null
 
@@ -45,7 +41,10 @@ export default function ConfirmDialog({
         className="absolute inset-0 bg-on-surface/40 backdrop-blur-sm"
         onClick={onCancel}
       />
-      <div className="relative z-10 w-full max-w-md bg-surface-container-lowest rounded-xl border border-outline-variant p-md md:p-lg shadow-[0_12px_48px_rgba(24,29,25,0.22)]">
+      <div
+        ref={dialogRef}
+        className="relative z-10 w-full max-w-md bg-surface-container-lowest rounded-xl border border-outline-variant p-md md:p-lg shadow-[0_12px_48px_rgba(24,29,25,0.22)]"
+      >
         <h2 className="font-display text-headline-sm text-on-surface mb-xs">{title}</h2>
         {/* div, not p: the message may contain block content such as a list */}
         <div className="font-body text-body-md text-on-surface-variant mb-lg">{message}</div>

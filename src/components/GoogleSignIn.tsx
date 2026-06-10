@@ -84,7 +84,7 @@ export default function GoogleSignIn() {
         </span>
       )}
       {!canEdit && (
-        <span className="hidden md:inline font-label-sm text-label-sm text-tertiary">
+        <span className="hidden md:inline font-label-sm text-label-sm text-secondary">
           view only
         </span>
       )}

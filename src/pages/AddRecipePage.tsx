@@ -115,7 +115,7 @@ function InputField({
           <div className="flex flex-col gap-base">
             <div className="flex items-center justify-between">
               <label className="font-label-lg text-label-lg text-on-surface">{label}</label>
-              {hint && <span className="font-label-sm text-label-sm text-tertiary">{hint}</span>}
+              {hint && <span className="font-label-sm text-label-sm text-secondary">{hint}</span>}
             </div>
             <input
               {...input}
@@ -123,7 +123,7 @@ function InputField({
               className={`${baseInput} ${showError ? errBorder : okBorder}`}
             />
             {showError && (
-              <p className="font-label-sm text-label-sm text-error">{meta.error}</p>
+              <p role="alert" className="font-label-sm text-label-sm text-error">{meta.error}</p>
             )}
           </div>
         )
@@ -156,7 +156,7 @@ function TextAreaField({
           <div className="flex flex-col gap-base">
             <div className="flex items-center justify-between">
               <label className="font-label-lg text-label-lg text-on-surface">{label}</label>
-              {hint && <span className="font-label-sm text-label-sm text-tertiary">{hint}</span>}
+              {hint && <span className="font-label-sm text-label-sm text-secondary">{hint}</span>}
             </div>
             <textarea
               {...input}
@@ -165,7 +165,7 @@ function TextAreaField({
               className={`${baseInput} resize-y ${showError ? errBorder : okBorder}`}
             />
             {showError && (
-              <p className="font-label-sm text-label-sm text-error">{meta.error}</p>
+              <p role="alert" className="font-label-sm text-label-sm text-error">{meta.error}</p>
             )}
           </div>
         )
@@ -278,7 +278,7 @@ function IngredientsField() {
           <section className="flex flex-col gap-base">
             <div className="flex items-center justify-between">
               <label className="font-label-lg text-label-lg text-on-surface">Ingredients</label>
-              <span className="font-label-sm text-label-sm text-tertiary">
+              <span className="font-label-sm text-label-sm text-secondary">
                 Link existing or create new
               </span>
             </div>
@@ -322,9 +322,30 @@ function IngredientsField() {
                       }}
                       className="shrink-0 cursor-grab active:cursor-grabbing text-secondary hover:text-on-surface"
                       title="Drag to reorder"
-                      aria-label="Drag to reorder"
+                      aria-hidden="true"
                     >
                       <Icon name="drag_indicator" className="text-[20px]" />
+                    </span>
+                    {/* Keyboard/touch alternative to drag-and-drop. */}
+                    <span className="shrink-0 flex flex-col -my-1">
+                      <button
+                        type="button"
+                        onClick={() => moveRow(i, i - 1)}
+                        disabled={i === 0}
+                        aria-label={`Move ${cat?.name ?? 'ingredient'} up`}
+                        className="text-secondary hover:text-primary disabled:opacity-30 disabled:hover:text-secondary leading-none"
+                      >
+                        <Icon name="keyboard_arrow_up" className="text-[18px]" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => moveRow(i, i + 1)}
+                        disabled={i === rows.length - 1}
+                        aria-label={`Move ${cat?.name ?? 'ingredient'} down`}
+                        className="text-secondary hover:text-primary disabled:opacity-30 disabled:hover:text-secondary leading-none"
+                      >
+                        <Icon name="keyboard_arrow_down" className="text-[18px]" />
+                      </button>
                     </span>
                     <div className="w-11 h-11 shrink-0 rounded-md overflow-hidden border border-outline-variant bg-surface-container">
                       <IngredientThumb src={imageSrc(cat)} alt={cat?.name ?? ''} />
@@ -358,7 +379,7 @@ function IngredientsField() {
               )}
             </div>
 
-            {showError && <p className="font-label-sm text-label-sm text-error">{meta.error}</p>}
+            {showError && <p role="alert" className="font-label-sm text-label-sm text-error">{meta.error}</p>}
 
             <div className="flex flex-wrap gap-md">
               <button

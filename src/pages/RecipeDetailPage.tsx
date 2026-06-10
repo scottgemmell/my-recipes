@@ -5,7 +5,6 @@ import Footer from '../components/Footer'
 import Icon from '../components/Icon'
 import RecipeImage from '../components/RecipeImage'
 import TagList from '../components/TagList'
-import RecipeDetailSkeleton from '../components/RecipeDetailSkeleton'
 import ConfirmDialog from '../components/ConfirmDialog'
 import { isNewRecipe } from '../features/recipes/recent'
 import { iconForDifficulty, isHardDifficulty } from '../features/recipes/difficulty'
@@ -57,24 +56,11 @@ export default function RecipeDetailPage() {
 
   const [confirmOpen, setConfirmOpen] = useState(false)
 
-  // Simulate a load each time a recipe is opened (including when navigating
-  // between recipes), showing the skeleton state first.
-  const [loading, setLoading] = useState(true)
+  // Start each recipe at the top (data is already local, so there's no
+  // loading state — a fake delay here just slowed every navigation down).
   useEffect(() => {
-    setLoading(true)
-    const timer = setTimeout(() => setLoading(false), 800)
-    return () => clearTimeout(timer)
+    window.scrollTo(0, 0)
   }, [slug])
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex flex-col bg-surface">
-        <Navbar active="Browse" />
-        <RecipeDetailSkeleton />
-        <Footer />
-      </div>
-    )
-  }
 
   if (!recipe) {
     return (

@@ -2,12 +2,17 @@ import { useRef } from 'react'
 import Icon from './Icon'
 import { INGREDIENT_IMAGES } from '../features/ingredients/imageRegistry'
 
-/** Small ingredient image preview (or a placeholder when none is set). */
+/**
+ * Small ingredient image preview. With no image it shows a placeholder in the
+ * same style as the recipe hero placeholder (dashed border, add-photo icon).
+ */
 export function IngredientThumb({ src, alt }: { src?: string; alt: string }) {
   if (src) return <img src={src} alt={alt} className="w-full h-full object-cover" />
   return (
-    <div className="w-full h-full flex items-center justify-center text-outline">
-      <Icon name="image" className="text-[20px]" />
+    <div className="w-full h-full p-[3px]">
+      <div className="w-full h-full rounded border border-dashed border-outline-variant flex items-center justify-center text-secondary">
+        <Icon name="add_photo_alternate" className="text-[18px]" />
+      </div>
     </div>
   )
 }

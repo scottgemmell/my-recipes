@@ -11,7 +11,8 @@ import {
   selectRecipes,
   updateRecipe,
 } from '../features/recipes/recipesSlice'
-import { selectCatalog } from '../features/ingredients/ingredientsSlice'
+import { addIngredient, selectCatalog } from '../features/ingredients/ingredientsSlice'
+import { makeIngredientId } from '../features/ingredients/ingredientsData'
 import { imageSrc } from '../features/ingredients/imageRegistry'
 import { IngredientThumb } from '../components/IngredientImagePicker'
 import type { Recipe } from '../features/recipes/types'
@@ -202,12 +203,13 @@ function SelectField({
 }
 
 /**
- * Ingredients editor: each row picks a catalog ingredient + amount. New
- * ingredients can be added to the catalog (with a bundled image), and an
- * existing ingredient's image can be changed (which updates it everywhere).
+ * Ingredients editor: each row links a catalog ingredient + amount. The picker
+ * searches the catalog; typing a name that isn't there offers "create new",
+ * which adds a placeholder-imaged ingredient to the catalog and links it.
  */
 function IngredientsField() {
   const catalog = useAppSelector(selectCatalog)
+  const dispatch = useAppDispatch()
   const [searching, setSearching] = useState(false)
   const [query, setQuery] = useState('')
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
@@ -261,12 +263,23 @@ function IngredientsField() {
           (c) => !addedIds.has(c.id) && (!q || c.name.toLowerCase().includes(q)),
         )
 
+        // Create a new catalog ingredient from the typed name (placeholder
+        // image until one is set on the Ingredients page) and link it.
+        const createNew = () => {
+          const name = query.trim()
+          if (!name) return
+          const id = makeIngredientId(name, catalog)
+          dispatch(addIngredient({ id, name }))
+          setRows([...rows, { ingredientId: id, amount: '' }])
+          setQuery('')
+        }
+
         return (
           <section className="flex flex-col gap-base">
             <div className="flex items-center justify-between">
               <label className="font-label-lg text-label-lg text-on-surface">Ingredients</label>
               <span className="font-label-sm text-label-sm text-tertiary">
-                Pick from the catalog
+                Link existing or create new
               </span>
             </div>
 
@@ -340,7 +353,7 @@ function IngredientsField() {
               })}
               {rows.length === 0 && (
                 <p className="font-body text-body-sm text-secondary">
-                  No ingredients yet — use “Add ingredient” to choose from the catalog.
+                  No ingredients yet — use “Add ingredients” to link existing ones or create new.
                 </p>
               )}
             </div>
@@ -387,11 +400,28 @@ function IngredientsField() {
                       </label>
                     )
                   })}
-                  {results.length === 0 && (
-                    <p className="font-body text-body-sm text-secondary p-1">
-                      No matching ingredients. Add it on the Add Ingredient page first.
-                    </p>
-                  )}
+                  {/* Create-new option: link an ingredient that doesn't exist yet */}
+                  <button
+                    type="button"
+                    onClick={createNew}
+                    disabled={!q}
+                    className={`flex items-center gap-sm p-1 rounded-md text-left transition-colors ${
+                      q ? 'hover:bg-surface-container cursor-pointer' : 'cursor-default'
+                    }`}
+                  >
+                    <div className="w-9 h-9 shrink-0 rounded border border-dashed border-outline-variant flex items-center justify-center text-secondary">
+                      <Icon name="add_photo_alternate" className="text-[18px]" />
+                    </div>
+                    {q ? (
+                      <span className="font-body text-body-md text-primary">
+                        Create new ingredient “{query.trim()}”
+                      </span>
+                    ) : (
+                      <span className="font-body text-body-sm text-secondary">
+                        …or type a name to create a new ingredient
+                      </span>
+                    )}
+                  </button>
                 </div>
                 <div className="flex items-center justify-end gap-sm">
                   <button

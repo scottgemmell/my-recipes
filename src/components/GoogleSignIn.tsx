@@ -64,10 +64,13 @@ export default function GoogleSignIn() {
 
   if (!CLIENT_ID) return null
 
-  if (!user) return <div ref={buttonRef} className="h-8" />
+  // Distinct keys force React to swap the DOM node between the two states —
+  // the GIS iframe inside the button div isn't React-managed, so reusing the
+  // node would leave the Google button behind next to the account chip.
+  if (!user) return <div key="gsi-button" ref={buttonRef} className="h-8" />
 
   return (
-    <div className="flex items-center gap-xs" title={user.email}>
+    <div key="account" className="flex items-center gap-xs" title={user.email}>
       {user.picture ? (
         <img
           src={user.picture}

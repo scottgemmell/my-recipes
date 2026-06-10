@@ -118,7 +118,7 @@
       "servingsIcon": "restaurant",
       "difficultyIcon": "signal_cellular_alt_2_bar",
       "calories": "520 kcal",
-      "favorite": true,
+      "favorite": false,
       "ingredients": [
         {
           "id": "i1",
@@ -128,6 +128,11 @@
         {
           "id": "i2",
           "ingredientId": "sea-salt",
+          "amount": ""
+        },
+        {
+          "id": "i3",
+          "ingredientId": "butter",
           "amount": ""
         }
       ],

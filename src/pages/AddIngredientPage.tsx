@@ -13,6 +13,7 @@ import {
   setIngredientImage,
 } from '../features/ingredients/ingredientsSlice'
 import { makeIngredientId } from '../features/ingredients/ingredientsData'
+import { selectRecipes } from '../features/recipes/recipesSlice'
 import { imageSrc, registerUploadedImage } from '../features/ingredients/imageRegistry'
 import { uploadIngredientImage } from '../features/ingredients/imageUpload'
 
@@ -34,6 +35,11 @@ export default function AddIngredientPage() {
   // Stable order (by id) so renaming a row never makes it jump position.
   const ordered = useMemo(() => [...catalog].sort((a, b) => a.id.localeCompare(b.id)), [catalog])
   const deleteTarget = catalog.find((c) => c.id === confirmDeleteId)
+  const recipes = useAppSelector(selectRecipes)
+  // Recipes that will lose an ingredient line if the pending delete is confirmed.
+  const affectedRecipes = confirmDeleteId
+    ? recipes.filter((r) => r.ingredients.some((i) => i.ingredientId === confirmDeleteId))
+    : []
 
   const addNew = () => {
     const name = newName.trim()
@@ -205,7 +211,25 @@ export default function AddIngredientPage() {
       <ConfirmDialog
         open={confirmDeleteId !== null}
         title="Delete ingredient?"
-        message={`"${deleteTarget?.name ?? 'This ingredient'}" will be removed from the catalog. Recipes that use it will lose its image.`}
+        message={
+          affectedRecipes.length > 0 ? (
+            <>
+              <p>
+                "{deleteTarget?.name ?? 'This ingredient'}" will be removed from the catalog and
+                from {affectedRecipes.length === 1 ? 'this recipe' : 'these recipes'}:
+              </p>
+              <ul className="list-disc pl-md mt-xs flex flex-col gap-1">
+                {affectedRecipes.map((r) => (
+                  <li key={r.id} className="font-bold text-on-surface">
+                    {r.title}
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : (
+            `"${deleteTarget?.name ?? 'This ingredient'}" will be removed from the catalog. No recipes use it.`
+          )
+        }
         confirmLabel="Delete"
         destructive
         onConfirm={() => {

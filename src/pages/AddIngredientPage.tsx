@@ -55,14 +55,27 @@ export default function AddIngredientPage() {
     <div className="min-h-screen flex flex-col bg-surface">
       <Navbar active="" />
 
-      <main className="flex-1 w-full max-w-4xl mx-auto px-margin-mobile md:px-margin-desktop py-lg flex flex-col gap-lg">
-        <div className="text-center max-w-2xl mx-auto mb-md">
-          <h1 className="font-display text-headline-lg-mobile md:text-headline-lg text-on-surface mb-xs">
-            Add an Ingredient
-          </h1>
-          <p className="font-body text-body-lg text-secondary">
-            Build the catalog your recipes pick from — give each ingredient a name and an image.
-          </p>
+      <main className="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-lg md:py-xl">
+        {/* Page Header */}
+        <div className="mb-lg md:mb-xl text-center md:text-left flex flex-col md:flex-row justify-between gap-md md:items-start">
+          <div>
+            <p className="font-label-lg text-label-lg text-primary uppercase tracking-wider mb-sm">
+              Ingredients
+            </p>
+            <h1 className="font-display text-display text-on-surface mb-md">Add an Ingredient</h1>
+            <p className="font-body text-body-lg text-on-surface-variant max-w-2xl">
+              Build the catalog your recipes pick from — give each ingredient a name and an image.
+            </p>
+          </div>
+
+          <div className="flex flex-col items-center md:items-end shrink-0 self-center md:self-start">
+            <span className="font-display text-[80px] leading-none font-bold text-primary">
+              {ordered.length}
+            </span>
+            <span className="font-body text-body-sm text-on-surface-variant uppercase tracking-wider">
+              {ordered.length === 1 ? 'ingredient' : 'ingredients'}
+            </span>
+          </div>
         </div>
 
         <div className="flex flex-col gap-lg bg-surface-container-lowest rounded-xl p-md md:p-lg border border-outline-variant/40 shadow-[0_4px_24px_rgba(141,170,145,0.04)]">
@@ -108,10 +121,10 @@ export default function AddIngredientPage() {
             <div className="flex items-center justify-between">
               <label className="font-label-lg text-label-lg text-on-surface">Ingredients</label>
               <span className="font-label-sm text-label-sm text-tertiary">
-                {ordered.length} total · click an image to change or upload it
+                click an image to change or upload it
               </span>
             </div>
-            <div className="flex flex-col gap-sm">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-gutter gap-y-sm">
               {ordered.map((ing) => (
                 <div key={ing.id} className="flex items-center gap-sm">
                   <button

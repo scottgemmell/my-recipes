@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { pastelFor } from './pastel'
 
 interface RecipeImageProps {
   src?: string
@@ -11,30 +12,13 @@ interface RecipeImageProps {
 const escapeXml = (value: string): string =>
   value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
-/** Soft pastel { background, accent } pairs for the placeholder cards. */
-const palette = [
-  { bg: '#dff1e1', fg: '#5b8c6a' },
-  { bg: '#d9ecdc', fg: '#6a9472' },
-  { bg: '#f3ecc0', fg: '#9a8b3e' },
-  { bg: '#f7ded0', fg: '#b07a5e' },
-  { bg: '#f2d6e6', fg: '#a96d92' },
-  { bg: '#f8ddc0', fg: '#bf8049' },
-]
-
-/** Deterministically pick a palette entry from the label text. */
-function paletteFor(label: string) {
-  let hash = 0
-  for (let i = 0; i < label.length; i += 1) hash = (hash * 31 + label.charCodeAt(i)) >>> 0
-  return palette[hash % palette.length]
-}
-
 /**
  * A soft placeholder rendered when an image is missing or fails to load: a
  * pastel card with a subtle diagonal hatch and the dish name as an uppercase,
  * letter-spaced caption. Returned as a data URI so it never hits the network.
  */
 function placeholderFor(label: string): string {
-  const { bg, fg } = paletteFor(label)
+  const { bg, accent: fg } = pastelFor(label)
   const text = escapeXml(label.toUpperCase())
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
   <defs>

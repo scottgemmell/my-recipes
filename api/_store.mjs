@@ -23,10 +23,33 @@ function client() {
   return redis
 }
 
+// Dev-only image paths that leaked into stored data: /src/assets/... resolves
+// on the Vite dev server but not in a production build. Images now live in
+// public/ and are served at /images/recipes/.
+const LEGACY_IMAGE_PREFIX = '/src/assets/images/recipes/'
+const IMAGE_PREFIX = '/images/recipes/'
+
+function migrateLegacyPaths(items) {
+  let changed = false
+  const next = items.map((item) => {
+    if (typeof item?.image === 'string' && item.image.startsWith(LEGACY_IMAGE_PREFIX)) {
+      changed = true
+      return { ...item, image: item.image.replace(LEGACY_IMAGE_PREFIX, IMAGE_PREFIX) }
+    }
+    return item
+  })
+  return { changed, items: next }
+}
+
 export async function readCollection(name) {
   const data = await client().get(name)
-  if (Array.isArray(data)) return data
-  const seed = require('../db.json')[name] ?? []
+  if (Array.isArray(data)) {
+    // Self-heal previously seeded data that still points at dev-only paths.
+    const { changed, items } = migrateLegacyPaths(data)
+    if (changed) await client().set(name, items)
+    return items
+  }
+  const seed = migrateLegacyPaths(require('../db.json')[name] ?? []).items
   await client().set(name, seed)
   return seed
 }

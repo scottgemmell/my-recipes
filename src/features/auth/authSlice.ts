@@ -19,7 +19,7 @@ interface AuthState {
   session: AuthSession | null
 }
 
-const SESSION_KEY = 'culinary-zen:session:v1'
+const SESSION_KEY = 'my-recipes:session:v1'
 
 /** Restore a previous session if its token hasn't expired. */
 export function loadSession(): AuthSession | null {

@@ -1,5 +1,5 @@
 ---
-name: Culinary Zen
+name: MY Recipes
 colors:
   surface: '#f7faf4'
   surface-dim: '#d8dbd5'
@@ -113,7 +113,7 @@ spacing:
 
 ## Brand & Style
 
-Culinary Zen embodies a **Modern Minimalist** aesthetic with a strong **Editorial** influence. The brand personality is mindful, sophisticated, and organic, catering to a home cook who values clarity and quality over complexity.
+MY Recipes embodies a **Modern Minimalist** aesthetic with a strong **Editorial** influence. The brand personality is mindful, sophisticated, and organic, catering to a home cook who values clarity and quality over complexity.
 
 The visual style leverages significant whitespace, high-quality culinary photography, and a refined palette of meadow greens and soft floral accents to evoke a sense of calm. It blends the structural reliability of a functional cooking app with the elegant pacing of a premium food magazine. Interaction is characterized by "soft" transitions (like the hover-lift effect) and tactile feedback that reinforces a premium, intentional user experience.
 
@@ -144,7 +144,7 @@ The system follows a **Fixed-Width Container** model on desktop (max 1200px) wit
 
 ## Elevation & Depth
 
-Culinary Zen avoids traditional heavy shadows in favor of **Tonal Layers** and **Subtle Interactivity**.
+MY Recipes avoids traditional heavy shadows in favor of **Tonal Layers** and **Subtle Interactivity**.
 
 - **Surface Tiers:** Depth is established by placing `surface-container-lowest` (pure white) cards on top of `background-warm` surfaces.
 - **Borders over Shadows:** Fine, 1px borders in `#c3c8c1` are the primary method of element containment.

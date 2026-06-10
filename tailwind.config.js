@@ -1,5 +1,5 @@
 /**
- * Culinary Zen design tokens, ported from the Stitch design files.
+ * MY Recipes design tokens, ported from the Stitch design files.
  * @type {import('tailwindcss').Config}
  */
 export default {

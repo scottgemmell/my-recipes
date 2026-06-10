@@ -1,6 +1,6 @@
 # [ My ] Recipes
 
-A clean, minimal recipe app built from the **Stitch "Culinary Zen"** design files using
+A clean, minimal recipe app — **MY Recipes** — built from Stitch design files using
 **React + TypeScript + Redux Toolkit + React Router**, styled with **Tailwind CSS**.
 
 ## Stack
@@ -8,7 +8,7 @@ A clean, minimal recipe app built from the **Stitch "Culinary Zen"** design file
 - **React 18** + **TypeScript** (Vite)
 - **Redux Toolkit** + **React Redux** for state
 - **React Router** for navigation
-- **Tailwind CSS** with the Culinary Zen design tokens (colors, type scale, spacing)
+- **Tailwind CSS** with the MY Recipes design tokens (colors, type scale, spacing)
 
 ## What it does
 
@@ -42,7 +42,7 @@ src/
     RecipeDetailPage.tsx
   App.tsx             # routes
   main.tsx            # Provider + Router bootstrap
-  index.css           # Tailwind layers + Culinary Zen component styles
+  index.css           # Tailwind layers + MY Recipes component styles
 tailwind.config.js    # design tokens
 ```
 

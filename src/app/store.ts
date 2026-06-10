@@ -6,7 +6,7 @@ import { attachRestSync, setAuthToken, type AppData } from '../features/api'
 
 // Ingredient-checklist ticks are UI state, not recipe data — they stay in
 // localStorage rather than the REST backend.
-const CHECKED_KEY = 'culinary-zen:checked:v1'
+const CHECKED_KEY = 'my-recipes:checked:v1'
 
 function loadChecked(): Record<string, string[]> {
   try {

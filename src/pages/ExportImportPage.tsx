@@ -27,7 +27,7 @@ export default function ExportImportPage() {
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `culinary-zen-backup-${new Date().toISOString().slice(0, 10)}.json`
+    a.download = `my-recipes-backup-${new Date().toISOString().slice(0, 10)}.json`
     document.body.appendChild(a)
     a.click()
     a.remove()
@@ -50,7 +50,7 @@ export default function ExportImportPage() {
           !parsed?.ingredients ||
           !Array.isArray(parsed.ingredients.items)
         ) {
-          setError('That doesn’t look like a Culinary Zen backup file.')
+          setError('That doesn’t look like a MY Recipes backup file.')
           return
         }
         setPending({

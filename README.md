@@ -1,4 +1,4 @@
-# [ My ] Recipes — Culinary Zen
+# [ My ] Recipes
 
 A clean, minimal recipe app built from the **Stitch "Culinary Zen"** design files using
 **React + TypeScript + Redux Toolkit + React Router**, styled with **Tailwind CSS**.
@@ -52,7 +52,7 @@ Requires Node.js 18+.
 
 ```bash
 npm install
-npm run dev      # start the dev server (http://localhost:5173)
+npm run dev      # start the dev server (http://localhost:5174)
 npm run build    # type-check + production build
 npm run preview  # preview the production build
 ```

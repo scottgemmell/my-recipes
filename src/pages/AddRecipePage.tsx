@@ -15,6 +15,7 @@ import { addIngredient, selectCatalog } from '../features/ingredients/ingredient
 import { makeIngredientId } from '../features/ingredients/ingredientsData'
 import { imageSrc } from '../features/ingredients/imageRegistry'
 import { IngredientThumb } from '../components/IngredientImagePicker'
+import { usePageTitle } from '../hooks/usePageTitle'
 import type { Recipe } from '../features/recipes/types'
 
 interface IngredientRow {
@@ -564,6 +565,7 @@ export default function AddRecipePage() {
   const recipes = useAppSelector(selectRecipes)
   const editingRecipe = useAppSelector(selectRecipeBySlug(slug ?? ''))
   const isEditing = Boolean(slug)
+  usePageTitle(isEditing ? `Edit ${editingRecipe?.title ?? 'Recipe'}` : 'Add a Recipe')
 
   // Memoised so dispatching to the ingredient catalog (add / change image) does
   // not change the initialValues identity and reset the whole form.

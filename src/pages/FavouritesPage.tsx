@@ -5,8 +5,10 @@ import Icon from '../components/Icon'
 import FavoriteRow from '../components/FavoriteRow'
 import { useAppSelector } from '../app/hooks'
 import { selectRecipes } from '../features/recipes/recipesSlice'
+import { usePageTitle } from '../hooks/usePageTitle'
 
 export default function FavouritesPage() {
+  usePageTitle('Favourites')
   const recipes = useAppSelector(selectRecipes)
   const favourites = recipes.filter((recipe) => recipe.favorite)
 
@@ -21,10 +23,10 @@ export default function FavouritesPage() {
             <p className="font-label-lg text-label-lg text-primary uppercase tracking-wider mb-sm">
             Favourites
           </p>
-          <h1 className="font-display text-display text-on-surface mb-md">All your favourite saved recipes</h1>
+          <h1 className="font-display text-display-mobile md:text-display text-on-surface mb-md">All your favourite saved recipes</h1>
           </div>
 
-          <div className="flex flex-col items-center md:items-end shrink-0 self-center md:self-start">
+          <div className="hidden md:flex flex-col items-end shrink-0 self-start">
             <span className="font-display text-[80px] leading-none font-bold text-primary">
               {favourites.length}
             </span>

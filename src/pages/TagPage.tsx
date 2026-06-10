@@ -5,6 +5,7 @@ import Icon from '../components/Icon'
 import FavoriteRow from '../components/FavoriteRow'
 import { useAppSelector } from '../app/hooks'
 import { selectRecipes } from '../features/recipes/recipesSlice'
+import { usePageTitle } from '../hooks/usePageTitle'
 
 export default function TagPage() {
   const { tag = '' } = useParams()
@@ -16,6 +17,7 @@ export default function TagPage() {
   // Prefer the tag's canonical casing as stored on a recipe.
   const label =
     tagged[0]?.tags.find((t) => t.toLowerCase() === tag.toLowerCase()) ?? tag
+  usePageTitle(label)
 
   return (
     <div className="min-h-screen flex flex-col bg-surface">
@@ -28,12 +30,12 @@ export default function TagPage() {
             <p className="font-label-lg text-label-lg text-primary uppercase tracking-wider mb-sm">
               Tag
             </p>
-            <h1 className="font-display text-display text-on-surface mb-md">
+            <h1 className="font-display text-display-mobile md:text-display text-on-surface mb-md">
               Recipes tagged “{label}”
             </h1>
           </div>
 
-          <div className="flex flex-col items-center md:items-end shrink-0 self-center md:self-start">
+          <div className="hidden md:flex flex-col items-end shrink-0 self-start">
             <span className="font-display text-[80px] leading-none font-bold text-primary">
               {tagged.length}
             </span>

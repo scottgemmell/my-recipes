@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import Icon from '../components/Icon'
+import { usePageTitle } from '../hooks/usePageTitle'
 
 const values = [
   {
@@ -22,6 +23,7 @@ const values = [
 ]
 
 export default function AboutPage() {
+  usePageTitle('About')
   return (
     <div className="min-h-screen flex flex-col bg-surface">
       <Navbar active="About" />

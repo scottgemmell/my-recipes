@@ -17,6 +17,7 @@ import { selectRecipes } from '../features/recipes/recipesSlice'
 import { imageSrc, registerUploadedImage } from '../features/ingredients/imageRegistry'
 import { uploadIngredientImage } from '../features/ingredients/imageUpload'
 import { useModalFocus } from '../hooks/useModalFocus'
+import { usePageTitle } from '../hooks/usePageTitle'
 
 const baseInput =
   'w-full border rounded-md px-4 py-3 font-body text-body-md text-on-surface bg-surface-container-lowest placeholder:text-outline transition-colors focus:outline-none focus:ring-1 border-outline-variant focus:ring-primary focus:border-primary'
@@ -24,6 +25,7 @@ const baseInput =
 type PickerTarget = { mode: 'new' } | { mode: 'edit'; id: string } | null
 
 export default function AddIngredientPage() {
+  usePageTitle('Add an Ingredient')
   const dispatch = useAppDispatch()
   const catalog = useAppSelector(selectCatalog)
 
@@ -83,13 +85,13 @@ export default function AddIngredientPage() {
             <p className="font-label-lg text-label-lg text-primary uppercase tracking-wider mb-sm">
               Ingredients
             </p>
-            <h1 className="font-display text-display text-on-surface mb-md">Add an Ingredient</h1>
+            <h1 className="font-display text-display-mobile md:text-display text-on-surface mb-md">Add an Ingredient</h1>
             <p className="font-body text-body-lg text-on-surface-variant max-w-2xl">
               Build the catalog your recipes pick from — give each ingredient a name and an image.
             </p>
           </div>
 
-          <div className="flex flex-col items-center md:items-end shrink-0 self-center md:self-start">
+          <div className="hidden md:flex flex-col items-end shrink-0 self-start">
             <span className="font-display text-[80px] leading-none font-bold text-primary">
               {ordered.length}
             </span>

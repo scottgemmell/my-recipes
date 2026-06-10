@@ -42,7 +42,7 @@ export default function Navbar({ active = 'Browse' }: NavbarProps) {
           to="/"
           className="font-display text-headline-md text-primary cursor-pointer active:opacity-70"
         >
-          <span className="font-body uppercase text-body-md">[ My ]</span>{' '}
+          <span className="font-body uppercase text-body-md">My</span>{' '}
           <span className="font-display">Recipes</span>
         </Link>
 

@@ -96,6 +96,7 @@ export default {
       },
       fontSize: {
         display: ['48px', { lineHeight: '56px', letterSpacing: '-0.02em', fontWeight: '700' }],
+        'display-mobile': ['34px', { lineHeight: '42px', letterSpacing: '-0.02em', fontWeight: '700' }],
         'headline-lg': ['32px', { lineHeight: '40px', fontWeight: '700' }],
         'headline-lg-mobile': ['28px', { lineHeight: '36px', fontWeight: '700' }],
         'headline-md': ['24px', { lineHeight: '32px', fontWeight: '600' }],

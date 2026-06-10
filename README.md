@@ -1,4 +1,4 @@
-# [ My ] Recipes
+# MY Recipes
 
 A clean, minimal recipe app — **MY Recipes** — built from Stitch design files using
 **React + TypeScript + Redux Toolkit + React Router**, styled with **Tailwind CSS**.

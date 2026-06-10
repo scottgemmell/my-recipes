@@ -5,6 +5,7 @@ import Icon from '../components/Icon'
 import { useAppSelector } from '../app/hooks'
 import { replaceAll } from '../features/api'
 import { selectCanEdit } from '../features/auth/authSlice'
+import { usePageTitle } from '../hooks/usePageTitle'
 
 interface PendingImport {
   json: string
@@ -14,6 +15,7 @@ interface PendingImport {
 }
 
 export default function ExportImportPage() {
+  usePageTitle('Export & Import')
   const recipes = useAppSelector((s) => s.recipes)
   const ingredients = useAppSelector((s) => s.ingredients)
   const canEdit = useAppSelector(selectCanEdit)

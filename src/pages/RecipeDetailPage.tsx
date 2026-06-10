@@ -11,6 +11,7 @@ import { iconForDifficulty, isHardDifficulty } from '../features/recipes/difficu
 import { selectCatalog } from '../features/ingredients/ingredientsSlice'
 import { galleryForRecipe } from '../features/ingredients/gallery'
 import { selectCanEdit } from '../features/auth/authSlice'
+import { usePageTitle } from '../hooks/usePageTitle'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import {
   deleteRecipe,
@@ -53,6 +54,7 @@ export default function RecipeDetailPage() {
   const checked = useAppSelector(selectCheckedIngredients(recipe?.id ?? ''))
   const catalog = useAppSelector(selectCatalog)
   const canEdit = useAppSelector(selectCanEdit)
+  usePageTitle(recipe?.title ?? 'Recipe not found')
 
   const [confirmOpen, setConfirmOpen] = useState(false)
 

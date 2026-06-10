@@ -88,9 +88,13 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
           <div className="mt-lg pt-sm border-t flex items-center justify-between border-outline-variant/30">
             <Link
               to={to}
-              className="font-body-md text-body-md text-primary flex items-center gap-xs hover:underline decoration-primary underline-offset-4"
+              className="font-body-md text-body-md text-primary flex items-center gap-xs group/link"
             >
-              View Recipe <Icon name="arrow_forward" className="text-[16px]" />
+              View Recipe{' '}
+              <Icon
+                name="arrow_forward"
+                className="text-[16px] transition-transform duration-200 group-hover/link:translate-x-1"
+              />
             </Link>
           </div>
         </div>

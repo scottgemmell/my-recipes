@@ -135,17 +135,17 @@ export default function RecipeDetailPage() {
               <p className="font-body text-body-lg text-on-surface-variant max-w-3xl">
                 {recipe.description}
               </p>
-              <div className="flex items-center gap-md">
+              <div className="flex flex-wrap items-center gap-sm">
                 <Link
                   to={`/recipe/${recipe.slug}/edit`}
-                  className="inline-flex items-center gap-xs font-label-lg text-label-lg text-primary hover:underline decoration-primary underline-offset-4"
+                  className="inline-flex items-center gap-xs px-5 py-[10px] rounded-full border border-primary text-primary font-label-lg text-label-lg hover:bg-primary hover:text-on-primary hover:shadow-[0_2px_8px_rgba(74,101,79,0.25)] transition-all duration-300"
                 >
                   <Icon name="edit" className="text-[18px]" /> Edit Recipe
                 </Link>
                 <button
                   type="button"
                   onClick={() => setConfirmOpen(true)}
-                  className="inline-flex items-center gap-xs font-label-lg text-label-lg text-error hover:underline decoration-error underline-offset-4"
+                  className="inline-flex items-center gap-xs px-5 py-[10px] rounded-full border border-error/50 text-error font-label-lg text-label-lg hover:bg-error hover:border-error hover:text-on-error hover:shadow-[0_2px_8px_rgba(186,26,26,0.25)] transition-all duration-300"
                 >
                   <Icon name="delete" className="text-[18px]" /> Delete Recipe
                 </button>
@@ -160,9 +160,6 @@ export default function RecipeDetailPage() {
                   value={recipe.difficulty}
                   tone={isHardDifficulty(recipe.difficulty) ? 'text-error' : undefined}
                 />
-                {recipe.calories && (
-                  <MetaItem icon="local_fire_department" label="Calories" value={recipe.calories} />
-                )}
               </div>
             </div>
           </div>

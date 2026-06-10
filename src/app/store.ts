@@ -1,125 +1,60 @@
 import { configureStore } from '@reduxjs/toolkit'
 import recipesReducer from '../features/recipes/recipesSlice'
 import ingredientsReducer from '../features/ingredients/ingredientsSlice'
-import { recipes as seedRecipes } from '../features/recipes/recipesData'
-import {
-  catalogIngredients,
-  canonicalIngredientId,
-  nameFromId,
-  type CatalogIngredient,
-} from '../features/ingredients/ingredientsData'
+import { attachRestSync, type AppData } from '../features/api'
 
-/** Bump the version suffix to invalidate previously persisted state. */
-export const STORAGE_KEY = 'culinary-zen:recipes:v3'
+// Ingredient-checklist ticks are UI state, not recipe data — they stay in
+// localStorage rather than the REST backend.
+const CHECKED_KEY = 'culinary-zen:checked:v1'
 
-type RecipesState = ReturnType<typeof recipesReducer>
-type IngredientsState = ReturnType<typeof ingredientsReducer>
-
-interface PersistedState {
-  recipes: RecipesState
-  ingredients: IngredientsState
-}
-
-/**
- * Upgrade state to the relationship model: link each recipe ingredient to a
- * catalog id, drop stored galleries (images live on catalog ingredients), and
- * backfill any referenced catalog ingredient that doesn't exist yet. Idempotent,
- * so it can run on every load — over the seed and over persisted user data alike.
- */
-function migrate(state: PersistedState): PersistedState {
-  const catalog = state.ingredients.items
-  const byId = new Map(catalog.map((i) => [i.id, i]))
-  for (const recipe of state.recipes.items) {
-    for (const ing of recipe.ingredients) {
-      const legacy = ing as { name?: string }
-      if (!ing.ingredientId) ing.ingredientId = canonicalIngredientId(legacy.name ?? '')
-      delete legacy.name
-      const id = ing.ingredientId
-      if (id && !byId.has(id)) {
-        const entry: CatalogIngredient = { id, name: nameFromId(id) }
-        catalog.push(entry)
-        byId.set(id, entry)
-      }
-    }
-    delete recipe.gallery
-  }
-  return state
-}
-
-// One-time cleanup: drop catalog ingredients not used by any recipe. Gated by a
-// flag, so adding a (still-unused) ingredient later is not immediately pruned.
-const PRUNE_FLAG = 'culinary-zen:pruned-unused:v1'
-function pruneUnusedOnce(state: PersistedState): void {
+function loadChecked(): Record<string, string[]> {
   try {
-    if (localStorage.getItem(PRUNE_FLAG)) return
-    const used = new Set<string>()
-    for (const recipe of state.recipes.items) {
-      for (const ing of recipe.ingredients) if (ing.ingredientId) used.add(ing.ingredientId)
-    }
-    state.ingredients.items = state.ingredients.items.filter((i) => used.has(i.id))
-    // Persist immediately so the prune sticks even without further interaction.
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
-    localStorage.setItem(PRUNE_FLAG, '1')
-  } catch {
-    /* storage unavailable */
-  }
-}
-
-/** Load the persisted slices from localStorage, only if both shapes are valid. */
-function loadPersisted(): PersistedState | undefined {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return undefined
-    const parsed = JSON.parse(raw) as Partial<PersistedState>
-    if (
-      parsed?.recipes &&
-      Array.isArray(parsed.recipes.items) &&
-      parsed?.ingredients &&
-      Array.isArray(parsed.ingredients.items)
-    ) {
-      return { recipes: parsed.recipes, ingredients: parsed.ingredients }
-    }
+    const raw = localStorage.getItem(CHECKED_KEY)
+    if (raw) return JSON.parse(raw) as Record<string, string[]>
   } catch {
     /* ignore malformed state */
   }
-  return undefined
+  return {}
 }
 
-// Use persisted state when present, else the seed; then migrate to the
-// relationship model. (Seed is cloned so the imported arrays aren't mutated.)
-const base: PersistedState =
-  loadPersisted() ?? {
-    recipes: { items: JSON.parse(JSON.stringify(seedRecipes)), checkedIngredients: {} },
-    ingredients: { items: JSON.parse(JSON.stringify(catalogIngredients)) },
-  }
-migrate(base)
-pruneUnusedOnce(base)
-const preloaded = base
+/**
+ * Build the store from data fetched off the REST backend (see main.tsx).
+ * Subsequent changes are mirrored back via attachRestSync.
+ */
+export function createAppStore(data: AppData) {
+  const store = configureStore({
+    reducer: {
+      recipes: recipesReducer,
+      ingredients: ingredientsReducer,
+    },
+    preloadedState: {
+      recipes: { items: data.recipes, checkedIngredients: loadChecked() },
+      ingredients: { items: data.ingredients },
+    },
+  })
 
-export const store = configureStore({
-  reducer: {
-    recipes: recipesReducer,
-    ingredients: ingredientsReducer,
-  },
-  preloadedState: preloaded,
-})
+  attachRestSync(store)
 
-// Persist the slices to localStorage (throttled) so added recipes, edits,
-// favorites, checklist state and the ingredient catalog survive page reloads.
-let saveScheduled = false
-store.subscribe(() => {
-  if (saveScheduled) return
-  saveScheduled = true
-  window.setTimeout(() => {
-    saveScheduled = false
-    try {
-      const { recipes, ingredients } = store.getState()
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ recipes, ingredients }))
-    } catch {
-      // Ignore write failures (e.g. storage unavailable or quota exceeded).
-    }
-  }, 300)
-})
+  let checkedSavePending = false
+  store.subscribe(() => {
+    if (checkedSavePending) return
+    checkedSavePending = true
+    window.setTimeout(() => {
+      checkedSavePending = false
+      try {
+        localStorage.setItem(
+          CHECKED_KEY,
+          JSON.stringify(store.getState().recipes.checkedIngredients),
+        )
+      } catch {
+        /* storage unavailable */
+      }
+    }, 300)
+  })
 
-export type RootState = ReturnType<typeof store.getState>
-export type AppDispatch = typeof store.dispatch
+  return store
+}
+
+export type AppStore = ReturnType<typeof createAppStore>
+export type RootState = ReturnType<AppStore['getState']>
+export type AppDispatch = AppStore['dispatch']

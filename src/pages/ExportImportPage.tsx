@@ -3,7 +3,7 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import Icon from '../components/Icon'
 import { useAppSelector } from '../app/hooks'
-import { STORAGE_KEY } from '../app/store'
+import { replaceAll } from '../features/api'
 
 interface PendingImport {
   json: string
@@ -64,14 +64,22 @@ export default function ExportImportPage() {
     reader.readAsText(file)
   }
 
-  const confirmImport = () => {
-    if (!pending) return
+  const [importing, setImporting] = useState(false)
+
+  const confirmImport = async () => {
+    if (!pending || importing) return
+    setImporting(true)
     try {
-      localStorage.setItem(STORAGE_KEY, pending.json)
-      // Full navigation so the store re-hydrates from the imported state.
+      const parsed = JSON.parse(pending.json)
+      await replaceAll({
+        recipes: parsed.recipes.items,
+        ingredients: parsed.ingredients.items,
+      })
+      // Full navigation so the store re-hydrates from the restored backend.
       window.location.href = '/'
     } catch {
-      setError('Could not save the imported data (storage may be full).')
+      setImporting(false)
+      setError('Could not restore the backup — is the API running?')
     }
   }
 
@@ -88,8 +96,8 @@ export default function ExportImportPage() {
             Export &amp; Import
           </h1>
           <p className="font-body text-body-lg text-secondary">
-            Your recipes and ingredient catalog live only in this browser. Back them up to a file,
-            or restore them from one.
+            Your recipes and ingredient catalog live in the app&rsquo;s REST backend. Back them up
+            to a file, or restore them from one.
           </p>
         </div>
 
@@ -112,7 +120,7 @@ export default function ExportImportPage() {
             <h2 className="font-headline-sm text-headline-sm text-on-surface">Import a backup</h2>
             <p className="font-body text-body-md text-on-surface-variant">
               Restore from a previously exported file. This <strong>replaces</strong> all recipes and
-              ingredients currently in this browser.
+              ingredients currently in the backend.
             </p>
             <div>
               <button
@@ -142,15 +150,17 @@ export default function ExportImportPage() {
                 <p className="font-body text-body-md text-on-surface">
                   <span className="font-bold">{pending.fileName}</span> — {pending.recipeCount}{' '}
                   recipes, {pending.ingredientCount} ingredients. Restoring will replace everything
-                  currently saved in this browser.
+                  currently saved in the backend.
                 </p>
                 <div className="flex flex-wrap gap-sm">
                   <button
                     type="button"
                     onClick={confirmImport}
-                    className={primaryBtn}
+                    disabled={importing}
+                    className={`${primaryBtn} disabled:opacity-50`}
                   >
-                    <Icon name="restore" className="text-[18px]" /> Restore &amp; reload
+                    <Icon name="restore" className="text-[18px]" />
+                    {importing ? 'Restoring…' : 'Restore & reload'}
                   </button>
                   <button
                     type="button"

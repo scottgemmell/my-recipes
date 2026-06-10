@@ -6,6 +6,7 @@
   "description": "Culinary Zen — a minimal Redux Toolkit + React + TypeScript recipe app built from Stitch designs.",
   "scripts": {
     "dev": "vite",
+    "api": "json-server --watch db.json --port 3001 --host 127.0.0.1",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "lint": "tsc --noEmit"
@@ -20,10 +21,12 @@
     "react-router-dom": "^6.28.0"
   },
   "devDependencies": {
+    "@types/node": "^25.9.2",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
+    "json-server": "^0.17.4",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.6.3",

@@ -206,7 +206,7 @@ export default function RecipeDetailPage() {
                             isChecked ? 'line-through opacity-50' : ''
                           }`}
                         >
-                          {ingredient.name}
+                          {catalog.find((c) => c.id === ingredient.ingredientId)?.name ?? ''}
                         </span>
                         <span
                           className={`font-body text-body-md text-secondary font-bold whitespace-nowrap ${

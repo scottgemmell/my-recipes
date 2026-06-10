@@ -31,7 +31,9 @@ function migrate(state: PersistedState): PersistedState {
   const byId = new Map(catalog.map((i) => [i.id, i]))
   for (const recipe of state.recipes.items) {
     for (const ing of recipe.ingredients) {
-      if (!ing.ingredientId) ing.ingredientId = canonicalIngredientId(ing.name)
+      const legacy = ing as { name?: string }
+      if (!ing.ingredientId) ing.ingredientId = canonicalIngredientId(legacy.name ?? '')
+      delete legacy.name
       const id = ing.ingredientId
       if (id && !byId.has(id)) {
         const entry: CatalogIngredient = { id, name: nameFromId(id) }
@@ -42,6 +44,25 @@ function migrate(state: PersistedState): PersistedState {
     delete recipe.gallery
   }
   return state
+}
+
+// One-time cleanup: drop catalog ingredients not used by any recipe. Gated by a
+// flag, so adding a (still-unused) ingredient later is not immediately pruned.
+const PRUNE_FLAG = 'culinary-zen:pruned-unused:v1'
+function pruneUnusedOnce(state: PersistedState): void {
+  try {
+    if (localStorage.getItem(PRUNE_FLAG)) return
+    const used = new Set<string>()
+    for (const recipe of state.recipes.items) {
+      for (const ing of recipe.ingredients) if (ing.ingredientId) used.add(ing.ingredientId)
+    }
+    state.ingredients.items = state.ingredients.items.filter((i) => used.has(i.id))
+    // Persist immediately so the prune sticks even without further interaction.
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+    localStorage.setItem(PRUNE_FLAG, '1')
+  } catch {
+    /* storage unavailable */
+  }
 }
 
 /** Load the persisted slices from localStorage, only if both shapes are valid. */
@@ -71,7 +92,9 @@ const base: PersistedState =
     recipes: { items: JSON.parse(JSON.stringify(seedRecipes)), checkedIngredients: {} },
     ingredients: { items: JSON.parse(JSON.stringify(catalogIngredients)) },
   }
-const preloaded = migrate(base)
+migrate(base)
+pruneUnusedOnce(base)
+const preloaded = base
 
 export const store = configureStore({
   reducer: {

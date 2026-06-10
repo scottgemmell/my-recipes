@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Form, Field } from 'react-final-form'
 import Navbar from '../components/Navbar'
@@ -11,7 +11,7 @@ import {
   selectRecipes,
   updateRecipe,
 } from '../features/recipes/recipesSlice'
-import { addIngredient, selectCatalog } from '../features/ingredients/ingredientsSlice'
+import { selectCatalog } from '../features/ingredients/ingredientsSlice'
 import { imageSrc } from '../features/ingredients/imageRegistry'
 import { IngredientThumb } from '../components/IngredientImagePicker'
 import type { Recipe } from '../features/recipes/types'
@@ -64,11 +64,6 @@ const slugify = (value: string) =>
     .trim()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
-
-// Map a (possibly legacy free-text) ingredient name to a deterministic catalog
-// id: the slug of the text before the first comma. Seed catalog ids follow the
-// same rule, so e.g. "Heirloom Tomatoes, sliced" -> "heirloom-tomatoes".
-const ingredientIdForName = (name: string) => slugify(name.split(',')[0]) || slugify(name)
 
 const validateIngredients = (rows?: IngredientRow[]) =>
   rows && rows.some((r) => r.ingredientId) ? undefined : 'Add at least one ingredient'
@@ -517,23 +512,7 @@ export default function AddRecipePage() {
   const { slug } = useParams()
   const recipes = useAppSelector(selectRecipes)
   const editingRecipe = useAppSelector(selectRecipeBySlug(slug ?? ''))
-  const catalog = useAppSelector(selectCatalog)
   const isEditing = Boolean(slug)
-
-  // Ensure any legacy (free-text) ingredients on the recipe being edited exist
-  // in the catalog so they can be selected in the picker.
-  useEffect(() => {
-    if (!editingRecipe) return
-    const have = new Set(catalog.map((c) => c.id))
-    editingRecipe.ingredients.forEach((ing) => {
-      const id = ing.ingredientId || ingredientIdForName(ing.name)
-      if (id && !have.has(id)) {
-        dispatch(addIngredient({ id, name: ing.name.split(',')[0].trim() || ing.name }))
-        have.add(id)
-      }
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slug])
 
   // Memoised so dispatching to the ingredient catalog (add / change image) does
   // not change the initialValues identity and reset the whole form.
@@ -549,7 +528,7 @@ export default function AddRecipePage() {
             yield: editingRecipe.servings === '—' ? '' : editingRecipe.servings,
             difficulty: editingRecipe.difficulty,
             ingredients: editingRecipe.ingredients.map((ing) => ({
-              ingredientId: ing.ingredientId || ingredientIdForName(ing.name),
+              ingredientId: ing.ingredientId ?? '',
               amount: ing.amount,
             })),
             instructions: stepsToText(editingRecipe.steps),
@@ -589,11 +568,9 @@ export default function AddRecipePage() {
       ingredients: (values.ingredients ?? [])
         .filter((r) => r.ingredientId)
         .map((r, i) => {
-          const cat = catalog.find((c) => c.id === r.ingredientId)
           return {
             id: `i${i + 1}`,
             ingredientId: r.ingredientId,
-            name: cat?.name ?? r.ingredientId,
             amount: r.amount.trim(),
           }
         }),

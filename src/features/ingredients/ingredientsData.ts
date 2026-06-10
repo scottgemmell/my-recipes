@@ -24,42 +24,19 @@ export function makeIngredientId(name: string, existing: CatalogIngredient[]): s
   return `${base}-${n}`
 }
 
-// Seed catalog: one entry per bundled ingredient image. The id equals the image
-// key (the source filename slug), and also equals slugify(name) — so legacy
-// recipe ingredient names map straight onto these ids.
-const SEED: Array<[string, string]> = [
+/**
+ * Initial seed catalog — intentionally empty.
+ *
+ * The real catalog lives in localStorage (persisted by store.ts) and in
+ * Export/Import backups. Bundled ingredient images remain available to pick
+ * from via the image registry (import.meta.glob in imageRegistry.ts).
+ */
+export const catalogIngredients: CatalogIngredient[] = []
 
-  ['buffalo-mozzarella', 'Buffalo Mozzarella'],
-  ['butter', 'Butter'],
-  ['caster-sugar', 'Caster Sugar'],
-  ['extra-virgin-olive-oil', 'Extra Virgin Olive Oil'],
-  ['fresh-basil', 'Fresh Basil'],
-  ['garlic', 'Garlic'],
-  ['lemon', 'Lemon'],
-  ['parmesan', 'Parmesan'],
-  ['red-onion', 'Red Onion'],
-]
-
-// Ingredients used by recipes that don't (yet) have a bundled image.
-const IMAGELESS: Array<[string, string]> = [
-  ['black-pepper', 'Black Pepper'],
-  ['sea-salt', 'Sea Salt'],
-]
-
-export const catalogIngredients: CatalogIngredient[] = [
-  ...SEED.map(([key, name]) => ({ id: key, name, imageKey: key })),
-  ...IMAGELESS.map(([id, name]) => ({ id, name })),
-]
-
-// Maps the recipe ingredient names used in the seed to a canonical catalog id.
-// Prep-variants collapse to one id (all "Garlic …" → garlic); tomatoes reuse the
-// single tomato image; ids without a bundled image are created image-less by the
-// load migration (see store.ts).
-const CANONICAL: Record<string, string> = {
-  'Black pepper': 'black-pepper',
-  'Extra Virgin Olive Oil': 'extra-virgin-olive-oil',
-  Garlic: 'garlic',
-}
+// Known name → canonical catalog id mappings for migrating legacy data
+// (recipe ingredient lines that predate ingredientId). Empty now that the
+// seed data is gone; canonicalIngredientId falls back to a name slug.
+const CANONICAL: Record<string, string> = {}
 
 /** A catalog id for a recipe ingredient name (known mapping, else a slug). */
 export function canonicalIngredientId(name: string): string {

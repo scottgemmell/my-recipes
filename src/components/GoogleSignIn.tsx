@@ -70,16 +70,16 @@ export default function GoogleSignIn() {
   if (!user) return <div key="gsi-button" ref={buttonRef} className="h-8" />
 
   return (
-    <div key="account" className="flex items-center gap-xs" title={user.email}>
+    <div key="account" className="flex items-center gap-base" title={user.email}>
       {user.picture ? (
         <img
           src={user.picture}
           alt={user.name}
           referrerPolicy="no-referrer"
-          className="w-8 h-8 rounded-full border border-outline-variant"
+          className="w-11 h-11 rounded-full border border-outline-variant"
         />
       ) : (
-        <span className="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-label-lg text-label-lg">
+        <span className="w-11 h-11 rounded-full bg-primary text-on-primary flex items-center justify-center font-label-lg text-label-lg">
           {user.name.charAt(0).toUpperCase()}
         </span>
       )}
@@ -95,7 +95,7 @@ export default function GoogleSignIn() {
           setAuthToken(null)
           dispatch(signedOut())
         }}
-        className="font-label-sm text-label-sm text-secondary hover:text-primary transition-colors"
+        className="font-label-lg text-label-lg text-primary hover:brightness-110 active:opacity-70 transition-all"
       >
         Sign out
       </button>

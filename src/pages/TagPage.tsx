@@ -39,7 +39,7 @@ export default function TagPage() {
             <span className="font-display text-[80px] leading-none font-bold text-primary">
               {tagged.length}
             </span>
-            <span className="font-body text-body-sm text-on-surface-variant uppercase tracking-wider">
+            <span className="mt-sm font-body text-body-sm text-on-surface-variant uppercase tracking-wider">
               {tagged.length === 1 ? 'recipe' : 'recipes'}
             </span>
           </div>

@@ -64,7 +64,7 @@ export default function CollectionPage() {
             <span className="font-display text-[80px] leading-none font-bold text-primary">
               {recipes.length}
             </span>
-            <span className="font-body text-body-sm text-on-surface-variant uppercase tracking-wider">
+            <span className="mt-sm font-body text-body-sm text-on-surface-variant uppercase tracking-wider">
               recipes
             </span>
           </div>

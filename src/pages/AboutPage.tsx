@@ -39,7 +39,7 @@ export default function AboutPage() {
 
         <div className="space-y-md font-body text-body-md text-on-surface-variant">
         <p className="font-body text-body-lg text-on-surface-variant">
-                    <span className="font-bold">[ My ] Recipes</span> is a personal cookbook for the dishes
+                    <span className="font-bold">MY Recipes</span> is a personal cookbook for the dishes
                     worth making again — a calm, uncluttered home for the meals you actually cook.
                   </p>
           <p>
@@ -49,7 +49,7 @@ export default function AboutPage() {
           </p>
         </div>
 
-        <section className="grid grid-cols-1 sm:grid-cols-3 gap-gutter mt-xl pt-lg border-t border-outline-variant/30">
+        <section className="grid grid-cols-1 sm:grid-cols-3 gap-gutter mt-xl">
           {values.map((value) => (
             <div
               key={value.title}

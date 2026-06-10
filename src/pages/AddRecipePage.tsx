@@ -386,9 +386,10 @@ function IngredientsField() {
               <button
                 type="button"
                 onClick={() => (searching ? closePicker() : setSearching(true))}
-                className="inline-flex items-center gap-xs font-label-lg text-label-lg text-primary hover:underline"
+                className="inline-flex items-center gap-xs px-5 py-[10px] rounded-full border border-primary text-primary font-label-lg text-label-lg hover:bg-primary hover:text-on-primary hover:shadow-[0_2px_8px_rgba(74,101,79,0.25)] transition-all duration-300"
               >
-                <Icon name={searching ? 'remove' : 'add'} className="text-[18px]" /> Add ingredients
+                <Icon name={searching ? 'remove' : 'add'} className="text-[18px]" />
+                {searching ? 'Close picker' : 'Add ingredients'}
               </button>
             </div>
 
@@ -662,12 +663,16 @@ export default function AddRecipePage() {
     <div className="min-h-screen flex flex-col bg-surface">
       <Navbar active="" />
 
-      <main className="flex-1 w-full max-w-4xl mx-auto px-margin-mobile md:px-margin-desktop py-lg flex flex-col gap-lg">
-        <div className="text-center max-w-2xl mx-auto mb-md">
-          <h1 className="font-display text-headline-lg-mobile md:text-headline-lg text-on-surface mb-xs">
+      <main className="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-lg md:py-xl flex flex-col gap-lg">
+        {/* Page Header */}
+        <div className="mb-md md:mb-lg text-center md:text-left">
+          <p className="font-label-lg text-label-lg text-primary uppercase tracking-wider mb-sm">
+            Recipes
+          </p>
+          <h1 className="font-display text-display-mobile md:text-display text-on-surface mb-md">
             {isEditing ? 'Edit Recipe' : 'Craft a New Recipe'}
           </h1>
-          <p className="font-body text-body-lg text-secondary">
+          <p className="font-body text-body-lg text-on-surface-variant max-w-2xl mx-auto md:mx-0">
             {isEditing
               ? 'Refine the details and save your changes.'
               : 'Share your culinary creations with clarity and elegance.'}

@@ -14,7 +14,7 @@ export default function CollectionPage() {
     if (idx <= 0) return recipes
     return [recipes[idx], ...recipes.slice(0, idx), ...recipes.slice(idx + 1)]
   }, [recipes])
-  const INITIAL_COUNT = 8
+  const INITIAL_COUNT = 5
   const BATCH_SIZE = 6
 
   const [loading, setLoading] = useState(true)

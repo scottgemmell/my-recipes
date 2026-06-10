@@ -1,7 +1,8 @@
 export interface Ingredient {
   id: string
-  name: string
   amount: string
+  /** Links this line to a catalog ingredient (drives the derived gallery). */
+  ingredientId?: string
 }
 
 export interface Step {
@@ -38,7 +39,11 @@ export interface Recipe {
   calories?: string
   ingredients: Ingredient[]
   steps: Step[]
-  gallery: GalleryItem[]
+  /**
+   * Legacy stored gallery. Galleries are now derived from the ingredients'
+   * catalog images (see galleryForRecipe); the load migration drops this.
+   */
+  gallery?: GalleryItem[]
   /** Marks the large hero card in the collection grid. */
   featured?: boolean
   favorite: boolean

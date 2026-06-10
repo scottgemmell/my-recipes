@@ -2,6 +2,7 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '../../app/store'
 import type { Recipe } from './types'
 import { recipes } from './recipesData'
+import { deleteIngredient } from '../ingredients/ingredientsSlice'
 
 interface RecipesState {
   items: Recipe[]
@@ -47,6 +48,18 @@ const recipesSlice = createSlice({
       state.items = state.items.filter((r) => r.id !== action.payload)
       delete state.checkedIngredients[action.payload]
     },
+  },
+  extraReducers: (builder) => {
+    // Deleting a catalog ingredient cascades: its lines disappear from every
+    // recipe, otherwise the load migration would resurrect the catalog entry
+    // (and the lines would render blank, since labels come from the catalog).
+    builder.addCase(deleteIngredient, (state, action) => {
+      for (const recipe of state.items) {
+        recipe.ingredients = recipe.ingredients.filter(
+          (ing) => ing.ingredientId !== action.payload,
+        )
+      }
+    })
   },
 })
 

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Form, Field } from 'react-final-form'
 import Navbar from '../components/Navbar'
@@ -11,7 +11,15 @@ import {
   selectRecipes,
   updateRecipe,
 } from '../features/recipes/recipesSlice'
+import { selectCatalog } from '../features/ingredients/ingredientsSlice'
+import { imageSrc } from '../features/ingredients/imageRegistry'
+import { IngredientThumb } from '../components/IngredientImagePicker'
 import type { Recipe } from '../features/recipes/types'
+
+interface IngredientRow {
+  ingredientId: string
+  amount: string
+}
 
 interface FormValues {
   image?: string
@@ -21,7 +29,7 @@ interface FormValues {
   time?: string
   yield?: string
   difficulty?: string
-  ingredients?: string
+  ingredients?: IngredientRow[]
   instructions?: string
 }
 
@@ -57,28 +65,8 @@ const slugify = (value: string) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
 
-// Each ingredient line is "name | amount" (amount optional). Splitting on the
-// first "|" keeps the name and amount as separate fields so they round-trip
-// through editing and still render name-left / amount-right.
-function parseIngredients(text: string): Recipe['ingredients'] {
-  return text
-    .split('\n')
-    .map((line) => line.trim())
-    .filter(Boolean)
-    .map((line, i) => {
-      const sep = line.indexOf('|')
-      const name = (sep === -1 ? line : line.slice(0, sep)).trim()
-      const amount = sep === -1 ? '' : line.slice(sep + 1).trim()
-      return { id: `i${i + 1}`, name, amount }
-    })
-}
-
-/** Serialise stored ingredients back into the "name | amount" textarea format. */
-function ingredientsToText(ingredients: Recipe['ingredients']): string {
-  return ingredients
-    .map((i) => (i.amount ? `${i.name} | ${i.amount}` : i.name))
-    .join('\n')
-}
+const validateIngredients = (rows?: IngredientRow[]) =>
+  rows && rows.some((r) => r.ingredientId) ? undefined : 'Add at least one ingredient'
 
 // Each step line is "title | description" (title optional). With no "|" the
 // line is the description and gets an auto "Step N" title. This mirrors the
@@ -213,6 +201,225 @@ function SelectField({
   )
 }
 
+/**
+ * Ingredients editor: each row picks a catalog ingredient + amount. New
+ * ingredients can be added to the catalog (with a bundled image), and an
+ * existing ingredient's image can be changed (which updates it everywhere).
+ */
+function IngredientsField() {
+  const catalog = useAppSelector(selectCatalog)
+  const [searching, setSearching] = useState(false)
+  const [query, setQuery] = useState('')
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [dragIndex, setDragIndex] = useState<number | null>(null)
+  const [overIndex, setOverIndex] = useState<number | null>(null)
+
+  const byId = new Map(catalog.map((c) => [c.id, c]))
+  const sortedCatalog = [...catalog].sort((a, b) => a.name.localeCompare(b.name))
+
+  return (
+    <Field<IngredientRow[]> name="ingredients" validate={validateIngredients}>
+      {({ input, meta }) => {
+        const rows: IngredientRow[] = (input.value || []).filter((r) => r.ingredientId)
+        const setRows = (next: IngredientRow[]) => input.onChange(next)
+        const showError = (meta.touched || meta.submitFailed) && meta.error
+        const addedIds = new Set(rows.map((r) => r.ingredientId))
+
+        const toggleSelected = (id: string) =>
+          setSelectedIds((prev) => {
+            const next = new Set(prev)
+            if (next.has(id)) next.delete(id)
+            else next.add(id)
+            return next
+          })
+        const closePicker = () => {
+          setSearching(false)
+          setSelectedIds(new Set())
+          setQuery('')
+        }
+        const addSelected = () => {
+          const toAdd = sortedCatalog.filter((c) => selectedIds.has(c.id) && !addedIds.has(c.id))
+          if (toAdd.length)
+            setRows([...rows, ...toAdd.map((c) => ({ ingredientId: c.id, amount: '' }))])
+          closePicker()
+        }
+        const removeRow = (id: string) => setRows(rows.filter((r) => r.ingredientId !== id))
+        const setAmount = (id: string, amount: string) =>
+          setRows(rows.map((r) => (r.ingredientId === id ? { ...r, amount } : r)))
+        const moveRow = (from: number | null, to: number) => {
+          setDragIndex(null)
+          setOverIndex(null)
+          if (from === null || from === to) return
+          const next = rows.slice()
+          const [moved] = next.splice(from, 1)
+          next.splice(to, 0, moved)
+          setRows(next)
+        }
+
+        const q = query.trim().toLowerCase()
+        const results = sortedCatalog.filter(
+          (c) => !addedIds.has(c.id) && (!q || c.name.toLowerCase().includes(q)),
+        )
+
+        return (
+          <section className="flex flex-col gap-base">
+            <div className="flex items-center justify-between">
+              <label className="font-label-lg text-label-lg text-on-surface">Ingredients</label>
+              <span className="font-label-sm text-label-sm text-tertiary">
+                Pick from the catalog
+              </span>
+            </div>
+
+            <div className="flex flex-col gap-sm">
+              {rows.map((row, i) => {
+                const cat = byId.get(row.ingredientId)
+                const isDragging = dragIndex === i
+                const isOver = overIndex === i && dragIndex !== null && dragIndex !== i
+                return (
+                  <div
+                    key={row.ingredientId}
+                    onDragOver={(e) => {
+                      e.preventDefault()
+                      if (overIndex !== i) setOverIndex(i)
+                    }}
+                    onDrop={(e) => {
+                      e.preventDefault()
+                      moveRow(dragIndex, i)
+                    }}
+                    className={`relative flex items-center gap-sm rounded-md ${
+                      isDragging ? 'opacity-40' : ''
+                    }`}
+                  >
+                    {isOver && (
+                      <div
+                        className={`pointer-events-none absolute left-0 right-0 h-0.5 rounded bg-primary ${
+                          (dragIndex ?? 0) < i ? '-bottom-1' : '-top-1'
+                        }`}
+                      />
+                    )}
+                    <span
+                      draggable
+                      onDragStart={(e) => {
+                        setDragIndex(i)
+                        if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move'
+                      }}
+                      onDragEnd={() => {
+                        setDragIndex(null)
+                        setOverIndex(null)
+                      }}
+                      className="shrink-0 cursor-grab active:cursor-grabbing text-secondary hover:text-on-surface"
+                      title="Drag to reorder"
+                      aria-label="Drag to reorder"
+                    >
+                      <Icon name="drag_indicator" className="text-[20px]" />
+                    </span>
+                    <div className="w-11 h-11 shrink-0 rounded-md overflow-hidden border border-outline-variant bg-surface-container">
+                      <IngredientThumb src={imageSrc(cat)} alt={cat?.name ?? ''} />
+                    </div>
+                    <span className="flex-1 min-w-0 font-body text-body-md text-on-surface truncate">
+                      {cat?.name ?? row.ingredientId}
+                    </span>
+                    <div className="w-24 md:w-32 shrink-0">
+                      <input
+                        value={row.amount}
+                        onChange={(e) => setAmount(row.ingredientId, e.target.value)}
+                        placeholder="Amount"
+                        className={`${baseInput} ${okBorder}`}
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeRow(row.ingredientId)}
+                      className="shrink-0 text-secondary hover:text-error p-xs"
+                      aria-label="Remove ingredient"
+                    >
+                      <Icon name="close" className="text-[20px]" />
+                    </button>
+                  </div>
+                )
+              })}
+              {rows.length === 0 && (
+                <p className="font-body text-body-sm text-secondary">
+                  No ingredients yet — use “Add ingredient” to choose from the catalog.
+                </p>
+              )}
+            </div>
+
+            {showError && <p className="font-label-sm text-label-sm text-error">{meta.error}</p>}
+
+            <div className="flex flex-wrap gap-md">
+              <button
+                type="button"
+                onClick={() => (searching ? closePicker() : setSearching(true))}
+                className="inline-flex items-center gap-xs font-label-lg text-label-lg text-primary hover:underline"
+              >
+                <Icon name={searching ? 'remove' : 'add'} className="text-[18px]" /> Add ingredients
+              </button>
+            </div>
+
+            {searching && (
+              <div className="border border-outline-variant rounded-lg p-sm bg-surface-container-low flex flex-col gap-sm">
+                <input
+                  value={query}
+                  autoFocus
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search ingredients…"
+                  className={`${baseInput} ${okBorder}`}
+                />
+                <div className="flex flex-col gap-1 max-h-64 overflow-y-auto pr-1">
+                  {results.map((c) => {
+                    const checked = selectedIds.has(c.id)
+                    return (
+                      <label
+                        key={c.id}
+                        className="flex items-center gap-sm p-1 rounded-md hover:bg-surface-container cursor-pointer"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={() => toggleSelected(c.id)}
+                          className="shrink-0 w-5 h-5 accent-primary"
+                        />
+                        <div className="w-9 h-9 shrink-0 rounded overflow-hidden border border-outline-variant bg-surface-container">
+                          <IngredientThumb src={imageSrc(c)} alt={c.name} />
+                        </div>
+                        <span className="font-body text-body-md text-on-surface">{c.name}</span>
+                      </label>
+                    )
+                  })}
+                  {results.length === 0 && (
+                    <p className="font-body text-body-sm text-secondary p-1">
+                      No matching ingredients. Add it on the Add Ingredient page first.
+                    </p>
+                  )}
+                </div>
+                <div className="flex items-center justify-end gap-sm">
+                  <button
+                    type="button"
+                    onClick={closePicker}
+                    className="font-label-lg text-label-lg text-secondary hover:underline"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={addSelected}
+                    disabled={selectedIds.size === 0}
+                    className="inline-flex items-center gap-xs rounded-full bg-primary px-base py-xs font-label-lg text-label-lg text-on-primary disabled:opacity-40"
+                  >
+                    <Icon name="add" className="text-[18px]" />
+                    {selectedIds.size > 0 ? `Add ${selectedIds.size} selected` : 'Add selected'}
+                  </button>
+                </div>
+              </div>
+            )}
+          </section>
+        )
+      }}
+    </Field>
+  )
+}
+
 /** Drag-and-drop / click-to-browse hero image picker storing a data URL. */
 function HeroImageField() {
   const inputRef = useRef<HTMLInputElement>(null)
@@ -307,6 +514,29 @@ export default function AddRecipePage() {
   const editingRecipe = useAppSelector(selectRecipeBySlug(slug ?? ''))
   const isEditing = Boolean(slug)
 
+  // Memoised so dispatching to the ingredient catalog (add / change image) does
+  // not change the initialValues identity and reset the whole form.
+  const initialValues = useMemo<FormValues>(
+    () =>
+      editingRecipe
+        ? {
+            image: editingRecipe.image || undefined,
+            title: editingRecipe.title,
+            description: editingRecipe.description,
+            tags: editingRecipe.tags.join(', '),
+            time: editingRecipe.time === '—' ? '' : editingRecipe.time,
+            yield: editingRecipe.servings === '—' ? '' : editingRecipe.servings,
+            difficulty: editingRecipe.difficulty,
+            ingredients: editingRecipe.ingredients.map((ing) => ({
+              ingredientId: ing.ingredientId ?? '',
+              amount: ing.amount,
+            })),
+            instructions: stepsToText(editingRecipe.steps),
+          }
+        : { difficulty: 'Easy', ingredients: [] },
+    [editingRecipe],
+  )
+
   if (isEditing && !editingRecipe) {
     return (
       <div className="min-h-screen flex flex-col bg-surface">
@@ -322,20 +552,6 @@ export default function AddRecipePage() {
     )
   }
 
-  const initialValues: FormValues = editingRecipe
-    ? {
-        image: editingRecipe.image || undefined,
-        title: editingRecipe.title,
-        description: editingRecipe.description,
-        tags: editingRecipe.tags.join(', '),
-        time: editingRecipe.time === '—' ? '' : editingRecipe.time,
-        yield: editingRecipe.servings === '—' ? '' : editingRecipe.servings,
-        difficulty: editingRecipe.difficulty,
-        ingredients: ingredientsToText(editingRecipe.ingredients),
-        instructions: stepsToText(editingRecipe.steps),
-      }
-    : { difficulty: 'Easy' }
-
   const onSubmit = (values: FormValues) => {
     const title = values.title!.trim()
     const description = values.description?.trim() ?? ''
@@ -349,7 +565,15 @@ export default function AddRecipePage() {
       time: values.time?.trim() || '—',
       servings: values.yield?.trim() || '—',
       difficulty: values.difficulty || 'Easy',
-      ingredients: parseIngredients(values.ingredients ?? ''),
+      ingredients: (values.ingredients ?? [])
+        .filter((r) => r.ingredientId)
+        .map((r, i) => {
+          return {
+            id: `i${i + 1}`,
+            ingredientId: r.ingredientId,
+            amount: r.amount.trim(),
+          }
+        }),
       steps: parseSteps(values.instructions ?? ''),
     }
 
@@ -372,7 +596,6 @@ export default function AddRecipePage() {
       category: 'Recipe',
       servingsIcon: 'restaurant',
       difficultyIcon: 'signal_cellular_alt',
-      gallery: [],
       favorite: false,
       createdAt: new Date().toISOString(),
       ...editable,
@@ -434,22 +657,16 @@ export default function AddRecipePage() {
                 <SelectField name="difficulty" label="Difficulty" options={DIFFICULTIES} />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-md md:gap-lg pt-md border-t border-outline-variant/30">
-                <TextAreaField
-                  name="ingredients"
-                  label="Ingredients"
-                  hint="One per line · name | amount"
-                  rows={12}
-                  validate={required}
-                  placeholder={
-                    'All-purpose flour | 1 cup\nSea salt | 2 tsp\nOlive oil | 1 tbsp'
-                  }
-                />
+              <div className="pt-md border-t border-outline-variant/30">
+                <IngredientsField />
+              </div>
+
+              <div className="pt-md border-t border-outline-variant/30">
                 <TextAreaField
                   name="instructions"
                   label="Instructions"
                   hint="One per line · title | step"
-                  rows={12}
+                  rows={10}
                   validate={required}
                   placeholder={
                     'Prep | Heat the oven to 400°F (200°C).\nMix | Combine the dry ingredients in a bowl.\nBake | Bake for 35 minutes until golden brown.'

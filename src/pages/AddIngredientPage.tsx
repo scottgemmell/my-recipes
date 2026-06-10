@@ -31,6 +31,8 @@ export default function AddIngredientPage() {
   const [newImageUrl, setNewImageUrl] = useState<string | undefined>(undefined)
   const [picker, setPicker] = useState<PickerTarget>(null)
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
+  // Names are read-only until the row's edit (pencil) icon is clicked.
+  const [editingId, setEditingId] = useState<string | null>(null)
 
   // Stable order (by id) so renaming a row never makes it jump position.
   const ordered = useMemo(() => [...catalog].sort((a, b) => a.id.localeCompare(b.id)), [catalog])
@@ -106,12 +108,15 @@ export default function AddIngredientPage() {
                 placeholder="Ingredient name (e.g., Black Pepper)"
                 className={`${baseInput} flex-1`}
               />
+            </div>
+            <div className="flex justify-end">
               <button
                 type="button"
                 onClick={addNew}
-                className="shrink-0 px-5 py-3 rounded-full bg-primary text-on-primary font-label-lg text-label-lg hover:brightness-110 transition-all duration-200 flex items-center gap-2"
+                className="w-full md:w-auto px-6 py-3 rounded-full bg-primary font-label-lg text-label-lg text-on-primary hover:brightness-110 transition-all duration-200 flex items-center justify-center gap-2 shadow-[0_2px_8px_rgba(74,101,79,0.2)]"
               >
-                <Icon name="add" className="text-[18px]" /> Add
+                <Icon name="done" filled className="text-[20px]" />
+                Publish Ingredient
               </button>
             </div>
           </section>
@@ -137,12 +142,34 @@ export default function AddIngredientPage() {
                   </button>
                   <input
                     value={ing.name}
+                    readOnly={editingId !== ing.id}
+                    autoFocus={editingId === ing.id}
                     onChange={(e) =>
                       dispatch(renameIngredient({ id: ing.id, name: e.target.value }))
                     }
-                    className={`${baseInput} flex-1`}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === 'Escape') setEditingId(null)
+                    }}
+                    className={`${baseInput} flex-1 ${
+                      editingId === ing.id
+                        ? ''
+                        : 'border-transparent bg-transparent cursor-default focus:ring-0 focus:border-transparent'
+                    }`}
                     aria-label={`Name for ${ing.name}`}
                   />
+                  <button
+                    type="button"
+                    onClick={() => setEditingId(editingId === ing.id ? null : ing.id)}
+                    className={`shrink-0 p-xs transition-colors ${
+                      editingId === ing.id
+                        ? 'text-primary hover:brightness-110'
+                        : 'text-secondary hover:text-primary'
+                    }`}
+                    aria-label={editingId === ing.id ? `Done editing ${ing.name}` : `Edit ${ing.name}`}
+                    title={editingId === ing.id ? 'Done' : 'Edit name'}
+                  >
+                    <Icon name={editingId === ing.id ? 'done' : 'edit'} className="text-[20px]" />
+                  </button>
                   <button
                     type="button"
                     onClick={() => setConfirmDeleteId(ing.id)}

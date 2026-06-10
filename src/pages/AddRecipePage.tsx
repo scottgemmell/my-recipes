@@ -215,6 +215,7 @@ function IngredientsField() {
   const catalog = useAppSelector(selectCatalog)
   const [searching, setSearching] = useState(false)
   const [query, setQuery] = useState('')
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [dragIndex, setDragIndex] = useState<number | null>(null)
   const [overIndex, setOverIndex] = useState<number | null>(null)
 
@@ -229,8 +230,23 @@ function IngredientsField() {
         const showError = (meta.touched || meta.submitFailed) && meta.error
         const addedIds = new Set(rows.map((r) => r.ingredientId))
 
-        const addRow = (id: string) => {
-          if (!addedIds.has(id)) setRows([...rows, { ingredientId: id, amount: '' }])
+        const toggleSelected = (id: string) =>
+          setSelectedIds((prev) => {
+            const next = new Set(prev)
+            if (next.has(id)) next.delete(id)
+            else next.add(id)
+            return next
+          })
+        const closePicker = () => {
+          setSearching(false)
+          setSelectedIds(new Set())
+          setQuery('')
+        }
+        const addSelected = () => {
+          const toAdd = sortedCatalog.filter((c) => selectedIds.has(c.id) && !addedIds.has(c.id))
+          if (toAdd.length)
+            setRows([...rows, ...toAdd.map((c) => ({ ingredientId: c.id, amount: '' }))])
+          closePicker()
         }
         const removeRow = (id: string) => setRows(rows.filter((r) => r.ingredientId !== id))
         const setAmount = (id: string, amount: string) =>
@@ -339,13 +355,10 @@ function IngredientsField() {
             <div className="flex flex-wrap gap-md">
               <button
                 type="button"
-                onClick={() => {
-                  setSearching((v) => !v)
-                  setQuery('')
-                }}
+                onClick={() => (searching ? closePicker() : setSearching(true))}
                 className="inline-flex items-center gap-xs font-label-lg text-label-lg text-primary hover:underline"
               >
-                <Icon name={searching ? 'remove' : 'add'} className="text-[18px]" /> Add ingredient
+                <Icon name={searching ? 'remove' : 'add'} className="text-[18px]" /> Add ingredients
               </button>
             </div>
 
@@ -359,24 +372,49 @@ function IngredientsField() {
                   className={`${baseInput} ${okBorder}`}
                 />
                 <div className="flex flex-col gap-1 max-h-64 overflow-y-auto pr-1">
-                  {results.map((c) => (
-                    <button
-                      key={c.id}
-                      type="button"
-                      onClick={() => addRow(c.id)}
-                      className="flex items-center gap-sm p-1 rounded-md hover:bg-surface-container text-left"
-                    >
-                      <div className="w-9 h-9 shrink-0 rounded overflow-hidden border border-outline-variant bg-surface-container">
-                        <IngredientThumb src={imageSrc(c)} alt={c.name} />
-                      </div>
-                      <span className="font-body text-body-md text-on-surface">{c.name}</span>
-                    </button>
-                  ))}
+                  {results.map((c) => {
+                    const checked = selectedIds.has(c.id)
+                    return (
+                      <label
+                        key={c.id}
+                        className="flex items-center gap-sm p-1 rounded-md hover:bg-surface-container cursor-pointer"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={() => toggleSelected(c.id)}
+                          className="shrink-0 w-5 h-5 accent-primary"
+                        />
+                        <div className="w-9 h-9 shrink-0 rounded overflow-hidden border border-outline-variant bg-surface-container">
+                          <IngredientThumb src={imageSrc(c)} alt={c.name} />
+                        </div>
+                        <span className="font-body text-body-md text-on-surface">{c.name}</span>
+                      </label>
+                    )
+                  })}
                   {results.length === 0 && (
                     <p className="font-body text-body-sm text-secondary p-1">
                       No matching ingredients. Add it on the Add Ingredient page first.
                     </p>
                   )}
+                </div>
+                <div className="flex items-center justify-end gap-sm">
+                  <button
+                    type="button"
+                    onClick={closePicker}
+                    className="font-label-lg text-label-lg text-secondary hover:underline"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={addSelected}
+                    disabled={selectedIds.size === 0}
+                    className="inline-flex items-center gap-xs rounded-full bg-primary px-base py-xs font-label-lg text-label-lg text-on-primary disabled:opacity-40"
+                  >
+                    <Icon name="add" className="text-[18px]" />
+                    {selectedIds.size > 0 ? `Add ${selectedIds.size} selected` : 'Add selected'}
+                  </button>
                 </div>
               </div>
             )}

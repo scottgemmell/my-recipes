@@ -52,7 +52,9 @@ export default function CollectionPage() {
             <p className="font-label-lg text-label-lg text-primary uppercase tracking-wider mb-sm">
             Browse
           </p>
-          <h1 className="font-display text-display-mobile md:text-display text-on-surface mb-md">A calmer kind of cookbook.</h1>
+          <h1 className="font-display text-display-mobile md:text-display text-on-surface mb-md">
+            A calmer kind of <em className="italic text-primary">cookbook.</em>
+          </h1>
             <p className="font-body text-body-lg text-on-surface-variant max-w-2xl">
               Discover seasonal favorites and timeless classics, thoughtfully organized to inspire
               your next culinary meditation.
@@ -60,11 +62,11 @@ export default function CollectionPage() {
           </div>
 
           {/* Recipe count (desktop only — it crowds the first screen on phones) */}
-          <div className="hidden md:flex flex-col items-end shrink-0 self-start">
-            <span className="font-display text-[80px] leading-none font-bold text-primary">
+          <div className="hidden md:flex flex-col items-end shrink-0 self-start border-r-2 border-primary pr-[16px]">
+            <span className="font-display text-[64px] leading-none font-medium text-on-surface">
               {recipes.length}
             </span>
-            <span className="mt-sm font-body text-body-sm text-on-surface-variant uppercase tracking-wider">
+            <span className="mt-base font-body text-body-sm text-on-surface-variant uppercase tracking-wider">
               recipes
             </span>
           </div>

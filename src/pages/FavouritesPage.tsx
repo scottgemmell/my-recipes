@@ -26,11 +26,11 @@ export default function FavouritesPage() {
           <h1 className="font-display text-display-mobile md:text-display text-on-surface mb-md">All your favourite saved recipes</h1>
           </div>
 
-          <div className="hidden md:flex flex-col items-end shrink-0 self-start">
-            <span className="font-display text-[80px] leading-none font-bold text-primary">
+          <div className="hidden md:flex flex-col items-end shrink-0 self-start border-r-2 border-primary pr-[16px]">
+            <span className="font-display text-[64px] leading-none font-medium text-on-surface">
               {favourites.length}
             </span>
-            <span className="mt-sm font-body text-body-sm text-on-surface-variant uppercase tracking-wider">
+            <span className="mt-base font-body text-body-sm text-on-surface-variant uppercase tracking-wider">
               {favourites.length === 1 ? 'recipe' : 'recipes'}
             </span>
           </div>

@@ -56,16 +56,16 @@ export default function FavoriteRow({ recipe }: { recipe: Recipe }) {
         </div>
 
         <Link to={to}>
-          <h2 className="font-headline-md text-headline-md text-on-surface group-hover:text-primary transition-colors">
+          <h2 className="font-headline-lg text-headline-lg text-on-surface group-hover:text-primary transition-colors">
             {recipe.title}
           </h2>
         </Link>
 
-        <p className="font-body text-body-md text-on-surface-variant line-clamp-2 max-w-2xl">
+        <p className="font-body text-body-lg text-on-surface-variant line-clamp-2 max-w-2xl">
           {recipe.excerpt}
         </p>
 
-        <div className="flex flex-wrap items-center gap-x-md gap-y-xs pt-xs text-body-sm font-body-sm">
+        <div className="flex flex-wrap items-center gap-x-md gap-y-xs pt-xs text-body-md font-body-md">
           <span className="flex items-center gap-xs text-primary">
             <Icon name="schedule" className="text-[16px]" />
             <span className="font-bold">{recipe.time}</span>

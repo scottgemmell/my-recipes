@@ -3,9 +3,14 @@
   "configurations": [
     {
       "name": "dev",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
-      "port": 5173
+      "runtimeExecutable": "wsl",
+      "runtimeArgs": [
+        "-e",
+        "bash",
+        "-lc",
+        "cd ~/Github/my-recipes && export NVM_DIR=~/.nvm && . ~/.nvm/nvm.sh && npm run dev -- --port 5180 --strictPort"
+      ],
+      "port": 5180
     }
   ]
 }

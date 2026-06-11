@@ -81,7 +81,7 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
                 {recipe.title}
               </h2>
             </Link>
-            <p className="font-body text-body-md text-on-surface-variant line-clamp-3">
+            <p className="font-body text-body-lg text-on-surface-variant line-clamp-3">
               {recipe.excerpt}
             </p>
           </div>
@@ -119,15 +119,15 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
             <FavoriteButton recipe={recipe} />
           </div>
           <Link to={to}>
-            <h2 className="font-headline-sm text-headline-sm text-on-surface mb-sm group-hover:text-primary transition-colors">
+            <h2 className="font-headline-md text-headline-md text-on-surface mb-sm group-hover:text-primary transition-colors">
               {recipe.title}
             </h2>
           </Link>
-          <p className="font-body text-body-sm text-on-surface-variant line-clamp-2">
+          <p className="font-body text-body-md text-on-surface-variant line-clamp-2">
             {recipe.excerpt}
           </p>
         </div>
-        <div className="mt-md pt-sm border-t flex items-center justify-between text-body-sm font-body-sm border-outline-variant/30">
+        <div className="mt-md pt-sm border-t flex items-center justify-between text-body-md font-body-md border-outline-variant/30">
           <MetaStat icon="schedule" label={recipe.time} />
           <MetaStat icon="restaurant" label={recipe.servings} />
           <MetaStat

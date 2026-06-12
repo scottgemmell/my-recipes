@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { Link } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { toggleFavorite } from '../features/recipes/recipesSlice'
@@ -56,7 +57,9 @@ function MetaStat({
   )
 }
 
-export default function RecipeCard({ recipe }: RecipeCardProps) {
+// Recipe objects are stable references under Redux Toolkit, so memo lets a
+// single favorite toggle re-render only the affected card, not the whole grid.
+const RecipeCard = memo(function RecipeCard({ recipe }: RecipeCardProps) {
   const to = `/recipe/${recipe.slug}`
 
   if (recipe.featured) {
@@ -139,4 +142,6 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
       </div>
     </article>
   )
-}
+})
+
+export default RecipeCard

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
@@ -53,6 +53,12 @@ export default function RecipeDetailPage() {
   const recipe = useAppSelector(selectRecipeBySlug(slug))
   const checked = useAppSelector(selectCheckedIngredients(recipe?.id ?? ''))
   const catalog = useAppSelector(selectCatalog)
+  // Index the catalog by id once so the ingredient list does O(1) name lookups
+  // instead of scanning the whole catalog for each line on every render.
+  const catalogById = useMemo(
+    () => new Map(catalog.map((c) => [c.id, c])),
+    [catalog],
+  )
   const canEdit = useAppSelector(selectCanEdit)
   usePageTitle(recipe?.title ?? 'Recipe not found')
 
@@ -195,7 +201,9 @@ export default function RecipeDetailPage() {
                             isChecked ? 'line-through opacity-50' : ''
                           }`}
                         >
-                          {catalog.find((c) => c.id === ingredient.ingredientId)?.name ?? ''}
+                          {(ingredient.ingredientId &&
+                            catalogById.get(ingredient.ingredientId)?.name) ||
+                            ''}
                         </span>
                         <span
                           className={`font-body text-body-md text-secondary font-bold whitespace-nowrap ${

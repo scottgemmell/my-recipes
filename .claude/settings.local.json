@@ -8,7 +8,15 @@
       "Bash(npx tsc *)",
       "Bash(npm run *)",
       "Bash(wsl -e bash -lc 'which node npm')",
-      "Bash(wsl -e bash -lc 'echo PATH=$PATH; command -v node; command -v npm; ls ~/.nvm 2>/dev/null && echo HAS_NVM')"
+      "Bash(wsl -e bash -lc 'echo PATH=$PATH; command -v node; command -v npm; ls ~/.nvm 2>/dev/null && echo HAS_NVM')",
+      "Bash(git checkout *)",
+      "Bash(git add *)",
+      "Bash(git restore *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(gh pr create --base main --head perf/react-best-practices --title 'perf: apply Vercel React best-practices to recipe app' --body ' *)",
+      "Bash(gh pr *)",
+      "Bash(git branch *)"
     ]
   }
 }

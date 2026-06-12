@@ -16,7 +16,9 @@
       "Bash(git push *)",
       "Bash(gh pr create --base main --head perf/react-best-practices --title 'perf: apply Vercel React best-practices to recipe app' --body ' *)",
       "Bash(gh pr *)",
-      "Bash(git branch *)"
+      "Bash(git branch *)",
+      "Bash(git pull *)",
+      "Bash(git stash *)"
     ]
   }
 }

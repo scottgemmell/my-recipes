@@ -84,5 +84,9 @@ export const selectRecipeBySlug = (slug: string) => (state: RootState) =>
 export const selectFavoriteCount = (state: RootState) =>
   state.recipes.items.filter((r) => r.favorite).length
 
+// Shared stable reference so an absent checklist doesn't hand useSelector a
+// fresh [] on every store update (which would force a needless re-render).
+const EMPTY_CHECKED: readonly string[] = []
+
 export const selectCheckedIngredients = (recipeId: string) => (state: RootState) =>
-  state.recipes.checkedIngredients[recipeId] ?? []
+  state.recipes.checkedIngredients[recipeId] ?? EMPTY_CHECKED

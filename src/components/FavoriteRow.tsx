@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { Link } from 'react-router-dom'
 import RecipeImage from './RecipeImage'
 import Icon from './Icon'
@@ -10,7 +11,7 @@ import { iconForDifficulty, isHardDifficulty } from '../features/recipes/difficu
 import type { Recipe } from '../features/recipes/types'
 
 /** Wide, landscape list item used on the Favourites page (image left, info right). */
-export default function FavoriteRow({ recipe }: { recipe: Recipe }) {
+const FavoriteRow = memo(function FavoriteRow({ recipe }: { recipe: Recipe }) {
   const dispatch = useAppDispatch()
   const canEdit = useAppSelector(selectCanEdit)
   const to = `/recipe/${recipe.slug}`
@@ -82,4 +83,6 @@ export default function FavoriteRow({ recipe }: { recipe: Recipe }) {
       </div>
     </article>
   )
-}
+})
+
+export default FavoriteRow
